@@ -560,9 +560,21 @@ function renderAccueil(){
   const info = document.getElementById('welcome-info');
   const pqs = calcPQS(currentUser.startDate);
 
+  // Fast SC (90j) et Fast EC (120j)
+  function calcFastDays(limitDays){
+    if(!currentUser.startDate||currentUser.startDate==='—') return null;
+    const parts=currentUser.startDate.split('/');
+    if(parts.length!==3) return null;
+    const start=new Date(parts[2],parts[1]-1,parts[0]);
+    const deadline=new Date(start.getTime()+limitDays*24*60*60*1000);
+    return Math.ceil((deadline-new Date())/(24*60*60*1000));
+  }
+  const fastSCDays = calcFastDays(90);
+  const fastECDays = calcFastDays(120);
+
   // PQS block
   let pqsHtml = '';
-  if(pqs){
+  if(pqs && !currentUser.pqsValidated){
     const color = pqs.daysLeft<=0?'#E24B4A':pqs.daysLeft<=7?'#f97316':pqs.daysLeft<=14?'#F59E0B':'#2E7D32';
     const label = pqs.daysLeft<=0 ? '⚠️ Délai PQS dépassé !'
       : pqs.daysLeft===1 ? '🔴 Deadline PQS demain !'
@@ -590,14 +602,36 @@ function renderAccueil(){
   }
 
   info.innerHTML = `
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-      <div style="width:40px;height:40px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;flex-shrink:0;">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+      <div style="width:42px;height:42px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;flex-shrink:0;">
         ${currentUser.fullName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)}
       </div>
-      <div>
+      <div style="flex:1;">
         <div style="font-size:15px;font-weight:700;color:var(--text);">Bonjour ${currentUser.name} 👋</div>
         <div style="font-size:12px;color:var(--text-sec);">Consultant Smart SN · Actif depuis le <strong>${currentUser.startDate}</strong></div>
+        <div style="margin-top:4px;">
+          <span style="font-size:12px;font-weight:700;background:var(--orange-light);color:var(--orange);padding:3px 10px;border-radius:99px;border:1px solid var(--orange-border);">
+            Statut : ${getNiveau(getTotalASP(currentUser.fullName)).label}
+          </span>
+        </div>
       </div>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+      ${currentUser.pqsValidated
+        ? '<span style="font-size:11px;padding:4px 10px;border-radius:99px;background:#E8F5E9;color:#2E7D32;font-weight:600;border:1px solid #c8e6c9;">✅ PQS réussi</span>'
+        : pqs && pqs.daysLeft > 0
+          ? `<span style="font-size:11px;padding:4px 10px;border-radius:99px;background:#FFF3E0;color:#B45309;font-weight:600;border:1px solid #f0d080;">⏱ PQS en cours — ${pqs.daysLeft}j restants</span>`
+          : '<span style="font-size:11px;padding:4px 10px;border-radius:99px;background:#fff0f0;color:#E24B4A;font-weight:600;border:1px solid #ffcdd2;">❌ PQS non réussi</span>'}
+      ${currentUser.fastSCValidated
+        ? '<span style="font-size:11px;padding:4px 10px;border-radius:99px;background:#FFF3E0;color:#B45309;font-weight:600;border:1px solid #f0d080;">🚀 Fast SC validé</span>'
+        : fastSCDays !== null && fastSCDays > 0
+          ? `<span style="font-size:11px;padding:4px 10px;border-radius:99px;background:#f5f7fa;color:#6b7280;font-weight:600;border:1px solid var(--border);">🚀 Fast SC — ${fastSCDays}j restants</span>`
+          : '<span style="font-size:11px;padding:4px 10px;border-radius:99px;background:#f5f7fa;color:#9ca3af;font-weight:600;border:1px solid var(--border);">🚀 Fast SC expiré</span>'}
+      ${currentUser.fastECValidated
+        ? '<span style="font-size:11px;padding:4px 10px;border-radius:99px;background:#EEF2FF;color:#1e3a6e;font-weight:600;border:1px solid #c7d7f5;">⚡ Fast EC validé</span>'
+        : fastECDays !== null && fastECDays > 0
+          ? `<span style="font-size:11px;padding:4px 10px;border-radius:99px;background:#f5f7fa;color:#6b7280;font-weight:600;border:1px solid var(--border);">⚡ Fast EC — ${fastECDays}j restants</span>`
+          : '<span style="font-size:11px;padding:4px 10px;border-radius:99px;background:#f5f7fa;color:#9ca3af;font-weight:600;border:1px solid var(--border);">⚡ Fast EC expiré</span>'}
     </div>
     ${pqsHtml}
     ${sponsorHtml}

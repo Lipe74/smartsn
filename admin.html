@@ -122,6 +122,32 @@ body{font-family:'Outfit',sans-serif;background:var(--gray);color:var(--text);mi
         <div class="form-group"></div>
       </div>
     </div>
+    <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px;margin-bottom:14px;">
+      <div style="font-size:11px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px;">Qualifications</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f5f7fa;border-radius:8px;cursor:pointer;border:1px solid var(--border);">
+          <input type="checkbox" id="edit-pqs" style="width:16px;height:16px;accent-color:#2E7D32;cursor:pointer;">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);">✅ PQS réussi</div>
+            <div style="font-size:11px;color:var(--text-sec);">10 ASP dans les 40 premiers jours</div>
+          </div>
+        </label>
+        <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f5f7fa;border-radius:8px;cursor:pointer;border:1px solid var(--border);">
+          <input type="checkbox" id="edit-fastsc" style="width:16px;height:16px;accent-color:#f97316;cursor:pointer;">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);">🚀 Fast SC validé</div>
+            <div style="font-size:11px;color:var(--text-sec);">Niveau SC atteint dans les 90 premiers jours</div>
+          </div>
+        </label>
+        <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:#f5f7fa;border-radius:8px;cursor:pointer;border:1px solid var(--border);">
+          <input type="checkbox" id="edit-fastec" style="width:16px;height:16px;accent-color:#1e3a6e;cursor:pointer;">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);">⚡ Fast EC validé</div>
+            <div style="font-size:11px;color:var(--text-sec);">Niveau EC atteint dans les 120 premiers jours</div>
+          </div>
+        </label>
+      </div>
+    </div>
     <div style="display:flex;gap:8px;justify-content:flex-end;">
       <button class="btn" onclick="closeModal()" style="border:1px solid var(--border);background:white;">Annuler</button>
       <button class="btn btn-orange" onclick="saveEdit()">💾 Enregistrer</button>
@@ -317,6 +343,17 @@ function renderList(){
         <button class="btn btn-sm btn-danger" onclick="toggleActive(${realIdx})">${c.active?'Désactiver':'Réactiver'}</button>
         <button class="btn btn-sm" onclick="removeConsultant(${realIdx})" style="border:none;background:none;color:var(--text-sec);cursor:pointer;font-size:16px;">🗑</button>
       </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;">
+        ${c.pqsValidated
+          ? '<span style="font-size:10px;padding:3px 8px;border-radius:99px;background:#E8F5E9;color:#2E7D32;font-weight:600;">✅ PQS réussi</span>'
+          : '<span style="font-size:10px;padding:3px 8px;border-radius:99px;background:#fff0f0;color:#E24B4A;font-weight:600;">❌ PQS non réussi</span>'}
+        ${c.fastSCValidated
+          ? '<span style="font-size:10px;padding:3px 8px;border-radius:99px;background:#FFF3E0;color:#B45309;font-weight:600;">🚀 Fast SC validé</span>'
+          : '<span style="font-size:10px;padding:3px 8px;border-radius:99px;background:#f5f7fa;color:#6b7280;font-weight:600;">🚀 Fast SC en attente</span>'}
+        ${c.fastECValidated
+          ? '<span style="font-size:10px;padding:3px 8px;border-radius:99px;background:#EEF2FF;color:#1e3a6e;font-weight:600;">⚡ Fast EC validé</span>'
+          : '<span style="font-size:10px;padding:3px 8px;border-radius:99px;background:#f5f7fa;color:#6b7280;font-weight:600;">⚡ Fast EC en attente</span>'}
+      </div>
     </div>`;
   }).join('');
 }
@@ -333,7 +370,9 @@ function openEdit(i){
   document.getElementById('edit-upline').value = c.upline||'';
   document.getElementById('edit-upline-tel').value = c.uplineTel||'';
   document.getElementById('edit-upline-email').value = c.uplineEmail||'';
-  // Convertir date fr vers input date
+  document.getElementById('edit-pqs').checked = !!c.pqsValidated;
+  document.getElementById('edit-fastsc').checked = !!c.fastSCValidated;
+  document.getElementById('edit-fastec').checked = !!c.fastECValidated;
   if(c.startDate && c.startDate!=='—'){
     const parts = c.startDate.split('/');
     if(parts.length===3) document.getElementById('edit-startdate').value = `${parts[2]}-${parts[1]}-${parts[0]}`;
@@ -363,13 +402,14 @@ function saveEdit(){
     name: document.getElementById('edit-name').value.trim(),
     fullName: document.getElementById('edit-fullname').value.trim(),
     aspInit: parseInt(document.getElementById('edit-asp').value)||0,
-    startDate,
-    isAdmin,
+    startDate, isAdmin,
     upline: document.getElementById('edit-upline').value.trim()||null,
     uplineTel: document.getElementById('edit-upline-tel').value.trim()||null,
     uplineEmail: document.getElementById('edit-upline-email').value.trim()||null,
+    pqsValidated: document.getElementById('edit-pqs').checked,
+    fastSCValidated: document.getElementById('edit-fastsc').checked,
+    fastECValidated: document.getElementById('edit-fastec').checked,
   };
-  // Sync admins
   consultantsData.admins = consultantsData.consultants.filter(x=>x.isAdmin).map(x=>({id:x.id,name:x.name,fullName:x.fullName,isAdmin:true}));
   closeModal();
   renderList(); renderJSON();
