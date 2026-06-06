@@ -611,10 +611,17 @@ function renderContactSponsor(){
   const upline=c.upline||currentUser.upline;
   const uplineTel=c.uplineTel||currentUser.uplineTel;
   const uplineEmail=c.uplineEmail||currentUser.uplineEmail;
+  const sponsorData = allConsultants.find(x=>x.fullName===upline)||{};
+  const sponsorPhoto = sponsorData.photo || 'images/logo.png';
   if(upline){
-    el.innerHTML=`<div style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:8px;">${upline}</div>
+    el.innerHTML=`
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <img src="${sponsorPhoto}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--blue);" onerror="this.src='images/logo.png'">
+        <div style="font-size:13px;font-weight:700;color:var(--blue);">${upline}</div>
+      </div>
       ${uplineTel?`<a href="tel:${uplineTel}" style="display:flex;align-items:center;gap:8px;padding:8px;background:white;border-radius:8px;text-decoration:none;color:var(--text);margin-bottom:6px;border:1px solid var(--border);"><span style="font-size:16px;">📞</span><div><div style="font-size:12px;font-weight:600;">${uplineTel}</div><div style="font-size:10px;color:var(--text-ter);">Appeler</div></div></a>`:''}
-      ${uplineEmail?`<a href="mailto:${uplineEmail}" style="display:flex;align-items:center;gap:8px;padding:8px;background:white;border-radius:8px;text-decoration:none;color:var(--text);border:1px solid var(--border);"><span style="font-size:16px;">📧</span><div><div style="font-size:12px;font-weight:600;">${uplineEmail}</div><div style="font-size:10px;color:var(--text-ter);">Email</div></div></a>`:''}`;
+      ${uplineEmail?`<a href="mailto:${uplineEmail}" style="display:flex;align-items:center;gap:8px;padding:8px;background:white;border-radius:8px;text-decoration:none;color:var(--text);border:1px solid var(--border);"><span style="font-size:16px;">📧</span><div><div style="font-size:12px;font-weight:600;">${uplineEmail}</div><div style="font-size:10px;color:var(--text-ter);">Email</div></div></a>`:''}
+    `;
   } else {
     el.innerHTML='<div style="font-size:12px;color:var(--text-ter);">Aucun sponsor renseigné</div>';
   }
@@ -683,11 +690,12 @@ function renderAccueil(){
   const curNiveau = getNiveau(aspTotal);
   const nextNiveau = getNextNiveau(aspTotal);
 
+  const photo = c.photo || 'images/logo.png';
+  const sponsorPhoto = allConsultants.find(x=>x.fullName===c.upline)?.photo || 'images/logo.png';
+
   info.innerHTML = `
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-      <div style="width:42px;height:42px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;flex-shrink:0;">
-        ${currentUser.fullName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)}
-      </div>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+      <img src="${photo}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--orange);flex-shrink:0;" onerror="this.src='images/logo.png'">
       <div style="flex:1;">
         <div style="font-size:15px;font-weight:700;color:var(--text);">Bonjour ${currentUser.name} 👋</div>
         <div style="font-size:12px;color:var(--text-sec);">Consultant Smart SN · Actif depuis le <strong>${currentUser.startDate}</strong></div>
