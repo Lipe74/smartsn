@@ -14,29 +14,51 @@ body{font-family:'Outfit',sans-serif;background:var(--gray);color:var(--text);mi
 .header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:var(--blue);color:white;}
 .header-title{font-size:16px;font-weight:700;}
 .badge{font-size:11px;background:rgba(249,115,22,.2);color:var(--orange);padding:4px 10px;border-radius:99px;border:1px solid rgba(249,115,22,.3);}
-.main{max-width:800px;margin:24px auto;padding:0 16px;}
+.main{max-width:860px;margin:24px auto;padding:0 16px 40px;}
 .card{background:white;border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;}
-.card-title{font-size:13px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px;}
+.card-title{font-size:13px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;}
 .form-group{display:flex;flex-direction:column;gap:4px;}
 .form-group label{font-size:11px;font-weight:600;color:var(--text-sec);text-transform:uppercase;letter-spacing:.05em;}
-.form-group input, .form-group select{padding:9px 12px;font-size:13px;border:1px solid var(--border);border-radius:8px;background:white;color:var(--text);font-family:'Outfit',sans-serif;outline:none;transition:border-color .2s;}
-.form-group input:focus, .form-group select:focus{border-color:var(--orange);}
-.btn{padding:10px 20px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;}
+.form-group input,.form-group select{padding:9px 12px;font-size:13px;border:1px solid var(--border);border-radius:8px;background:white;color:var(--text);font-family:'Outfit',sans-serif;outline:none;transition:border-color .2s;}
+.form-group input:focus,.form-group select:focus{border-color:var(--orange);}
+.btn{padding:8px 16px;border:none;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;}
 .btn-primary{background:var(--blue);color:white;}.btn-primary:hover{background:#2a4f94;}
 .btn-orange{background:var(--orange);color:white;}.btn-orange:hover{background:#ea6c0a;}
+.btn-edit{background:#EEF2FF;color:var(--blue);border:1px solid #c7d7f5;}.btn-edit:hover{background:#dce8ff;}
 .btn-danger{background:#fff;color:#E24B4A;border:1px solid #E24B4A;}.btn-danger:hover{background:#fff0f0;}
-.btn-sm{padding:6px 12px;font-size:11px;}
-.consultant-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
-.consultant-row:last-child{border-bottom:none;}
-.avatar{width:36px;height:36px;border-radius:50%;background:#EEF2FF;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--blue);flex-shrink:0;}
-.consultant-info{flex:1;}
-.consultant-name{font-size:13px;font-weight:600;}
-.consultant-meta{font-size:11px;color:var(--text-sec);margin-top:2px;}
-.tag{font-size:10px;padding:2px 7px;border-radius:99px;font-weight:600;}
+.btn-sm{padding:5px 10px;font-size:11px;}
+.consultant-row{border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;transition:box-shadow .15s;}
+.consultant-row:hover{box-shadow:0 2px 12px rgba(30,58,110,0.08);}
+.consultant-row.inactive{opacity:.6;}
+.c-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.avatar{width:38px;height:38px;border-radius:50%;background:#EEF2FF;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--blue);flex-shrink:0;}
+.c-name{font-size:14px;font-weight:700;color:var(--text);flex:1;}
+.tag{font-size:10px;padding:2px 7px;border-radius:99px;font-weight:600;margin-left:4px;}
 .tag-admin{background:#EEF2FF;color:var(--blue);}
 .tag-active{background:#E8F5E9;color:#2E7D32;}
 .tag-inactive{background:#f3f4f6;color:var(--text-sec);}
+.tag-pqs-ok{background:#E8F5E9;color:#2E7D32;}
+.tag-pqs-warn{background:#FFF3E0;color:#B45309;}
+.tag-pqs-urgent{background:#FFEBEE;color:#C62828;}
+.c-meta{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;font-size:11px;color:var(--text-sec);margin-bottom:8px;}
+.c-meta-item{display:flex;flex-direction:column;gap:2px;}
+.c-meta-label{font-size:10px;color:var(--text-sec);text-transform:uppercase;letter-spacing:.05em;}
+.c-meta-val{font-size:12px;font-weight:600;color:var(--text);}
+.c-actions{display:flex;gap:6px;flex-wrap:wrap;}
+.pqs-bar{background:#f5f7fa;border-radius:6px;padding:8px 10px;display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.pqs-label{font-size:11px;color:var(--text-sec);flex:1;}
+.pqs-days{font-size:12px;font-weight:700;}
+.pqs-progress{flex:2;height:6px;background:var(--border);border-radius:99px;overflow:hidden;}
+.pqs-fill{height:100%;border-radius:99px;transition:width .4s;}
+/* Modal édition */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:200;padding:16px;}
+.modal-overlay.show{display:flex;}
+.modal{background:white;border-radius:16px;padding:24px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+.modal-close{background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-sec);}
+/* Lock */
 .lock-screen{position:fixed;inset:0;background:var(--blue);display:flex;align-items:center;justify-content:center;z-index:999;}
 .lock-card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:40px 32px;width:100%;max-width:340px;text-align:center;backdrop-filter:blur(20px);}
 .lock-card h2{color:white;font-size:20px;margin-bottom:8px;}
@@ -47,7 +69,7 @@ body{font-family:'Outfit',sans-serif;background:var(--gray);color:var(--text);mi
 .alert{padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:12px;display:none;}
 .alert-success{background:#E8F5E9;color:#2E7D32;border:1px solid #c8e6c9;}
 .alert-error{background:#fff0f0;color:#E24B4A;border:1px solid #ffcdd2;}
-@media(max-width:500px){.form-row{grid-template-columns:1fr;}}
+@media(max-width:600px){.form-row,.form-row-3,.c-meta{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -64,6 +86,49 @@ body{font-family:'Outfit',sans-serif;background:var(--gray);color:var(--text);mi
   </div>
 </div>
 
+<!-- MODAL ÉDITION -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-title">
+      ✏️ Modifier le consultant
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <input type="hidden" id="edit-index">
+    <div class="form-row">
+      <div class="form-group"><label>Identifiant Smart SN</label><input type="text" id="edit-id" autocapitalize="none"></div>
+      <div class="form-group"><label>Prénom *</label><input type="text" id="edit-name"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Nom complet *</label><input type="text" id="edit-fullname"></div>
+      <div class="form-group"><label>ASP initiaux</label><input type="number" id="edit-asp" min="0"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Date démarrage</label><input type="date" id="edit-startdate"></div>
+      <div class="form-group"><label>Rôle</label>
+        <select id="edit-role">
+          <option value="false">Consultant</option>
+          <option value="true">Admin</option>
+        </select>
+      </div>
+    </div>
+    <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px;margin-bottom:14px;">
+      <div style="font-size:11px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Informations Upline / Sponsor</div>
+      <div class="form-row">
+        <div class="form-group"><label>Nom upline</label><input type="text" id="edit-upline" placeholder="ex: Philippe Tomaszewsky"></div>
+        <div class="form-group"><label>Téléphone upline</label><input type="tel" id="edit-upline-tel" placeholder="ex: +32 475 24 02 05"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Email upline</label><input type="email" id="edit-upline-email" placeholder="ex: infos@phil-mobile.be"></div>
+        <div class="form-group"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;">
+      <button class="btn" onclick="closeModal()" style="border:1px solid var(--border);background:white;">Annuler</button>
+      <button class="btn btn-orange" onclick="saveEdit()">💾 Enregistrer</button>
+    </div>
+  </div>
+</div>
+
 <!-- HEADER -->
 <div class="header">
   <div class="header-title">⚙️ Admin Smart Tools</div>
@@ -71,77 +136,72 @@ body{font-family:'Outfit',sans-serif;background:var(--gray);color:var(--text);mi
 </div>
 
 <div class="main">
-
   <div id="alert-box" class="alert"></div>
 
   <!-- LISTE CONSULTANTS -->
   <div class="card">
-    <div class="card-title">Consultants actifs</div>
+    <div class="card-title">
+      <span>Consultants (<span id="count-active">0</span> actifs)</span>
+      <div style="display:flex;gap:6px;">
+        <button class="btn btn-sm" id="filter-all" onclick="setFilter('all')" style="background:var(--blue);color:white;">Tous</button>
+        <button class="btn btn-sm" id="filter-active" onclick="setFilter('active')" style="border:1px solid var(--border);background:white;">Actifs</button>
+        <button class="btn btn-sm" id="filter-inactive" onclick="setFilter('inactive')" style="border:1px solid var(--border);background:white;">Inactifs</button>
+      </div>
+    </div>
     <div id="consultants-list"><div style="color:var(--text-sec);font-size:13px;">Chargement...</div></div>
   </div>
 
   <!-- AJOUTER UN CONSULTANT -->
   <div class="card">
-    <div class="card-title">Ajouter un consultant</div>
+    <div class="card-title">➕ Ajouter un consultant</div>
     <div class="form-row">
-      <div class="form-group">
-        <label>Identifiant Smart SN *</label>
-        <input type="text" id="new-id" placeholder="ex: lotus193" autocapitalize="none">
-      </div>
-      <div class="form-group">
-        <label>Prénom *</label>
-        <input type="text" id="new-name" placeholder="ex: Julien">
-      </div>
+      <div class="form-group"><label>Identifiant Smart SN *</label><input type="text" id="new-id" placeholder="ex: lotus193" autocapitalize="none"></div>
+      <div class="form-group"><label>Prénom *</label><input type="text" id="new-name" placeholder="ex: Julien"></div>
     </div>
     <div class="form-row">
-      <div class="form-group">
-        <label>Nom complet *</label>
-        <input type="text" id="new-fullname" placeholder="ex: Julien Couvreur">
-      </div>
-      <div class="form-group">
-        <label>Upline</label>
-        <input type="text" id="new-upline" placeholder="ex: Philippe Tomaszewsky">
-      </div>
+      <div class="form-group"><label>Nom complet *</label><input type="text" id="new-fullname" placeholder="ex: Julien Couvreur"></div>
+      <div class="form-group"><label>ASP initiaux</label><input type="number" id="new-asp" placeholder="0" min="0" value="0"></div>
     </div>
     <div class="form-row">
-      <div class="form-group">
-        <label>Date démarrage</label>
-        <input type="date" id="new-startdate">
-      </div>
-      <div class="form-group">
-        <label>ASP initiaux</label>
-        <input type="number" id="new-asp" placeholder="0" min="0" value="0">
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Rôle</label>
+      <div class="form-group"><label>Date démarrage</label><input type="date" id="new-startdate"></div>
+      <div class="form-group"><label>Rôle</label>
         <select id="new-role">
           <option value="false">Consultant</option>
           <option value="true">Admin</option>
         </select>
       </div>
-      <div class="form-group" style="justify-content:flex-end;">
-        <button class="btn btn-orange" onclick="addConsultant()" style="margin-top:20px;">+ Ajouter</button>
+    </div>
+    <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px;margin-bottom:14px;">
+      <div style="font-size:11px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Upline / Sponsor</div>
+      <div class="form-row">
+        <div class="form-group"><label>Nom upline</label><input type="text" id="new-upline" placeholder="ex: Philippe Tomaszewsky"></div>
+        <div class="form-group"><label>Téléphone upline</label><input type="tel" id="new-upline-tel" placeholder="ex: +32 475 24 02 05"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>Email upline</label><input type="email" id="new-upline-email" placeholder="ex: infos@phil-mobile.be"></div>
+        <div class="form-group" style="justify-content:flex-end;"><button class="btn btn-orange" onclick="addConsultant()" style="margin-top:20px;">+ Ajouter</button></div>
       </div>
     </div>
   </div>
 
   <!-- JSON EXPORT -->
   <div class="card">
-    <div class="card-title">consultants.json — à copier sur GitHub</div>
-    <p style="font-size:12px;color:var(--text-sec);margin-bottom:10px;">Après modification, copiez ce JSON et mettez-le à jour sur GitHub dans le fichier <strong>consultants.json</strong>.</p>
-    <button class="btn btn-primary btn-sm" onclick="copyJSON()">📋 Copier le JSON</button>
-    <button class="btn btn-sm" onclick="downloadJSON()" style="border:1px solid var(--border);background:white;margin-left:8px;">⬇ Télécharger</button>
+    <div class="card-title">consultants.json — GitHub</div>
+    <p style="font-size:12px;color:var(--text-sec);margin-bottom:10px;">Après toute modification, copiez ce JSON et mettez à jour le fichier <strong>consultants.json</strong> sur GitHub.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn btn-primary btn-sm" onclick="copyJSON()">📋 Copier le JSON</button>
+      <button class="btn btn-sm" onclick="downloadJSON()" style="border:1px solid var(--border);background:white;">⬇ Télécharger</button>
+    </div>
     <div class="json-preview" id="json-preview"></div>
   </div>
-
 </div>
 
 <script>
 const ADMIN_PWD = 'delta835Admin2026';
 let consultantsData = null;
+let currentFilter = 'all';
 
+// ===== AUTH =====
 function checkAdmin(){
   const val = document.getElementById('admin-pwd').value;
   if(val === ADMIN_PWD){
@@ -156,91 +216,221 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&document.getElementById('lock-screen').style.display!=='none') checkAdmin();
 });
 
+// ===== DATA =====
 async function loadData(){
   try{
     const data = await fetch('consultants.json?v='+Date.now()).then(r=>r.json());
     consultantsData = data;
-    renderList();
-    renderJSON();
   } catch(e){
     consultantsData = {admins:[],consultants:[]};
-    renderList();renderJSON();
   }
+  renderList(); renderJSON();
+}
+
+// ===== PQS =====
+function calcPQS(startDateStr){
+  if(!startDateStr || startDateStr==='—') return null;
+  // Parser dd/mm/yyyy
+  const parts = startDateStr.split('/');
+  if(parts.length!==3) return null;
+  const start = new Date(parts[2], parts[1]-1, parts[0]);
+  const deadline = new Date(start.getTime() + 40*24*60*60*1000);
+  const now = new Date();
+  const daysLeft = Math.ceil((deadline - now) / (24*60*60*1000));
+  const totalDays = 40;
+  const elapsed = totalDays - daysLeft;
+  const pct = Math.min(100, Math.max(0, Math.round(elapsed/totalDays*100)));
+  return { deadline, daysLeft, pct };
+}
+
+function pqsColor(daysLeft){
+  if(daysLeft <= 0) return '#E24B4A';
+  if(daysLeft <= 7) return '#f97316';
+  if(daysLeft <= 14) return '#F59E0B';
+  return '#2E7D32';
+}
+
+function fmtDateFr(d){
+  return d.toLocaleDateString('fr-BE',{day:'2-digit',month:'2-digit',year:'numeric'});
+}
+
+// ===== RENDER LIST =====
+function setFilter(f){
+  currentFilter=f;
+  ['all','active','inactive'].forEach(x=>{
+    const b=document.getElementById('filter-'+x);
+    b.style.background=x===f?'var(--blue)':'white';
+    b.style.color=x===f?'white':'var(--text)';
+    b.style.border=x===f?'none':'1px solid var(--border)';
+  });
+  renderList();
 }
 
 function renderList(){
   const list = document.getElementById('consultants-list');
-  if(!consultantsData.consultants.length){list.innerHTML='<div style="color:var(--text-sec);font-size:13px;">Aucun consultant</div>';return;}
-  list.innerHTML = consultantsData.consultants.map((c,i)=>{
-    const ini=c.fullName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-    return `<div class="consultant-row">
-      <div class="avatar">${ini}</div>
-      <div class="consultant-info">
-        <div class="consultant-name">${c.fullName} <span class="tag ${c.isAdmin?'tag-admin':''}">${c.isAdmin?'Admin':'Consultant'}</span> <span class="tag ${c.active?'tag-active':'tag-inactive'}">${c.active?'Actif':'Inactif'}</span></div>
-        <div class="consultant-meta">ID: <strong>${c.id}</strong> · Depuis ${c.startDate||'—'} · ${c.aspInit||0} ASP init · Upline: ${c.upline||'—'}</div>
+  const active = consultantsData.consultants.filter(c=>c.active);
+  document.getElementById('count-active').textContent = active.length;
+
+  let filtered = consultantsData.consultants;
+  if(currentFilter==='active') filtered = filtered.filter(c=>c.active);
+  if(currentFilter==='inactive') filtered = filtered.filter(c=>!c.active);
+
+  if(!filtered.length){list.innerHTML='<div style="color:var(--text-sec);font-size:13px;padding:10px 0;">Aucun consultant</div>';return;}
+
+  list.innerHTML = filtered.map((c)=>{
+    const realIdx = consultantsData.consultants.indexOf(c);
+    const ini = c.fullName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const pqs = calcPQS(c.startDate);
+    const color = pqs ? pqsColor(pqs.daysLeft) : '#9ca3af';
+
+    let pqsHtml = '';
+    if(pqs){
+      const label = pqs.daysLeft <= 0
+        ? '⚠️ Délai PQS dépassé !'
+        : pqs.daysLeft === 1 ? '🔴 Deadline PQS demain !'
+        : `⏱ Deadline PQS dans ${pqs.daysLeft} jours`;
+      pqsHtml = `<div class="pqs-bar">
+        <div class="pqs-label">${label} <span style="color:var(--text-ter);font-size:10px;">(${fmtDateFr(pqs.deadline)})</span></div>
+        <div class="pqs-progress"><div class="pqs-fill" style="width:${pqs.pct}%;background:${color};"></div></div>
+      </div>`;
+    }
+
+    return `<div class="consultant-row${c.active?'':' inactive'}">
+      <div class="c-header">
+        <div class="avatar" style="background:${c.isAdmin?'var(--blue)':'#EEF2FF'};color:${c.isAdmin?'white':'var(--blue)'};">${ini}</div>
+        <div class="c-name">${c.fullName}
+          ${c.isAdmin?'<span class="tag tag-admin">Admin</span>':''}
+          <span class="tag ${c.active?'tag-active':'tag-inactive'}">${c.active?'Actif':'Inactif'}</span>
+        </div>
       </div>
-      <button class="btn btn-danger btn-sm" onclick="toggleActive(${i})">${c.active?'Désactiver':'Réactiver'}</button>
-      <button class="btn btn-sm" onclick="removeConsultant(${i})" style="border:none;background:none;color:var(--text-sec);cursor:pointer;font-size:16px;">🗑</button>
+      ${pqsHtml}
+      <div class="c-meta">
+        <div class="c-meta-item"><span class="c-meta-label">Identifiant</span><span class="c-meta-val">${c.id}</span></div>
+        <div class="c-meta-item"><span class="c-meta-label">Démarrage</span><span class="c-meta-val">${c.startDate||'—'}</span></div>
+        <div class="c-meta-item"><span class="c-meta-label">ASP init</span><span class="c-meta-val">${c.aspInit||0}</span></div>
+        <div class="c-meta-item"><span class="c-meta-label">Upline</span><span class="c-meta-val">${c.upline||'—'}</span></div>
+        <div class="c-meta-item"><span class="c-meta-label">Tél. upline</span><span class="c-meta-val">${c.uplineTel||'—'}</span></div>
+        <div class="c-meta-item"><span class="c-meta-label">Email upline</span><span class="c-meta-val" style="font-size:11px;">${c.uplineEmail||'—'}</span></div>
+      </div>
+      <div class="c-actions">
+        <button class="btn btn-edit btn-sm" onclick="openEdit(${realIdx})">✏️ Modifier</button>
+        <button class="btn btn-sm btn-danger" onclick="toggleActive(${realIdx})">${c.active?'Désactiver':'Réactiver'}</button>
+        <button class="btn btn-sm" onclick="removeConsultant(${realIdx})" style="border:none;background:none;color:var(--text-sec);cursor:pointer;font-size:16px;">🗑</button>
+      </div>
     </div>`;
   }).join('');
 }
 
+// ===== MODAL EDITION =====
+function openEdit(i){
+  const c = consultantsData.consultants[i];
+  document.getElementById('edit-index').value = i;
+  document.getElementById('edit-id').value = c.id;
+  document.getElementById('edit-name').value = c.name;
+  document.getElementById('edit-fullname').value = c.fullName;
+  document.getElementById('edit-asp').value = c.aspInit||0;
+  document.getElementById('edit-role').value = c.isAdmin?'true':'false';
+  document.getElementById('edit-upline').value = c.upline||'';
+  document.getElementById('edit-upline-tel').value = c.uplineTel||'';
+  document.getElementById('edit-upline-email').value = c.uplineEmail||'';
+  // Convertir date fr vers input date
+  if(c.startDate && c.startDate!=='—'){
+    const parts = c.startDate.split('/');
+    if(parts.length===3) document.getElementById('edit-startdate').value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+  } else {
+    document.getElementById('edit-startdate').value = '';
+  }
+  document.getElementById('modal-overlay').classList.add('show');
+}
+
+function closeModal(){
+  document.getElementById('modal-overlay').classList.remove('show');
+}
+
+function saveEdit(){
+  const i = parseInt(document.getElementById('edit-index').value);
+  const c = consultantsData.consultants[i];
+  const startDateRaw = document.getElementById('edit-startdate').value;
+  let startDate = c.startDate;
+  if(startDateRaw){
+    const d = new Date(startDateRaw);
+    startDate = d.toLocaleDateString('fr-BE',{day:'2-digit',month:'2-digit',year:'numeric'});
+  }
+  const isAdmin = document.getElementById('edit-role').value === 'true';
+  consultantsData.consultants[i] = {
+    ...c,
+    id: document.getElementById('edit-id').value.trim().toLowerCase(),
+    name: document.getElementById('edit-name').value.trim(),
+    fullName: document.getElementById('edit-fullname').value.trim(),
+    aspInit: parseInt(document.getElementById('edit-asp').value)||0,
+    startDate,
+    isAdmin,
+    upline: document.getElementById('edit-upline').value.trim()||null,
+    uplineTel: document.getElementById('edit-upline-tel').value.trim()||null,
+    uplineEmail: document.getElementById('edit-upline-email').value.trim()||null,
+  };
+  // Sync admins
+  consultantsData.admins = consultantsData.consultants.filter(x=>x.isAdmin).map(x=>({id:x.id,name:x.name,fullName:x.fullName,isAdmin:true}));
+  closeModal();
+  renderList(); renderJSON();
+  showAlert('✅ Consultant modifié ! Pensez à mettre à jour GitHub.','success');
+}
+
+// ===== AJOUTER =====
 function addConsultant(){
-  const id=document.getElementById('new-id').value.trim().toLowerCase();
-  const name=document.getElementById('new-name').value.trim();
-  const fullName=document.getElementById('new-fullname').value.trim();
-  const upline=document.getElementById('new-upline').value.trim();
-  const startDateRaw=document.getElementById('new-startdate').value;
-  const aspInit=parseInt(document.getElementById('new-asp').value)||0;
-  const isAdmin=document.getElementById('new-role').value==='true';
+  const id = document.getElementById('new-id').value.trim().toLowerCase();
+  const name = document.getElementById('new-name').value.trim();
+  const fullName = document.getElementById('new-fullname').value.trim();
+  const upline = document.getElementById('new-upline').value.trim();
+  const uplineTel = document.getElementById('new-upline-tel').value.trim();
+  const uplineEmail = document.getElementById('new-upline-email').value.trim();
+  const startDateRaw = document.getElementById('new-startdate').value;
+  const aspInit = parseInt(document.getElementById('new-asp').value)||0;
+  const isAdmin = document.getElementById('new-role').value==='true';
 
   if(!id||!name||!fullName){showAlert('Remplissez les champs obligatoires (*)','error');return;}
   if(consultantsData.consultants.find(c=>c.id===id)){showAlert('Identifiant déjà utilisé !','error');return;}
 
-  let startDate='—';
+  let startDate = '—';
   if(startDateRaw){
-    const d=new Date(startDateRaw);
-    startDate=d.toLocaleDateString('fr-BE',{day:'2-digit',month:'2-digit',year:'numeric'});
+    const d = new Date(startDateRaw);
+    startDate = d.toLocaleDateString('fr-BE',{day:'2-digit',month:'2-digit',year:'numeric'});
   }
 
-  consultantsData.consultants.push({id,name,fullName,upline:upline||null,startDate,aspInit,isAdmin,active:true});
-  if(isAdmin&&!consultantsData.admins.find(a=>a.id===id)){
-    consultantsData.admins.push({id,name,fullName,isAdmin:true});
-  }
+  consultantsData.consultants.push({
+    id, name, fullName,
+    upline: upline||null, uplineTel: uplineTel||null, uplineEmail: uplineEmail||null,
+    startDate, aspInit, isAdmin, active: true
+  });
+  if(isAdmin) consultantsData.admins = consultantsData.consultants.filter(x=>x.isAdmin).map(x=>({id:x.id,name:x.name,fullName:x.fullName,isAdmin:true}));
 
-  // Reset form
-  ['new-id','new-name','new-fullname','new-upline','new-startdate'].forEach(f=>document.getElementById(f).value='');
+  ['new-id','new-name','new-fullname','new-upline','new-upline-tel','new-upline-email','new-startdate'].forEach(f=>document.getElementById(f).value='');
   document.getElementById('new-asp').value='0';
   document.getElementById('new-role').value='false';
 
-  renderList();renderJSON();
+  renderList(); renderJSON();
   showAlert(`✅ ${fullName} ajouté ! Copiez le JSON et mettez à jour GitHub.`,'success');
 }
 
+// ===== TOGGLE / SUPPRIMER =====
 function toggleActive(i){
   consultantsData.consultants[i].active=!consultantsData.consultants[i].active;
-  renderList();renderJSON();
+  renderList(); renderJSON();
   showAlert('Statut mis à jour — pensez à mettre à jour GitHub','success');
 }
 
 function removeConsultant(i){
-  const c=consultantsData.consultants[i];
-  if(!confirm(`Supprimer ${c.fullName} ?`)) return;
+  const c = consultantsData.consultants[i];
+  if(!confirm(`Supprimer définitivement ${c.fullName} ?`)) return;
   consultantsData.consultants.splice(i,1);
-  consultantsData.admins=consultantsData.admins.filter(a=>a.id!==c.id);
-  renderList();renderJSON();
+  consultantsData.admins = consultantsData.consultants.filter(x=>x.isAdmin).map(x=>({id:x.id,name:x.name,fullName:x.fullName,isAdmin:true}));
+  renderList(); renderJSON();
   showAlert('Consultant supprimé — pensez à mettre à jour GitHub','success');
 }
 
-function renderJSON(){
-  document.getElementById('json-preview').textContent=JSON.stringify(consultantsData,null,2);
-}
-
-function copyJSON(){
-  const text=JSON.stringify(consultantsData,null,2);
-  navigator.clipboard.writeText(text).then(()=>showAlert('✅ JSON copié ! Collez-le dans GitHub → consultants.json','success'));
-}
-
+// ===== JSON =====
+function renderJSON(){ document.getElementById('json-preview').textContent=JSON.stringify(consultantsData,null,2); }
+function copyJSON(){ navigator.clipboard.writeText(JSON.stringify(consultantsData,null,2)).then(()=>showAlert('✅ JSON copié !','success')); }
 function downloadJSON(){
   const blob=new Blob([JSON.stringify(consultantsData,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='consultants.json';a.click();
@@ -251,6 +441,11 @@ function showAlert(msg,type){
   el.textContent=msg;el.className='alert alert-'+(type==='error'?'error':'success');el.style.display='block';
   setTimeout(()=>el.style.display='none',4000);
 }
+
+// Fermer modal en cliquant dehors
+document.getElementById('modal-overlay').addEventListener('click',function(e){
+  if(e.target===this) closeModal();
+});
 </script>
 </body>
 </html>

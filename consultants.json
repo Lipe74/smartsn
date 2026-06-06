@@ -13,6 +13,8 @@
       "name": "Philippe",
       "fullName": "Philippe Tomaszewsky",
       "upline": null,
+      "uplineTel": null,
+      "uplineEmail": null,
       "startDate": "29/11/2025",
       "aspInit": 82,
       "isAdmin": true,
@@ -23,18 +25,10 @@
       "name": "Julien",
       "fullName": "Julien Couvreur",
       "upline": "Philippe Tomaszewsky",
+      "uplineTel": "+32 475 24 02 05",
+      "uplineEmail": "infos@phil-mobile.be",
       "startDate": "24/04/2026",
       "aspInit": 16,
-      "isAdmin": false,
-      "active": true
-    },
-    {
-      "id": "lotus099",
-      "name": "Liliana",
-      "fullName": "Rodrigues",
-      "upline": "Philippe Tomaszewsky",
-      "startDate": "04/06/2026",
-      "aspInit": 0,
       "isAdmin": false,
       "active": true
     }
