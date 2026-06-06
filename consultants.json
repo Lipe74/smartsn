@@ -18,7 +18,10 @@
       "startDate": "29/11/2025",
       "aspInit": 82,
       "isAdmin": true,
-      "active": true
+      "active": true,
+      "pqsValidated": true,
+      "fastSCValidated": false,
+      "fastECValidated": false
     },
     {
       "id": "lotus193",
