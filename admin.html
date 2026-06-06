@@ -314,6 +314,10 @@ function renderList(){
   list.innerHTML = filtered.map((c)=>{
     const realIdx = consultantsData.consultants.indexOf(c);
     const ini = c.fullName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    const photoSrc = c.photo || null;
+    const avatarHtml = photoSrc
+      ? `<img src="${photoSrc}" style="width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid var(--orange);" onerror="this.style.display='none';this.nextSibling.style.display='flex'"><div class="avatar" style="display:none;">${ini}</div>`
+      : `<div class="avatar">${ini}</div>`;
     const pqs = calcPQS(c.startDate);
     const color = pqs ? pqsColor(pqs.daysLeft) : '#9ca3af';
 
@@ -331,7 +335,7 @@ function renderList(){
 
     return `<div class="consultant-row${c.active?'':' inactive'}">
       <div class="c-header">
-        <div class="avatar" style="background:${c.isAdmin?'var(--blue)':'#EEF2FF'};color:${c.isAdmin?'white':'var(--blue)'};">${ini}</div>
+        ${avatarHtml}
         <div class="c-name">${c.fullName}
           ${c.isAdmin?'<span class="tag tag-admin">Admin</span>':''}
           <span class="tag ${c.active?'tag-active':'tag-inactive'}">${c.active?'Actif':'Inactif'}</span>
