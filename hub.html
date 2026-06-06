@@ -54,6 +54,8 @@ html,body{height:100%;font-family:'Outfit',sans-serif;background:var(--gray);col
 /* TAB PANELS */
 .tab-panel{display:none;}
 .tab-panel.active{display:block;}
+.content-panel{display:none;}
+.content-panel.active{display:block;}
 
 /* MENU ITEMS */
 .menu-section{padding:10px 12px 4px;font-size:10px;font-weight:700;color:var(--text-ter);text-transform:uppercase;letter-spacing:.08em;}
@@ -183,87 +185,66 @@ iframe{width:100%;flex:1;border:none;border-radius:8px;}
   </div>
 </div>
 
-<!-- TABS -->
-<div class="tabs">
-  <button class="tab-btn active" id="tab-accueil" onclick="switchTab('accueil')">🏠 Accueil</button>
-  <button class="tab-btn" id="tab-contrats" onclick="switchTab('contrats')">📊 Contrats</button>
-  <button class="tab-btn" id="tab-outils" onclick="switchTab('outils')">🛠 Outils</button>
-  <button class="tab-btn" id="tab-agenda" onclick="switchTab('agenda')">📅 Agenda</button>
-</div>
-
-<!-- MAIN LAYOUT : sidebar gauche + contenu droit -->
+<!-- MAIN LAYOUT : sidebar gauche unifiée + contenu droit -->
 <div class="main">
 
-  <!-- SIDEBAR -->
+  <!-- SIDEBAR UNIFIÉE -->
   <div class="sidebar" id="sidebar">
 
-    <!-- TAB ACCUEIL -->
-    <div class="sidebar-panel" id="sb-accueil">
-      <div class="menu-section">Accueil</div>
-      <button class="menu-item" onclick="showWelcome()">🏠 Tableau de bord</button>
-    </div>
+    <!-- TABLEAU DE BORD -->
+    <div class="menu-section" style="display:flex;align-items:center;gap:6px;"><i class="ti ti-layout-dashboard" style="font-size:13px;color:var(--orange);"></i> Tableau de bord</div>
+    <button class="menu-item active" id="mi-dashboard" onclick="sidebarClick('dashboard', this)">🏠 Tableau de bord</button>
+    <button class="menu-item" id="mi-contrats" onclick="sidebarClick('contrats', this)">📊 Suivi des contrats</button>
+    <button class="menu-item" id="mi-agenda" onclick="sidebarClick('agenda', this)">📅 Agenda</button>
+    <button class="menu-item" id="mi-contacts" onclick="sidebarClick('contacts', this)">📞 Contacts</button>
 
-    <!-- TAB CONTRATS -->
-    <div class="sidebar-panel" id="sb-contrats" style="display:none;">
-      <div class="menu-section">Suivi</div>
-      <button class="menu-item" onclick="showContratsPanel()">📊 Suivi des contrats</button>
-    </div>
+    <!-- LIENS DIRECTS -->
+    <div class="menu-section" style="display:flex;align-items:center;gap:6px;margin-top:8px;"><i class="ti ti-external-link" style="font-size:13px;color:var(--orange);"></i> Liens directs</div>
+    <a href="https://smartservicesnetwork.my.site.com/" target="_blank" class="menu-item" style="text-decoration:none;">🏢 My Smart ↗</a>
+    <a href="https://obe.my.site.com" target="_blank" class="menu-item" style="text-decoration:none;">☁️ Sales Force ↗</a>
+    <a href="https://www.crdc.be/" target="_blank" class="menu-item" style="text-decoration:none;">📋 CRB — 1399 ↗</a>
+    <a href="https://www.orange.be" target="_blank" class="menu-item" style="text-decoration:none;">🟠 Orange ↗</a>
+    <a href="https://www.orange.be/fr/options-et-services/internet/internet-boost/internet-boost-giga" target="_blank" class="menu-item" style="text-decoration:none;">📡 Orange Tester Fibre ↗</a>
+    <a href="https://eneco.be/fr/?" target="_blank" class="menu-item" style="text-decoration:none;">⚡ Eneco ↗</a>
 
-    <!-- TAB OUTILS -->
-    <div class="sidebar-panel" id="sb-outils" style="display:none;">
-      <div class="menu-section">Simulateurs</div>
-      <button class="menu-item" onclick="loadIframe('wp_rem.html', this)">💶 Calculateur commissions</button>
-      <button class="menu-item" onclick="loadIframe('wp_orange.html', this)">🟠 Simulateur Orange</button>
-      <button class="menu-item" onclick="loadIframe('wp_eneco.html', this)">⚡ Simulateur Eneco</button>
-      <div class="menu-section">Sites web</div>
-      <a href="https://smartservicesnetwork.my.site.com/" target="_blank" class="menu-item" style="text-decoration:none;">🏢 My Smart ↗</a>
-      <a href="https://smartsn.showpad.biz/webapp2/home" target="_blank" class="menu-item" style="text-decoration:none;">📱 Showpad ↗</a>
-      <a href="https://obe.my.site.com" target="_blank" class="menu-item" style="text-decoration:none;">☁️ Sales Force ↗</a>
-      <a href="https://www.crdc.be/" target="_blank" class="menu-item" style="text-decoration:none;">📋 CRB (1399) ↗</a>
-      <a href="https://eneco.be/fr/?" target="_blank" class="menu-item" style="text-decoration:none;">⚡ Eneco ↗</a>
-      <a href="https://www.orange.be/fr/options-et-services/internet/internet-boost/internet-boost-giga" target="_blank" class="menu-item" style="text-decoration:none;">🟠 Orange Fibre ↗</a>
-      <div class="menu-section">Documents</div>
-      <button class="menu-item" onclick="loadIframe('documents/wp_commissions.pdf', this)">💶 Les commissions</button>
-      <button class="menu-item" onclick="loadIframe('documents/wp_smartPlan.pdf', this)">📊 Plan de commissions</button>
-      <button class="menu-item" onclick="loadIframe('documents/wp_orange.pdf', this)">🟠 Produits Orange</button>
-      <button class="menu-item" onclick="loadIframe('documents/wp_eneco.pdf', this)">⚡ Produits Eneco</button>
-      <button class="menu-item" onclick="loadIframe('documents/wp_salesforce.pdf', this)">☁️ Manuel Salesforce</button>
-      <button class="menu-item" onclick="loadIframe('documents/wp_mysmart.pdf', this)">📘 Manuel My Smart</button>
-      <div class="menu-section">Scripts Orange</div>
-      <button class="menu-item" onclick="showScriptPanel('sc-orange-froid')">❄️ Prospect froid</button>
-      <button class="menu-item" onclick="showScriptPanel('sc-orange-ref')">🤝 Référence</button>
-      <button class="menu-item" onclick="showScriptPanel('sc-orange-amis')">👥 Amis / connaissances</button>
-      <div class="menu-section">Scripts Eneco</div>
-      <button class="menu-item" onclick="showScriptPanel('sc-eneco-froid')">❄️ Prospect froid</button>
-      <button class="menu-item" onclick="showScriptPanel('sc-eneco-ref')">🤝 Référence</button>
-      <button class="menu-item" onclick="showScriptPanel('sc-eneco-amis')">👥 Amis / connaissances</button>
-      <div class="menu-section">Scripts Recrutement</div>
-      <button class="menu-item" onclick="showScriptPanel('sc-recr-client')">⭐ Clients existants</button>
-      <button class="menu-item" onclick="showScriptPanel('sc-recr-prospect')">❄️ Prospects</button>
-      <button class="menu-item" onclick="showScriptPanel('sc-recr-amis')">👥 Connaissances</button>
-      <div class="menu-section">Support Smart SN</div>
-      <a href="tel:+3200077170" class="menu-item" style="text-decoration:none;">📞 +32 200 77 17</a>
-      <a href="mailto:support@smartsn.be" class="menu-item" style="text-decoration:none;">📧 support@smartsn.be</a>
-      <a href="mailto:rem@smartsn.be" class="menu-item" style="text-decoration:none;">💶 rem@smartsn.be</a>
-    </div>
+    <!-- SIMULATEURS -->
+    <div class="menu-section" style="display:flex;align-items:center;gap:6px;margin-top:8px;"><i class="ti ti-chart-bar" style="font-size:13px;color:var(--orange);"></i> Simulateurs</div>
+    <button class="menu-item" id="mi-sim-orange" onclick="sidebarClick('sim-orange', this)">🟠 Simulateur Orange</button>
+    <button class="menu-item" id="mi-sim-eneco" onclick="sidebarClick('sim-eneco', this)">⚡ Simulateur Eneco</button>
+    <button class="menu-item" id="mi-sim-comm" onclick="sidebarClick('sim-comm', this)">💶 Simulateur Commissions</button>
 
-    <!-- TAB AGENDA -->
-    <div class="sidebar-panel" id="sb-agenda" style="display:none;">
-      <div class="menu-section">Agenda</div>
-      <button class="menu-item" onclick="showAgendaPanel()">📅 Événements Smart SN</button>
-      <button class="menu-item" onclick="showCalendlyPanel()">📆 Réserver un RDV</button>
-    </div>
+    <!-- DOCUMENTS -->
+    <div class="menu-section" style="display:flex;align-items:center;gap:6px;margin-top:8px;"><i class="ti ti-file-description" style="font-size:13px;color:var(--orange);"></i> Documents</div>
+    <button class="menu-item" id="mi-doc-comm" onclick="sidebarClick('doc-comm', this)">💶 Commissions</button>
+    <button class="menu-item" id="mi-doc-plan" onclick="sidebarClick('doc-plan', this)">📊 Smart Plan</button>
+    <button class="menu-item" id="mi-doc-orange" onclick="sidebarClick('doc-orange', this)">🟠 Produits Orange</button>
+    <button class="menu-item" id="mi-doc-mysmart" onclick="sidebarClick('doc-mysmart', this)">📘 Manuel Smart SN</button>
+    <button class="menu-item" id="mi-doc-sf" onclick="sidebarClick('doc-sf', this)">☁️ Manuel Sales Force</button>
+
+    <!-- SCRIPTS -->
+    <div class="menu-section" style="display:flex;align-items:center;gap:6px;margin-top:8px;"><i class="ti ti-message-chatbot" style="font-size:13px;color:var(--orange);"></i> Scripts Orange</div>
+    <button class="menu-item" onclick="sidebarScript('sc-orange-froid', this)">❄️ Prospect froid</button>
+    <button class="menu-item" onclick="sidebarScript('sc-orange-ref', this)">🤝 Référence</button>
+    <button class="menu-item" onclick="sidebarScript('sc-orange-amis', this)">👥 Amis / connaissances</button>
+    <div class="menu-section" style="display:flex;align-items:center;gap:6px;"><i class="ti ti-message-chatbot" style="font-size:13px;color:var(--orange);"></i> Scripts Eneco</div>
+    <button class="menu-item" onclick="sidebarScript('sc-eneco-froid', this)">❄️ Prospect froid</button>
+    <button class="menu-item" onclick="sidebarScript('sc-eneco-ref', this)">🤝 Référence</button>
+    <button class="menu-item" onclick="sidebarScript('sc-eneco-amis', this)">👥 Amis / connaissances</button>
+    <div class="menu-section" style="display:flex;align-items:center;gap:6px;"><i class="ti ti-users" style="font-size:13px;color:var(--orange);"></i> Scripts Recrutement</div>
+    <button class="menu-item" onclick="sidebarScript('sc-recr-client', this)">⭐ Clients existants</button>
+    <button class="menu-item" onclick="sidebarScript('sc-recr-prospect', this)">❄️ Prospects</button>
+    <button class="menu-item" onclick="sidebarScript('sc-recr-amis', this)">👥 Connaissances</button>
 
   </div>
 
   <!-- CONTENU DROIT -->
   <div class="content" id="main-content">
 
-    <!-- TAB ACCUEIL -->
-    <div class="tab-panel active" id="panel-accueil">
+    <!-- DASHBOARD (accueil) -->
+    <div id="panel-dashboard" class="content-panel active">
       <div class="card">
         <div class="card-title">Bienvenue</div>
-        <div id="welcome-info" style="font-size:13px;color:var(--text-sec);line-height:1.7;"></div>
+        <div id="welcome-info"></div>
       </div>
       <div class="card">
         <div class="card-title">Progression</div>
@@ -271,29 +252,10 @@ iframe{width:100%;flex:1;border:none;border-radius:8px;}
         <div id="accueil-niv-info" style="font-size:12px;color:var(--text-sec);text-align:center;"></div>
       </div>
       <div class="grid-4" id="accueil-metrics"></div>
-      <div class="card">
-        <div class="card-title">Liens rapides</div>
-        <a href="https://smartservicesnetwork.my.site.com/" target="_blank" class="link-item">
-          <div class="link-icon" style="background:#EEF2FF;">🏢</div>
-          <div><div class="link-title">My Smart</div><div class="link-sub">Portail consultant</div></div>
-        </a>
-        <a href="https://www.orange.be" target="_blank" class="link-item">
-          <div class="link-icon" style="background:#FFF3E0;">🟠</div>
-          <div><div class="link-title">Orange Belgium</div><div class="link-sub">Site officiel</div></div>
-        </a>
-        <a href="https://eneco.be/fr" target="_blank" class="link-item">
-          <div class="link-icon" style="background:#E8F5E9;">⚡</div>
-          <div><div class="link-title">Eneco</div><div class="link-sub">Énergie responsable</div></div>
-        </a>
-        <a href="https://www.crdc.be/" target="_blank" class="link-item">
-          <div class="link-icon" style="background:var(--gray);">📋</div>
-          <div><div class="link-title">CRB (1399)</div><div class="link-sub">Vérification clients</div></div>
-        </a>
-      </div>
     </div>
 
-    <!-- TAB CONTRATS -->
-    <div class="tab-panel" id="panel-contrats">
+    <!-- SUIVI CONTRATS -->
+    <div id="panel-contrats" class="content-panel">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
         <div style="font-size:15px;font-weight:700;">Suivi contrats</div>
         <div style="display:flex;align-items:center;gap:6px;">
@@ -351,81 +313,84 @@ iframe{width:100%;flex:1;border:none;border-radius:8px;}
       </div>
     </div>
 
-    <!-- TAB OUTILS — panel script + iframe -->
-    <div class="tab-panel" id="panel-outils">
-      <!-- Panel script (affiché quand on clique un script) -->
-      <div id="script-display" style="display:none;" class="card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-          <span id="script-title" style="font-size:14px;font-weight:700;"></span>
-          <button onclick="hideScriptPanel()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;color:var(--text-sec);">✕ Fermer</button>
-        </div>
-        <div id="script-content"></div>
-        <button id="script-copy-btn" onclick="copyScript()" style="margin-top:12px;padding:8px 16px;background:transparent;border:1.5px solid var(--orange);border-radius:8px;color:var(--orange);font-size:12px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;">📋 Copier le script complet</button>
+    <!-- AGENDA -->
+    <div id="panel-agenda" class="content-panel">
+      <div class="card">
+        <div class="card-title">📅 Prochains événements Smart SN</div>
+        <div id="agenda-list"></div>
       </div>
-      <!-- Iframe pour simulateurs et PDFs -->
-      <div id="iframe-panel" style="display:none;height:calc(100vh - 130px);">
-        <div id="iframe-loading" style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:12px;color:var(--text-ter);">
-          <div style="width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--orange);border-radius:50%;animation:spin .8s linear infinite;"></div>
-          Chargement...
-        </div>
-        <iframe id="embed-frame" src="" style="width:100%;height:100%;border:none;border-radius:12px;display:none;" onload="frameLoaded()"></iframe>
-      </div>
-      <!-- Message accueil outils -->
-      <div id="outils-welcome">
-        <div style="text-align:center;padding:28px 16px 20px;">
-          <div style="width:64px;height:64px;border-radius:50%;background:#EEF2FF;border:2px solid #c7d7f5;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 14px;">🧰</div>
-          <div style="font-size:17px;font-weight:700;color:var(--blue);margin-bottom:6px;">Bienvenue dans vos outils</div>
-          <p style="font-size:13px;color:var(--text-sec);line-height:1.6;max-width:320px;margin:0 auto 20px;">
-            Retrouvez ici votre <strong style="color:var(--orange);">simulateur de commissions</strong>, tous vos <strong style="color:var(--blue);">documents</strong> utiles (manuels, plans, catalogues) ainsi que vos <strong style="color:#2E7D32;">scripts de vente</strong> prêts à l'emploi.
-          </p>
-          <p style="font-size:12px;color:var(--text-ter);margin-bottom:20px;">Cliquez sur un élément du menu à gauche pour l'afficher ici.</p>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;padding:0 16px 20px;">
-          <button onclick="loadIframe('wp_rem.html', null)" style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:white;border:1.5px solid #c7d7f5;border-radius:10px;cursor:pointer;font-family:'Outfit',sans-serif;text-align:left;transition:all .15s;" onmouseover="this.style.borderColor='var(--blue)';this.style.background='#EEF2FF';" onmouseout="this.style.borderColor='#c7d7f5';this.style.background='white';">
-            <span style="font-size:22px;">💶</span>
-            <div>
-              <div style="font-size:13px;font-weight:700;color:var(--blue);">Simulateur de commissions interactif</div>
-              <div style="font-size:11px;color:var(--text-ter);">Calculez vos gains en temps réel</div>
-            </div>
-            <span style="margin-left:auto;color:var(--text-ter);font-size:16px;">›</span>
-          </button>
-          <button onclick="loadIframe('documents/wp_commissions.pdf', null)" style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:white;border:1.5px solid #c7d7f5;border-radius:10px;cursor:pointer;font-family:'Outfit',sans-serif;text-align:left;transition:all .15s;" onmouseover="this.style.borderColor='var(--blue)';this.style.background='#EEF2FF';" onmouseout="this.style.borderColor='#c7d7f5';this.style.background='white';">
-            <span style="font-size:22px;">📄</span>
-            <div>
-              <div style="font-size:13px;font-weight:700;color:var(--blue);">Manuels, plans & catalogues PDF</div>
-              <div style="font-size:11px;color:var(--text-ter);">Tous vos documents en un clic</div>
-            </div>
-            <span style="margin-left:auto;color:var(--text-ter);font-size:16px;">›</span>
-          </button>
-          <button onclick="showScriptPanel('sc-orange-froid')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:white;border:1.5px solid #c7d7f5;border-radius:10px;cursor:pointer;font-family:'Outfit',sans-serif;text-align:left;transition:all .15s;" onmouseover="this.style.borderColor='var(--blue)';this.style.background='#EEF2FF';" onmouseout="this.style.borderColor='#c7d7f5';this.style.background='white';">
-            <span style="font-size:22px;">💬</span>
-            <div>
-              <div style="font-size:13px;font-weight:700;color:var(--blue);">Scripts de vente prêts à copier</div>
-              <div style="font-size:11px;color:var(--text-ter);">Orange, Eneco, Recrutement</div>
-            </div>
-            <span style="margin-left:auto;color:var(--text-ter);font-size:16px;">›</span>
-          </button>
-        </div>
-        <div style="border-top:1px solid var(--border);padding:16px;text-align:center;">
-          <p style="font-size:11px;color:var(--text-ter);margin-bottom:10px;">En cas de lien mort ou de souci</p>
-          <a href="mailto:infos@phil-mobile.be" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--blue);text-decoration:none;margin-bottom:6px;">💶 infos@phil-mobile.be</a><br>
-          <a href="https://wa.me/32475240205" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#25d366;text-decoration:none;">💬 WhatsApp Philippe</a>
-          <p style="font-size:11px;color:var(--text-ter);margin-top:10px;">— Philippe</p>
+      <div class="card">
+        <div class="card-title">📆 Réserver un accompagnement</div>
+        <div id="calendly-container">
+          <p style="font-size:13px;color:var(--text-sec);margin-bottom:12px;">Chaque consultant peut utiliser le calendrier de son sponsor. Entrez l'URL Calendly ci-dessous :</p>
+          <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+            <input type="url" id="calendly-url" placeholder="https://calendly.com/votre-sponsor/30min" style="flex:1;min-width:200px;font-size:12px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-family:'Outfit',sans-serif;">
+            <button onclick="loadCalendly()" class="btn-primary btn-orange" style="padding:8px 14px;font-size:12px;">Afficher</button>
+          </div>
+          <div id="calendly-frame" style="border-radius:10px;overflow:hidden;border:1px solid var(--border);display:none;">
+            <iframe id="calendly-iframe" src="" style="width:100%;height:500px;border:none;" frameborder="0"></iframe>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- TAB AGENDA -->
-    <div class="tab-panel" id="panel-agenda">
-      <div id="agenda-panel" class="card">
-        <div class="card-title">Prochains événements Smart SN</div>
-        <div id="agenda-list"></div>
-      </div>
-      <div id="calendly-panel" class="card">
-        <div class="card-title">📆 Réserver un accompagnement</div>
-        <div style="border-radius:10px;overflow:hidden;border:1px solid var(--border);">
-          <iframe src="https://calendly.com/infos-phil-mobile/30min" style="width:100%;height:500px;border:none;" frameborder="0"></iframe>
+    <!-- CONTACTS -->
+    <div id="panel-contacts" class="content-panel">
+      <div class="card">
+        <div class="card-title">📞 Contacts</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+          <!-- Sponsor direct -->
+          <div style="background:var(--gray);border-radius:10px;padding:14px;border:1px solid var(--border);">
+            <div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">👤 Votre sponsor</div>
+            <div id="contact-sponsor"></div>
+          </div>
+          <!-- Smart SN -->
+          <div style="background:var(--gray);border-radius:10px;padding:14px;border:1px solid var(--border);">
+            <div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">🏢 Smart SN</div>
+            <a href="tel:+3200077170" style="display:flex;align-items:center;gap:8px;padding:8px;background:white;border-radius:8px;text-decoration:none;color:var(--text);margin-bottom:6px;border:1px solid var(--border);">
+              <span style="font-size:16px;">📞</span><div><div style="font-size:12px;font-weight:600;">+32 200 77 17</div><div style="font-size:10px;color:var(--text-ter);">Support téléphonique</div></div>
+            </a>
+            <a href="mailto:support@smartsn.be" style="display:flex;align-items:center;gap:8px;padding:8px;background:white;border-radius:8px;text-decoration:none;color:var(--text);margin-bottom:6px;border:1px solid var(--border);">
+              <span style="font-size:16px;">📧</span><div><div style="font-size:12px;font-weight:600;">support@smartsn.be</div><div style="font-size:10px;color:var(--text-ter);">Support général</div></div>
+            </a>
+            <a href="mailto:rem@smartsn.be" style="display:flex;align-items:center;gap:8px;padding:8px;background:white;border-radius:8px;text-decoration:none;color:var(--text);border:1px solid var(--border);">
+              <span style="font-size:16px;">💶</span><div><div style="font-size:12px;font-weight:600;">rem@smartsn.be</div><div style="font-size:10px;color:var(--text-ter);">Rémunérations</div></div>
+            </a>
+          </div>
         </div>
+        <!-- Upline niveau 2 : Jean Luc Danko -->
+        <div style="background:var(--gray);border-radius:10px;padding:14px;border:1px solid var(--border);">
+          <div style="font-size:11px;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">👥 Upline Niveau 2 — Jean Luc Danko</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <a href="tel:+32498664215" style="display:flex;align-items:center;gap:8px;padding:8px;background:white;border-radius:8px;text-decoration:none;color:var(--text);border:1px solid var(--border);">
+              <span style="font-size:16px;">📞</span><div><div style="font-size:12px;font-weight:600;">+32 498 66 42 15</div><div style="font-size:10px;color:var(--text-ter);">Jean Luc Danko</div></div>
+            </a>
+            <a href="mailto:jld@danko.be" style="display:flex;align-items:center;gap:8px;padding:8px;background:white;border-radius:8px;text-decoration:none;color:var(--text);border:1px solid var(--border);">
+              <span style="font-size:16px;">📧</span><div><div style="font-size:12px;font-weight:600;">jld@danko.be</div><div style="font-size:10px;color:var(--text-ter);">Jean Luc Danko</div></div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIMULATEURS + DOCUMENTS + SCRIPTS (iframe + script panel) -->
+    <div id="panel-iframe" class="content-panel">
+      <div id="iframe-loading" style="display:flex;align-items:center;justify-content:center;height:400px;flex-direction:column;gap:12px;color:var(--text-ter);">
+        <div style="width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--orange);border-radius:50%;animation:spin .8s linear infinite;"></div>
+        Chargement...
+      </div>
+      <iframe id="embed-frame" src="" style="width:100%;height:calc(100vh - 130px);border:none;border-radius:12px;display:none;" onload="frameLoaded()"></iframe>
+    </div>
+
+    <!-- PANEL SCRIPT -->
+    <div id="panel-script" class="content-panel">
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <span id="script-title" style="font-size:14px;font-weight:700;"></span>
+          <button onclick="sidebarClick('dashboard', document.getElementById('mi-dashboard'))" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;color:var(--text-sec);">✕ Fermer</button>
+        </div>
+        <div id="script-content"></div>
+        <button id="script-copy-btn" onclick="copyScript()" style="margin-top:12px;padding:8px 16px;background:transparent;border:1.5px solid var(--orange);border-radius:8px;color:var(--orange);font-size:12px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;">📋 Copier le script complet</button>
       </div>
     </div>
 
@@ -550,26 +515,52 @@ function initUI(){
   pmRender();
 
   switchTab('accueil');
+  sidebarClick('dashboard', document.getElementById('mi-dashboard'));
 }
 
-// ===== TABS =====
-function switchTab(tab){
-  ['accueil','contrats','outils','agenda'].forEach(t=>{
-    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
-    document.getElementById('panel-'+t).classList.toggle('active',t===tab);
-    const sb=document.getElementById('sb-'+t);
-    if(sb) sb.style.display=t===tab?'block':'none';
-  });
-  if(tab==='contrats') pmRenderChart();
+// ===== NAVIGATION SIDEBAR UNIFIÉE =====
+const PANEL_MAP = {
+  'dashboard':'panel-dashboard','contrats':'panel-contrats',
+  'agenda':'panel-agenda','contacts':'panel-contacts',
+  'sim-orange':'panel-iframe','sim-eneco':'panel-iframe','sim-comm':'panel-iframe',
+  'doc-comm':'panel-iframe','doc-plan':'panel-iframe','doc-orange':'panel-iframe',
+  'doc-mysmart':'panel-iframe','doc-sf':'panel-iframe',
+};
+const IFRAME_MAP = {
+  'sim-orange':'wp_orange.html','sim-eneco':'wp_eneco.html','sim-comm':'wp_rem.html',
+  'doc-comm':'documents/wp_commissions.pdf','doc-plan':'documents/wp_smartPlan.pdf',
+  'doc-orange':'documents/wp_orangeproduits.pdf',
+  'doc-mysmart':'documents/wp_mysmart.pdf','doc-sf':'documents/wp_salesforce.pdf',
+};
+
+function sidebarClick(key, btn){
+  document.querySelectorAll('.menu-item').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  document.querySelectorAll('.content-panel').forEach(p=>p.classList.remove('active'));
+  const panelId = PANEL_MAP[key]||'panel-dashboard';
+  document.getElementById(panelId).classList.add('active');
+  if(IFRAME_MAP[key]){
+    document.getElementById('iframe-loading').style.display='flex';
+    document.getElementById('embed-frame').style.display='none';
+    document.getElementById('embed-frame').src=IFRAME_MAP[key];
+  }
+  if(key==='contrats') pmRenderChart();
+  if(key==='contacts') renderContactSponsor();
+}
+
+function sidebarScript(id, btn){
+  document.querySelectorAll('.menu-item').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  document.querySelectorAll('.content-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-script').classList.add('active');
+  showScriptPanel(id);
 }
 
 function loadIframe(url, btn){
-  document.querySelectorAll('.sidebar .menu-item').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.menu-item').forEach(b=>b.classList.remove('active'));
   if(btn) btn.classList.add('active');
-  document.getElementById('outils-welcome').style.display='none';
-  document.getElementById('script-display').style.display='none';
-  const panel=document.getElementById('iframe-panel');
-  panel.style.display='block';
+  document.querySelectorAll('.content-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-iframe').classList.add('active');
   document.getElementById('iframe-loading').style.display='flex';
   document.getElementById('embed-frame').style.display='none';
   document.getElementById('embed-frame').src=url;
@@ -578,6 +569,36 @@ function loadIframe(url, btn){
 function frameLoaded(){
   document.getElementById('iframe-loading').style.display='none';
   document.getElementById('embed-frame').style.display='block';
+}
+
+function loadCalendly(){
+  const url=document.getElementById('calendly-url').value.trim();
+  if(!url) return;
+  document.getElementById('calendly-iframe').src=url;
+  document.getElementById('calendly-frame').style.display='block';
+}
+
+function switchTab(tab){}
+function showWelcome(){ sidebarClick('dashboard', document.getElementById('mi-dashboard')); }
+function showContratsPanel(){ sidebarClick('contrats', document.getElementById('mi-contrats')); }
+function showAgendaPanel(){ sidebarClick('agenda', document.getElementById('mi-agenda')); }
+function showCalendlyPanel(){ sidebarClick('agenda', document.getElementById('mi-agenda')); }
+
+function renderContactSponsor(){
+  if(!currentUser) return;
+  const el=document.getElementById('contact-sponsor');
+  if(!el) return;
+  const c=allConsultants.find(x=>x.fullName===currentUser.fullName)||{};
+  const upline=c.upline||currentUser.upline;
+  const uplineTel=c.uplineTel||currentUser.uplineTel;
+  const uplineEmail=c.uplineEmail||currentUser.uplineEmail;
+  if(upline){
+    el.innerHTML=`<div style="font-size:13px;font-weight:700;color:var(--blue);margin-bottom:8px;">${upline}</div>
+      ${uplineTel?`<a href="tel:${uplineTel}" style="display:flex;align-items:center;gap:8px;padding:8px;background:white;border-radius:8px;text-decoration:none;color:var(--text);margin-bottom:6px;border:1px solid var(--border);"><span style="font-size:16px;">📞</span><div><div style="font-size:12px;font-weight:600;">${uplineTel}</div><div style="font-size:10px;color:var(--text-ter);">Appeler</div></div></a>`:''}
+      ${uplineEmail?`<a href="mailto:${uplineEmail}" style="display:flex;align-items:center;gap:8px;padding:8px;background:white;border-radius:8px;text-decoration:none;color:var(--text);border:1px solid var(--border);"><span style="font-size:16px;">📧</span><div><div style="font-size:12px;font-weight:600;">${uplineEmail}</div><div style="font-size:10px;color:var(--text-ter);">Email</div></div></a>`:''}`;
+  } else {
+    el.innerHTML='<div style="font-size:12px;color:var(--text-ter);">Aucun sponsor renseigné</div>';
+  }
 }
 
 // ===== ACCUEIL =====
@@ -1134,16 +1155,12 @@ function showScriptPanel(id){
   const sc = SCRIPTS[id];
   if(!sc) return;
   currentScript = sc;
-  document.querySelectorAll('.sidebar .menu-item').forEach(b=>b.classList.remove('active'));
-  document.getElementById('outils-welcome').style.display='none';
-  document.getElementById('iframe-panel').style.display='none';
   document.getElementById('script-title').textContent = sc.title;
   document.getElementById('script-content').innerHTML = sc.sections.map(s=>`
     <div style="margin-bottom:12px;">
       <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--orange);margin-bottom:4px;">${s.label}</div>
       <div style="font-size:13px;color:#374151;line-height:1.8;white-space:pre-line;padding:10px 14px;background:var(--orange-light);border-radius:8px;border-left:3px solid var(--orange);">${s.text}</div>
     </div>`).join('');
-  document.getElementById('script-display').style.display='block';
 }
 
 function hideScriptPanel(){

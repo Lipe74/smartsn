@@ -1,4 +1,4 @@
-const CACHE_NAME = 'smart-tools-v2';
+const CACHE_NAME = 'smart-tools-v3';
 const ASSETS = [
   '/smartsn/',
   '/smartsn/index.html',
