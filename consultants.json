@@ -22,7 +22,8 @@
       "active": true,
       "pqsValidated": true,
       "fastSCValidated": false,
-      "fastECValidated": false
+      "fastECValidated": false,
+      "photo": "images/photo_philippe.png"
     },
     {
       "id": "lotus193",
