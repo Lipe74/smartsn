@@ -103,8 +103,8 @@ body{font-family:'Outfit',sans-serif;background:var(--gray);color:var(--text);mi
       <div class="form-group"><label>ASP initiaux</label><input type="number" id="edit-asp" min="0"></div>
     </div>
     <div class="form-row">
-      <div class="form-group"><label>Photo (URL ou chemin)</label><input type="text" id="edit-photo" placeholder="ex: images/photo_julien.png"></div>
       <div class="form-group"><label>Date démarrage</label><input type="date" id="edit-startdate"></div>
+      <div class="form-group"><div style="font-size:10px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Photo</div><div style="font-size:11px;color:var(--text-sec);padding:8px;background:var(--gray);border-radius:6px;">Auto : <code>images/<span id="edit-photo-hint">id</span>.png</code></div></div>
     </div>
       <div class="form-group"><label>Rôle</label>
         <select id="edit-role">
@@ -188,7 +188,7 @@ body{font-family:'Outfit',sans-serif;background:var(--gray);color:var(--text);mi
     </div>
     <div class="form-row">
       <div class="form-group"><label>Nom complet *</label><input type="text" id="new-fullname" placeholder="ex: Julien Couvreur"></div>
-      <div class="form-group"><label>Photo (URL ou chemin)</label><input type="text" id="new-photo" placeholder="ex: images/photo_julien.png"></div>
+      <div class="form-group"><div style="font-size:10px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;">Photo</div><div style="font-size:11px;color:var(--text-sec);padding:8px;background:var(--gray);border-radius:6px;">Auto : <code>images/[identifiant].png</code></div></div>
     </div>
     <div class="form-row">
       <div class="form-group"><label>ASP initiaux</label><input type="number" id="new-asp" placeholder="0" min="0" value="0"></div>
@@ -314,10 +314,8 @@ function renderList(){
   list.innerHTML = filtered.map((c)=>{
     const realIdx = consultantsData.consultants.indexOf(c);
     const ini = c.fullName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-    const photoSrc = c.photo || null;
-    const avatarHtml = photoSrc
-      ? `<img src="${photoSrc}" style="width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid var(--orange);" onerror="this.style.display='none';this.nextSibling.style.display='flex'"><div class="avatar" style="display:none;">${ini}</div>`
-      : `<div class="avatar">${ini}</div>`;
+    const photoSrc = `images/${c.id}.png`;
+    const avatarHtml = `<img src="${photoSrc}" style="width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid var(--orange);flex-shrink:0;" onerror="this.style.display='none';this.nextSibling.style.display='flex'"><div class="avatar" style="display:none;background:${c.isAdmin?'var(--blue)':'#EEF2FF'};color:${c.isAdmin?'white':'var(--blue)'};">${ini}</div>`;
     const pqs = calcPQS(c.startDate);
     const color = pqs ? pqsColor(pqs.daysLeft) : '#9ca3af';
 
@@ -378,7 +376,7 @@ function openEdit(i){
   document.getElementById('edit-name').value = c.name;
   document.getElementById('edit-fullname').value = c.fullName;
   document.getElementById('edit-asp').value = c.aspInit||0;
-  document.getElementById('edit-photo').value = c.photo||'';
+  document.getElementById('edit-photo-hint').textContent = c.id;
   document.getElementById('edit-role').value = c.isAdmin?'true':'false';
   document.getElementById('edit-upline').value = c.upline||'';
   document.getElementById('edit-upline-tel').value = c.uplineTel||'';
@@ -416,7 +414,6 @@ function saveEdit(){
     name: document.getElementById('edit-name').value.trim(),
     fullName: document.getElementById('edit-fullname').value.trim(),
     aspInit: parseInt(document.getElementById('edit-asp').value)||0,
-    photo: document.getElementById('edit-photo').value.trim()||null,
     startDate, isAdmin,
     upline: document.getElementById('edit-upline').value.trim()||null,
     uplineTel: document.getElementById('edit-upline-tel').value.trim()||null,
@@ -440,7 +437,6 @@ function addConsultant(){
   const upline = document.getElementById('new-upline').value.trim();
   const uplineTel = document.getElementById('new-upline-tel').value.trim();
   const uplineEmail = document.getElementById('new-upline-email').value.trim();
-  const photo = document.getElementById('new-photo').value.trim();
   const calendlyUrl = document.getElementById('new-calendly').value.trim();
   const startDateRaw = document.getElementById('new-startdate').value;
   const aspInit = parseInt(document.getElementById('new-asp').value)||0;
@@ -458,12 +454,12 @@ function addConsultant(){
   consultantsData.consultants.push({
     id, name, fullName,
     upline: upline||null, uplineTel: uplineTel||null, uplineEmail: uplineEmail||null,
-    calendlyUrl: calendlyUrl||null, photo: photo||null,
+    calendlyUrl: calendlyUrl||null,
     startDate, aspInit, isAdmin, active: true
   });
   if(isAdmin) consultantsData.admins = consultantsData.consultants.filter(x=>x.isAdmin).map(x=>({id:x.id,name:x.name,fullName:x.fullName,isAdmin:true}));
 
-  ['new-id','new-name','new-fullname','new-upline','new-upline-tel','new-upline-email','new-calendly','new-photo','new-startdate'].forEach(f=>document.getElementById(f).value='');
+  ['new-id','new-name','new-fullname','new-upline','new-upline-tel','new-upline-email','new-calendly','new-startdate'].forEach(f=>document.getElementById(f).value='');
   document.getElementById('new-asp').value='0';
   document.getElementById('new-role').value='false';
 
