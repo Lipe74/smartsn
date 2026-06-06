@@ -1,0 +1,424 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+.app { padding:24px; font-family:Arial,sans-serif; max-width:1000px; margin:0 auto; }
+.header { background:#ff5a14; border-radius:24px; padding:22px; margin-bottom:18px; display:flex; align-items:center; gap:16px; }
+.header-logo { width:64px; height:64px; border-radius:14px; background:white; padding:4px; object-fit:contain; flex-shrink:0; }
+.header-text { flex: 1; }
+.header-title { color:#fff; font-size:30px; font-weight:bold; }
+.header-by { color:rgba(255,255,255,0.8); font-size:14px;  }
+.header-sub { color:rgba(255,255,255,0.9); font-size:15px; }
+.section { background:white; border:none; border-radius:22px; padding:26px; margin-bottom:16px; box-shadow:0 4px 18px rgba(0,0,0,0.06); }
+.section-title { font-size:24px; font-weight:700; color:#222; margin-bottom:22px; display:flex; align-items:center; gap:8px; }
+.product-row { display:flex; align-items:center; gap:18px; padding:14px 0; border-bottom:1px solid #f0f0f0; }
+.product-row:last-child { border-bottom: none; }
+.product-name { flex:1; font-size:18px; color:#222; line-height:1.3; }
+.product-sub { font-size:15px; color:#777; margin-top:4px; font-weight:500; line-height:1.4; }
+.product-price { font-size:18px; font-weight:bold; color:#333; min-width:100px; text-align:right; }
+.qty-ctrl { display: flex; align-items: center; gap: 5px; }
+.qty-btn { width:36px; height:36px; border-radius:10px; border:1px solid #ddd; background:white; color:#222; font-size:20px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.qty-btn:active { transform: scale(0.93); }
+.qty-val { font-size:18px; font-weight:bold; min-width:24px; text-align:center; color:#222; }
+.toggle-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 0.5px solid var(--color-border-tertiary); cursor: pointer; }
+.toggle-row:last-child { border-bottom: none; }
+.toggle-name { flex: 1; font-size: 13px; color: var(--color-text-primary); line-height: 1.3; }
+.toggle-price { font-size: 26px !important; font-weight:700 !important; min-width: 140px; text-align: right; color: #cc4400; }
+.toggle-btn { width: 36px; height: 22px; border-radius: 11px; border: none; cursor: pointer; position: relative; flex-shrink: 0; }
+.toggle-btn.off { background: var(--color-border-secondary); }
+.toggle-btn.on { background: #ff6600; }
+.toggle-knob { position: absolute; top: 3px; width: 16px; height: 16px; border-radius: 50%; background: #fff; }
+.toggle-btn.off .toggle-knob { left: 3px; }
+.toggle-btn.on .toggle-knob { left: 17px; }
+.love-box { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px 12px; }
+.love-line { display: flex; justify-content: space-between; font-size: 12px; padding: 3px 0; color: var(--color-text-tertiary); }
+.love-line.active { color: #cc4400; font-weight: 500; }
+.love-none { font-size: 12px; color: var(--color-text-tertiary);  padding: 4px 0; }
+.love-total { display: flex; justify-content: space-between; font-size: 13px; font-weight: 500; border-top: 0.5px solid var(--color-border-tertiary); margin-top: 6px; padding-top: 6px; color: var(--color-text-primary); }
+.summary { background:#ff5a14; border-radius:24px; padding:28px; margin-bottom:16px; }
+.sum-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; }
+.sum-label { font-size:18px; color:rgba(255,255,255,0.92); }
+.sum-val { font-size:18px; font-weight:bold; color:#fff; }
+.sum-divider { border: none; border-top: 0.5px solid rgba(255,255,255,0.3); margin: 8px 0; }
+.sum-total-val { font-size:48px; font-weight:bold; color:#fff; }
+.sum-total-label { font-size:24px; font-weight:bold; color:#fff; }
+.reset-btn { width: 100%; padding: 11px; border-radius: var(--border-radius-md); border: 0.5px solid var(--color-border-secondary); background: var(--color-background-secondary); color: var(--color-text-secondary); font-size: 14px; cursor: pointer; }
+.active-line { background: #fff8f4; border-radius: 6px; }
+</style>
+
+<div class="app">
+  <div class="header">
+    <img class="header-logo" id="logo-img" src="" alt="Phil-Mobile logo" />
+    <div class="header-text" style="flex:1;">
+      <div class="header-title">Simulateur Phil-Mobile</div>
+      <div class="header-sub">Le simulateur pour vos clients.</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;">
+      <button onclick="window.print()" style="background:white;color:#ff5a14;border:2px solid white;border-radius:10px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;">
+        🖨️ Imprimer / PDF
+      </button>
+      <div style="display:flex;align-items:center;background:rgba(255,255,255,0.2);border-radius:10px;overflow:hidden;border:2px solid white;">
+        <button id="btn-tvac" onclick="setTVAC(true)" style="padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:white;color:#ff5a14;">TVAC</button>
+        <button id="btn-htva" onclick="setTVAC(false)" style="padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:transparent;color:white;">HTVA</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><i class="ti ti-wifi" aria-hidden="true"></i> Internet</div>
+    <div id="internet-rows"></div>
+  </div>
+  <div class="section">
+    <div class="section-title"><i class="ti ti-device-tv" aria-hidden="true"></i> TV</div>
+    <div id="tv-rows"></div>
+  </div>
+  <div class="section">
+    <div class="section-title"><i class="ti ti-device-mobile" aria-hidden="true"></i> Mobile</div>
+    <div id="mobile-rows"></div>
+  </div>
+  <div class="section">
+    <div class="section-title"><i class="ti ti-brand-netflix" aria-hidden="true"></i> Netflix</div>
+    <div id="netflix-rows"></div>
+  </div>
+  <div class="section">
+    <div class="section-title"><i class="ti ti-settings" aria-hidden="true"></i> Options</div>
+    <div id="options-rows"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><i class="ti ti-heart" aria-hidden="true"></i> Remises Love — automatiques</div>
+    <div class="love-box" id="love-detail">
+      <div class="love-none"><span class="product-name"><span style="font-size:18px;font-weight:500;font-family:Arial,sans-serif;line-height:1.4;color:#222;">Ajoutez internet + mobile pour voir les remises</span></span></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title"><i class="ti ti-tag" aria-hidden="true"></i> PROMOTIONS JUIN 2026</div>
+    <div id="promos-rows"></div>
+    <div style="margin-top:12px;background:#fff3cd;border:1px solid #ffc107;border-radius:10px;padding:10px 14px;font-size:13px;color:#856404;font-weight:600;">
+      ⚠️ Attention : Les promotions ne sont accordées que si vous faites une <strong>Domiciliation Bancaire</strong>.
+    </div>
+  </div>
+
+  <div class="summary">
+    <div class="sum-row" style="margin-bottom:10px;">
+      <span class="sum-total-label" style="font-size:18px;">Prix affichés</span>
+      <span id="tva-badge" style="background:rgba(255,255,255,0.25);color:white;font-weight:700;font-size:14px;padding:5px 16px;border-radius:20px;">TVAC (21%)</span>
+    </div>
+    <div class="sum-row"><span class="sum-label">Total produits</span><span class="sum-val" id="s-products">0,00 €</span></div>
+    <div class="sum-row" style="padding-left:16px;opacity:0.85;"><span class="sum-label" style="font-size:13px;">📱 Total Mobiles</span><span class="sum-val" id="s-mobiles" style="font-size:13px;">0,00 €</span></div>
+    <div class="sum-row" style="padding-left:16px;opacity:0.85;"><span class="sum-label" style="font-size:13px;">🌐 Total Internet, TV & Acc.</span><span class="sum-val" id="s-internet" style="font-size:13px;">0,00 €</span></div>
+    <div class="sum-row"><span class="sum-label">Options</span><span class="sum-val" id="s-options">+ 0,00 €</span></div>
+    <div class="sum-row"><span class="sum-label">Remises Love (à vie)</span><span class="sum-val" id="s-love"><span style="font-size:18px;font-weight:700;font-family:Arial,sans-serif;color:#e54b16;">- 0,00 €</span></span></div>
+    <div class="sum-row"><span class="sum-label">Promotions actives</span><span class="sum-val" id="s-promos"><span style="font-size:18px;font-weight:700;font-family:Arial,sans-serif;color:#e54b16;">- 0,00 €</span></span></div>
+    <hr class="sum-divider">
+    <div class="sum-row">
+      <span class="sum-total-label">Total mensuel</span>
+      <span class="sum-total-val" id="s-total">0,00 €</span>
+    </div>
+    <div class="sum-row" style="margin-top:4px">
+      <span class="sum-label" style="font-size:11px">Après fin promos</span>
+      <span class="sum-val" id="s-after" style="font-size:13px">0,00 €</span>
+    </div>
+  </div>
+
+  <button class="reset-btn" onclick="resetAll()"><i class="ti ti-refresh" aria-hidden="true"></i> Réinitialiser</button>
+</div>
+
+<script>
+document.getElementById('logo-img').src = 'https://app.phil-mobile.be/logo.png';
+
+let isTVAC = true;
+const TVA = 1.21;
+
+function setTVAC(tvac) {
+  isTVAC = tvac;
+  document.getElementById('btn-tvac').style.background = tvac ? 'white' : 'transparent';
+  document.getElementById('btn-tvac').style.color = tvac ? '#ff5a14' : 'white';
+  document.getElementById('btn-htva').style.background = tvac ? 'transparent' : 'white';
+  document.getElementById('btn-htva').style.color = tvac ? 'white' : '#ff5a14';
+  document.getElementById('tva-badge').textContent = tvac ? 'TVAC (21%)' : 'HTVA';
+  ['internet-rows','tv-rows','mobile-rows','netflix-rows','options-rows','promos-rows'].forEach(id => {
+    document.getElementById(id).innerHTML = '';
+  });
+  Object.entries(productList).forEach(([key, items]) => buildQtyRows(key+'-rows', items));
+  buildQtyRows('options-rows', options);
+  buildToggleRows('promos-rows', promos);
+  // Restaurer les quantités
+  document.querySelectorAll('.qty-val').forEach(el => {
+    const id = el.id.replace('qty-','');
+    el.textContent = qtyMap[id] || 0;
+  });
+  render();
+}
+
+function priceFmt(p) {
+  const val = isTVAC ? p : p / TVA;
+  return fmt(Math.abs(val));
+}
+
+const productList = {
+  internet: [
+    { id:'inet_start', name:'Internet Start', sub:'Vitesse jusqu\'à 200MB', price:49, max:2 },
+    { id:'inet_zen',   name:'Internet Zen',   sub:'Vitesse jusqu\'à 500MB', price:58, max:2 },
+    { id:'inet_giga',  name:'Internet Giga',  sub:'Vitesse jusqu\'à 1000MB', price:68, max:2 },
+    { id:'inet_fixe',  name:'Ligne Fixe',     sub:'Téléphone fixe', price:12, max:2 },
+  ],
+  tv: [
+    { id:'tv_deco',   name:'TV Deco Sup', price:9,  max:1 },
+    { id:'tv_light',  name:'TV Light',    price:10, max:1 },
+    { id:'tv_orange', name:'TV Orange',   price:20, max:1 },
+  ],
+  mobile: [
+    { id:'mob_small',  name:'Mobile Small 12GB',      price:15, max:9 },
+    { id:'mob_medium', name:'<span style="font-size:18px;font-weight:500;font-family:Arial,sans-serif;line-height:1.4;color:#222;">Mobile Medium</span> 70GB',     price:23, max:9 },
+    { id:'mob_large',  name:'Mobile Large 140GB',     price:29, max:9 },
+    { id:'mob_unlim',  name:'Mobile Unlimited 300GB', price:40, max:9 },
+    { id:'mob_child',  name:'Mobile Child 5GB',       price:5,  max:9 },
+  ],
+  netflix: [
+    { id:'net_ess',  name:'Netflix Essentiel', price:10.99, max:1 },
+    { id:'net_std',  name:'Netflix Standard',  price:16.99, max:1 },
+    { id:'net_prem', name:'Netflix Premium',   price:21.99, max:1 },
+  ],
+};
+
+const options = [
+  { id:'opt_install_m', name:"Frais d'installation",         sub:'Frais Unique',   price:39 },
+  { id:'opt_raccord',   name:'Frais de Raccordement',        sub:'Si pas de cable dans la maison (Frais d\'installation)', price:99, oneshot:true },
+  { id:'opt_booster',   name:'WiFi Booster',                 sub:'Prix / booster', price:3, max:5 },
+  { id:'opt_confort',   name:'Option WiFi Confort',          sub:'3 Booster + Boitier 4G (Prix / mois)', price:10 },
+  { id:'opt_sans_mob',  name:'Internet sans mobile',         sub:'Frais mensuel',  price:5 },
+  { id:'opt_surf',      name:'Carte Extra Surf Mobile',      sub:'Prix par carte', price:3, max:9 },
+];
+
+const promos = [
+  { id:'pr_wallonie',  name:'<span style="font-size:18px;font-weight:500;font-family:Arial,sans-serif;line-height:1.4;color:#222;">Promotion Internet Start & Zen</span>', sub:'- 11€ par internet · Valable 6 mois', price:11, perAbo:true, mobileId:'_internet' },
+  { id:'pr_wallonie2', name:'<span style="font-size:18px;font-weight:500;font-family:Arial,sans-serif;line-height:1.4;color:#222;">Promotion 2ème Internet</span>', sub:'- 10€ · Valable à vie', price:10, perAbo:false },
+  { id:'pr_fibre',     name:'<span style="font-size:18px;font-weight:500;font-family:Arial,sans-serif;line-height:1.4;color:#222;">Promotion Internet Fibre</span>', sub:'- 15€ · Valable 1 an', price:15, perAbo:false },
+  { id:'pr_install',   name:'<span style="font-size:18px;font-weight:500;font-family:Arial,sans-serif;line-height:1.4;color:#222;">Installation Internet offerte</span>', sub:'- 39€ · Remise unique', price:39, perAbo:false },
+  { id:'pr_medium',    name:'<span style="font-size:18px;font-weight:500;font-family:Arial,sans-serif;line-height:1.4;color:#222;">Promotion Mobile Medium</span>', sub:'- 5€ · Uniquement si ajout d\'un abonnement Child (cumulable)', price:5, perAbo:true, mobileId:'mob_medium', requiresChild:true },
+  { id:'pr_large',     name:'<span style="font-size:18px;font-weight:500;font-family:Arial,sans-serif;line-height:1.4;color:#222;">Promotion Mobile Large</span>', sub:'- 5€ · Valable 12 mois', price:5, perAbo:true, mobileId:'mob_large' },
+  { id:'pr_netflix_zen',  name:'<span style="font-size:18px;font-weight:500;font-family:Arial,sans-serif;line-height:1.4;color:#222;">Netflix avec Internet Zen</span>', sub:'- 5,99€ · Valable 6 mois', price:5.99, perAbo:false },
+  { id:'pr_netflix_giga', name:'<span style="font-size:18px;font-weight:500;font-family:Arial,sans-serif;line-height:1.4;color:#222;">Netflix avec Internet Giga</span>', sub:'- 5,99€ · À vie', price:5.99, perAbo:false },
+  { id:'pr_comfort_start_zen', name:'<span style="font-size:18px;font-weight:500;font-family:Arial,sans-serif;line-height:1.4;color:#222;">My Comfort Service — Start & Zen Internet</span>', sub:'- 10€ · Durant 12 mois', price:10, perAbo:false },
+  { id:'pr_comfort_giga',      name:'<span style="font-size:18px;font-weight:500;font-family:Arial,sans-serif;line-height:1.4;color:#222;">My Comfort Service — Giga Internet</span>',        sub:'- 5€ · Durant 12 mois',  price:5,  perAbo:false },
+];
+
+const loveRates = {
+  mob_small:  { rateNoInet: 1,    rateInet1: 3,    rateInet2: 4    },
+  mob_medium: { rateNoInet: 2,    rateInet1: 6,    rateInet2: 8    },
+  mob_large:  { rateNoInet: 2.5,  rateInet1: 6.5,  rateInet2: 9    },
+  mob_unlim:  { rateNoInet: 3,    rateInet1: 7,    rateInet2: 10   },
+};
+
+const qtyMap = {};
+[...Object.values(productList).flat(), ...options].forEach(p => qtyMap[p.id] = 0);
+const togMap = {};
+promos.forEach(p => togMap[p.id] = false);
+
+function fmt(v) { return Math.abs(v).toFixed(2).replace('.',',') + ' €'; }
+function hasInternet() { return ['inet_start','inet_zen','inet_giga'].some(id => qtyMap[id] > 0); }
+function totalMobileAbo() { return ['mob_small','mob_medium','mob_large','mob_unlim','mob_child'].reduce((s,id) => s + (qtyMap[id]||0), 0); }
+
+function calcLove() {
+  const inet = hasInternet();
+  const totalAbo = totalMobileAbo();
+  let total = 0;
+  const lines = [];
+  [{ id:'mob_small', label:'Small' },{ id:'mob_medium', label:'Medium' },{ id:'mob_large', label:'Large' },{ id:'mob_unlim', label:'Unlimited' }].forEach(({ id, label }) => {
+    const qty = qtyMap[id] || 0;
+    if (qty === 0) return;
+    const rates = loveRates[id];
+    let ratePerAbo = 0, palier = '';
+    if (inet && totalAbo >= 2) {
+      ratePerAbo = rates.rateInet2;
+      palier = '×' + qty + ' + internet (2+ abo) → ' + fmt(rates.rateInet2) + '/abo';
+    } else if (inet && totalAbo === 1) {
+      ratePerAbo = rates.rateInet1;
+      palier = '×' + qty + ' + internet → ' + fmt(rates.rateInet1) + '/abo';
+    } else if (!inet && totalAbo >= 2) {
+      ratePerAbo = rates.rateNoInet;
+      palier = '×' + qty + ' sans internet → ' + fmt(rates.rateNoInet) + '/abo';
+    } else {
+      lines.push({ text: label + ' ×1 — internet requis pour remise', disc: 0, active: false });
+      return;
+    }
+    const disc = qty * ratePerAbo;
+    total += disc;
+    lines.push({ text: label + ' ' + palier, disc, active: true });
+  });
+  const box = document.getElementById('love-detail');
+  if (lines.length === 0) {
+    box.innerHTML = '<div class="love-none"><span class="product-name"><span style="font-size:18px;font-weight:500;font-family:Arial,sans-serif;line-height:1.4;color:#222;">Ajoutez internet + mobile pour voir les remises</span></span></div>';
+  } else {
+    let html = lines.map(l =>
+      `<div class="love-line${l.active ? ' active' : ''}"><span>${l.text}</span><span>${l.active ? '- ' + fmt(l.disc) : '—'}</span></div>`
+    ).join('');
+    html += `<div class="love-total"><span>Total remises Love</span><span>- ${fmt(total)}</span></div>`;
+    box.innerHTML = html;
+  }
+  return total;
+}
+
+function calcProducts() {
+  let t = 0;
+  Object.values(productList).flat().forEach(p => { t += p.price * (qtyMap[p.id]||0); });
+  return t;
+}
+function calcOptions() {
+  let t = 0;
+  options.forEach(o => { t += o.price * (qtyMap[o.id] || 0); });
+  return t;
+}
+function calcPromos() {
+  let t = 0;
+  const inetCount = (qtyMap['inet_start'] || 0) + (qtyMap['inet_zen'] || 0);
+  const hasChild = (qtyMap['mob_child'] || 0) > 0;
+  promos.forEach(p => {
+    if (!togMap[p.id]) return;
+    if (p.mobileId === '_internet') {
+      t += p.price * Math.max(1, inetCount);
+    } else if (p.requiresChild) {
+      if (hasChild) t += p.price * Math.max(1, qtyMap[p.mobileId] || 0);
+    } else if (p.perAbo && p.mobileId) {
+      t += p.price * Math.max(1, qtyMap[p.mobileId] || 0);
+    } else {
+      t += p.price;
+    }
+  });
+  return t;
+}
+
+function calcMobiles() {
+  let t = 0;
+  (productList.mobile || []).forEach(p => { t += p.price * (qtyMap[p.id] || 0); });
+  return t;
+}
+
+function calcInternet() {
+  let t = 0;
+  (productList.internet || []).forEach(p => { t += p.price * (qtyMap[p.id] || 0); });
+  (productList.tv || []).forEach(p => { t += p.price * (qtyMap[p.id] || 0); });
+  (productList.netflix || []).forEach(p => { t += p.price * (qtyMap[p.id] || 0); });
+  return t;
+}
+
+function render() {
+  const prod = calcProducts(), opts = calcOptions(), love = calcLove(), prom = calcPromos();
+  const mob = calcMobiles(), inet = calcInternet();
+  const total = Math.max(0, prod + opts - love - prom);
+  const after = Math.max(0, prod + opts - love);
+  const r = isTVAC ? 1 : 1/TVA;
+  document.getElementById('s-products').textContent = fmt(prod*r);
+  document.getElementById('s-mobiles').textContent = fmt(mob*r);
+  document.getElementById('s-internet').textContent = fmt(inet*r);
+  document.getElementById('s-options').textContent = (opts >= 0 ? '+ ' : '- ') + fmt(Math.abs(opts)*r);
+  document.getElementById('s-love').textContent = '- ' + fmt(love*r);
+  document.getElementById('s-promos').textContent = '- ' + fmt(prom*r);
+  document.getElementById('s-total').textContent = fmt(total*r);
+  document.getElementById('s-after').textContent = fmt(after*r);
+  promos.forEach(p => {
+    if (!p.perAbo || !p.mobileId) return;
+    const qty = qtyMap[p.mobileId] || 0;
+    const el = document.querySelector('[data-id="'+p.id+'"] .toggle-name');
+    if (el) {
+      const calc = togMap[p.id] && qty > 0 ? ' = - ' + fmt(p.price * qty) : '';
+      el.innerHTML = p.name + (qty > 1 ? ' ×'+qty : '') + calc + '<br><span class="product-sub">'+p.sub+'</span>';
+    }
+  });
+  document.querySelectorAll('.product-row').forEach(row => {
+    if (row.dataset.id) row.classList.toggle('active-line', (qtyMap[row.dataset.id]||0) > 0);
+  });
+  document.querySelectorAll('.toggle-row').forEach(row => {
+    if (row.dataset.id) {
+      row.classList.toggle('active-line', togMap[row.dataset.id]);
+      const btn = row.querySelector('.toggle-btn');
+      if (btn) btn.className = 'toggle-btn ' + (togMap[row.dataset.id] ? 'on' : 'off');
+    }
+  });
+}
+
+function change(id, delta, max) {
+  qtyMap[id] = Math.max(0, Math.min(max || 9, (qtyMap[id]||0) + delta));
+  document.getElementById('qty-' + id).textContent = qtyMap[id];
+  render();
+}
+function togglePromo(id) { togMap[id] = !togMap[id]; render(); }
+function resetAll() {
+  Object.keys(qtyMap).forEach(k => qtyMap[k] = 0);
+  Object.keys(togMap).forEach(k => togMap[k] = false);
+  document.querySelectorAll('.qty-val').forEach(el => el.textContent = '0');
+  render();
+}
+
+function buildQtyRows(containerId, items) {
+  const c = document.getElementById(containerId);
+  items.forEach(p => {
+    const max = p.max || 1;
+    const row = document.createElement('div');
+    row.className = 'product-row';
+    row.dataset.id = p.id;
+    row.innerHTML = `
+      <div class="product-name">${p.name}${p.sub ? '<br><span class="product-sub">'+p.sub+'</span>' : ''}${p.oneshot ? ' <span style="font-size:10px;color:#cc4400">(unique)</span>' : ''}</div>
+      <div class="product-price" style="${p.price<0?'color:#cc4400':''}">${p.price<0?'- ':''} ${priceFmt(p.price)}</div>
+      <div class="qty-ctrl">
+        <button class="qty-btn" onclick="change('${p.id}',-1,${max})" aria-label="Moins">−</button>
+        <span class="qty-val" id="qty-${p.id}">0</span>
+        <button class="qty-btn" onclick="change('${p.id}',1,${max})" aria-label="Plus">+</button>
+      </div>`;
+    c.appendChild(row);
+  });
+}
+
+function buildToggleRows(containerId, items) {
+  const c = document.getElementById(containerId);
+  items.forEach(p => {
+    const row = document.createElement('div');
+    row.className = 'toggle-row';
+    row.dataset.id = p.id;
+    row.onclick = () => togglePromo(p.id);
+    row.innerHTML = `
+      <div class="toggle-name">${p.name}<br><span class="product-sub">${p.sub}</span></div>
+      <div class="toggle-price">- ${priceFmt(p.price)}</div>
+      <button class="toggle-btn off" aria-label="Activer"><div class="toggle-knob"></div></button>`;
+    c.appendChild(row);
+  });
+}
+
+Object.entries(productList).forEach(([key, items]) => buildQtyRows(key+'-rows', items));
+buildQtyRows('options-rows', options);
+buildToggleRows('promos-rows', promos);
+render();
+</script>
+
+
+<style>
+.love-row,
+.promo-row{
+font-size:17px !important;
+font-weight:500 !important;
+line-height:1.5 !important;
+}
+</style>
+
+
+<style>
+
+/* Harmonisation LOVE + PROMOS */
+
+.section .product-name{
+font-size:18px !important;
+font-weight:500 !important;
+color:#222 !important;
+line-height:1.4 !important;
+}
+
+.section .product-sub{
+font-size:15px !important;
+font-weight:500 !important;
+color:#777 !important;
+line-height:1.4 !important;
+font-style:normal !important;
+}
+
+</style>

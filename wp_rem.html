@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculateur de Commissions</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #FF6B00;
+    --orange-light: #FF8C35;
+    --orange-pale: #FFF3E8;
+    --dark: #f97316;
+    --mid: #6b7280;
+    --text: #1f2937;
+    --muted: #9ca3af;
+    --bg: #f9fafb;
+    --white: #FFFFFF;
+    --blue: #1E3A8A;
+    --green-light: #166534;
+    --border: #e5e7eb;
+    --shadow: 0 2px 12px rgba(0,0,0,0.07);
+    --radius: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 16px 16px 0;
+  }
+
+  .instructions {
+    background: var(--orange-pale);
+    border-left: 4px solid var(--orange);
+    border-radius: var(--radius);
+    padding: 12px 18px;
+    margin-bottom: 20px;
+    font-size: 0.85rem;
+    color: #92400e;
+    line-height: 1.6;
+  }
+  .instructions strong { color: var(--orange); }
+
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+
+  thead th {
+    background: #f97316;
+    color: var(--white);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 10px 10px;
+    text-align: center;
+    white-space: nowrap;
+  }
+  thead th:first-child { text-align: left; padding-left: 16px; background: #ea6a0a; }
+  thead th.col-total { background: #c2510a; color: white; }
+
+  .group-header {
+    background: #fb923c !important;
+    font-size: 0.62rem !important;
+    letter-spacing: 0.1em !important;
+    color: #fff !important;
+    padding: 6px 8px !important;
+    border-bottom: 2px solid #fff !important;
+  }
+
+  tbody tr { transition: background 0.15s; }
+  tbody tr:hover { background: var(--orange-pale); }
+
+  tbody td {
+    padding: 0;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+
+  .row-label {
+    padding: 10px 12px 10px 16px;
+    font-weight: 700;
+    font-size: 0.83rem;
+    white-space: nowrap;
+    color: var(--white);
+  }
+
+  .cat-blue   .row-label { background: var(--blue); }
+  .cat-mobile .row-label { background: var(--orange); }
+  .cat-energy .row-label { background: #166534; }
+  .cat-other  .row-label { background: var(--mid); }
+
+  /* +/- stepper */
+  .qty-cell { text-align: center; padding: 5px 4px; }
+  .stepper {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 2px 4px;
+  }
+  .stepper.has-value {
+    border-color: var(--orange-light);
+    background: var(--orange-pale);
+  }
+  .stepper button {
+    width: 24px; height: 24px;
+    border: none;
+    border-radius: 5px;
+    background: #fff;
+    color: var(--orange);
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    line-height: 1;
+    transition: background .12s;
+    flex-shrink: 0;
+  }
+  .stepper button:hover { background: var(--orange-pale); }
+  .stepper button:active { background: #fde8d0; }
+  .stepper .qty-val {
+    min-width: 28px;
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text);
+    user-select: none;
+  }
+  .stepper.has-value .qty-val { color: var(--orange); }
+
+  /* N/A cells */
+  .na-cell { background: #f3f4f6; width: 80px; }
+
+  /* Rate display */
+  .rate-cell {
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    padding: 5px 8px;
+    white-space: nowrap;
+  }
+
+  /* Subtotal per row */
+  .subtotal-cell {
+    text-align: right;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--orange);
+    padding: 8px 16px 8px 8px;
+    white-space: nowrap;
+    min-width: 100px;
+  }
+  .subtotal-cell.zero { color: var(--border); font-weight: 400; }
+
+  /* Total bar */
+  .total-bar {
+    background: var(--orange);
+    color: var(--white);
+    border-radius: var(--radius);
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+  }
+  .total-bar .label {
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #fff3e8;
+  }
+  .total-bar .amount {
+    font-family: 'DM Mono', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -1px;
+  }
+
+  /* Category totals */
+  .cat-totals {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .cat-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    box-shadow: var(--shadow);
+    border-top: 4px solid var(--border);
+  }
+  .cat-card.cat-blue   { border-color: var(--blue); }
+  .cat-card.cat-mobile { border-color: var(--orange); }
+  .cat-card.cat-energy { border-color: #166534; }
+  .cat-card.cat-other  { border-color: var(--mid); }
+
+  .cat-card .cat-name {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 5px;
+  }
+  .cat-card .cat-amount {
+    font-family: 'DM Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .cat-card .cat-amount.zero { color: var(--border); }
+
+  .reset-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: transparent;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-family: 'Syne', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-bottom: 20px;
+  }
+  .reset-btn:hover { border-color: var(--orange); color: var(--orange); }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <div class="instructions">
+    <strong>Mode d'emploi :</strong> Utilisez les boutons <strong>+</strong> et <strong>−</strong> pour indiquer le nombre de ventes par produit et par type. Le total de votre commission se calcule automatiquement.
+  </div>
+
+  <button class="reset-btn" onclick="resetAll()">↺ Réinitialiser</button>
+
+  <table id="commTable">
+    <thead>
+      <tr>
+        <th style="min-width:180px">Produit</th>
+        <th class="group-header" colspan="2">BC</th>
+        <th class="group-header" colspan="2">SC OU +</th>
+        <th class="group-header" colspan="2">CONVERGENCE</th>
+        <th class="group-header" colspan="2">PORTABILITÉ</th>
+        <th class="group-header" colspan="2">SOHO-INDEP.</th>
+        <th class="col-total">TOTAL</th>
+      </tr>
+      <tr>
+        <th></th>
+        <th>Qté</th><th>€/u</th>
+        <th>Qté</th><th>€/u</th>
+        <th>Qté</th><th>€/u</th>
+        <th>Qté</th><th>€/u</th>
+        <th>Qté</th><th>€/u</th>
+        <th class="col-total"></th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+
+  <div class="total-bar">
+    <span class="label">Total commission client</span>
+    <span class="amount" id="grandTotal">0,00 €</span>
+  </div>
+
+  <div class="cat-totals">
+    <div class="cat-card cat-blue">
+      <div class="cat-name">📡 Fixe / Internet</div>
+      <div class="cat-amount zero" id="cat-fixe">0,00 €</div>
+    </div>
+    <div class="cat-card cat-mobile">
+      <div class="cat-name">📱 Mobile</div>
+      <div class="cat-amount zero" id="cat-mobile">0,00 €</div>
+    </div>
+    <div class="cat-card cat-energy">
+      <div class="cat-name">⚡ Énergie</div>
+      <div class="cat-amount zero" id="cat-energy">0,00 €</div>
+    </div>
+    <div class="cat-card cat-other">
+      <div class="cat-name">📋 Autres</div>
+      <div class="cat-amount zero" id="cat-other">0,00 €</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const products = [
+  { label: "Home Flybox",            cat: "fixe",   rates: [25,  30,   null, null, null] },
+  { label: "INTERNET",               cat: "fixe",   rates: [15,  20,   15,   12,   null] },
+  { label: "TV ORANGE",              cat: "fixe",   rates: [10,  10,   null, null, null] },
+  { label: "MOBILE CHILD",          cat: "mobile", rates: [1,   5,    null, null, null] },
+  { label: "MOBILE SMALL",          cat: "mobile", rates: [10,  15,   null, null, null] },
+  { label: "MOBILE MEDIUM",         cat: "mobile", rates: [35,  40,   12,   20,   15]   },
+  { label: "MOBILE UNLIMITED",      cat: "mobile", rates: [60,  65,   12,   20,   15]   },
+  { label: "MOBILE LARGE",          cat: "mobile", rates: [50,  55,   12,   20,   15]   },
+  { label: "ENECO ELECTRICITE",     cat: "energy", rates: [20,  25,   null, null, 20]   },
+  { label: "ENECO GAZ",             cat: "energy", rates: [20,  25,   null, null, 20]   },
+  { label: "Entretien chaudière",   cat: "energy", rates: [20,  25,   null, null, null] },
+  { label: "eBilling",              cat: "other",  rates: [5,   5,    null, null, null] },
+  { label: "Domiciliation",         cat: "other",  rates: [5,   5,    null, null, null] },
+];
+
+const catClass = { fixe:"cat-blue", mobile:"cat-mobile", energy:"cat-energy", other:"cat-other" };
+
+// Store qty values
+const vals = {};
+
+function getKey(pi, ci) { return `${pi}_${ci}`; }
+
+function fmt(v) {
+  return v.toLocaleString('fr-FR', { minimumFractionDigits:2, maximumFractionDigits:2 }) + ' €';
+}
+
+function step(pi, ci, delta) {
+  const key = getKey(pi, ci);
+  const cur = vals[key] || 0;
+  const next = Math.max(0, cur + delta);
+  vals[key] = next;
+  // Update display
+  const valEl = document.getElementById(`val_${key}`);
+  const stepper = document.getElementById(`step_${key}`);
+  valEl.textContent = next;
+  if (next > 0) stepper.classList.add('has-value');
+  else stepper.classList.remove('has-value');
+  recalc();
+}
+
+function buildTable() {
+  const tbody = document.getElementById('tableBody');
+  tbody.innerHTML = '';
+  products.forEach((p, pi) => {
+    const tr = document.createElement('tr');
+    tr.className = catClass[p.cat];
+
+    // Label
+    const tdLabel = document.createElement('td');
+    tdLabel.innerHTML = `<div class="row-label">${p.label}</div>`;
+    tr.appendChild(tdLabel);
+
+    p.rates.forEach((rate, ci) => {
+      const key = getKey(pi, ci);
+      const tdQty = document.createElement('td');
+      tdQty.className = 'qty-cell';
+
+      if (rate === null) {
+        tdQty.className += ' na-cell';
+      } else {
+        vals[key] = vals[key] || 0;
+        tdQty.innerHTML = `
+          <div class="stepper" id="step_${key}">
+            <button onclick="step(${pi},${ci},-1)" title="Moins">−</button>
+            <span class="qty-val" id="val_${key}">0</span>
+            <button onclick="step(${pi},${ci},+1)" title="Plus">+</button>
+          </div>`;
+      }
+      tr.appendChild(tdQty);
+
+      const tdRate = document.createElement('td');
+      tdRate.className = 'rate-cell';
+      tdRate.textContent = rate !== null ? rate.toFixed(2) + ' €' : '';
+      tr.appendChild(tdRate);
+    });
+
+    const tdSub = document.createElement('td');
+    tdSub.className = 'subtotal-cell zero';
+    tdSub.id = `sub_${pi}`;
+    tdSub.textContent = '- €';
+    tr.appendChild(tdSub);
+
+    tbody.appendChild(tr);
+  });
+}
+
+function recalc() {
+  const catTotals = { fixe:0, mobile:0, energy:0, other:0 };
+  let grand = 0;
+
+  products.forEach((p, pi) => {
+    let rowTotal = 0;
+    p.rates.forEach((rate, ci) => {
+      if (rate === null) return;
+      rowTotal += (vals[getKey(pi,ci)] || 0) * rate;
+    });
+    grand += rowTotal;
+    catTotals[p.cat] += rowTotal;
+
+    const subEl = document.getElementById(`sub_${pi}`);
+    subEl.textContent = rowTotal === 0 ? '- €' : fmt(rowTotal);
+    subEl.className = rowTotal === 0 ? 'subtotal-cell zero' : 'subtotal-cell';
+  });
+
+  document.getElementById('grandTotal').textContent = fmt(grand);
+  for (const [cat, val] of Object.entries(catTotals)) {
+    const el = document.getElementById('cat-' + cat);
+    el.textContent = fmt(val);
+    el.className = val === 0 ? 'cat-amount zero' : 'cat-amount';
+  }
+}
+
+function resetAll() {
+  Object.keys(vals).forEach(k => {
+    vals[k] = 0;
+    const valEl = document.getElementById(`val_${k}`);
+    const stepper = document.getElementById(`step_${k}`);
+    if (valEl) valEl.textContent = '0';
+    if (stepper) stepper.classList.remove('has-value');
+  });
+  recalc();
+}
+
+buildTable();
+recalc();
+</script>
+</body>
+</html>

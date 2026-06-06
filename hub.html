@@ -46,8 +46,9 @@ html,body{height:100%;font-family:'Outfit',sans-serif;background:var(--gray);col
 
 /* LAYOUT */
 .main{display:flex;gap:0;height:calc(100vh - 88px);}
-.sidebar{width:200px;flex-shrink:0;background:white;border-right:1px solid var(--border);overflow-y:auto;display:none;}
+.sidebar{width:200px;flex-shrink:0;background:white;border-right:1px solid var(--border);overflow-y:auto;display:block;}
 .sidebar.show{display:block;}
+@keyframes spin{to{transform:rotate(360deg);}}
 .content{flex:1;overflow-y:auto;padding:16px;}
 
 /* TAB PANELS */
@@ -190,183 +191,207 @@ iframe{width:100%;flex:1;border:none;border-radius:8px;}
   <button class="tab-btn" id="tab-agenda" onclick="switchTab('agenda')">📅 Agenda</button>
 </div>
 
-<!-- MAIN -->
+<!-- MAIN LAYOUT : sidebar gauche + contenu droit -->
 <div class="main">
-<div class="content" id="main-content">
 
-  <!-- TAB ACCUEIL -->
-  <div class="tab-panel active" id="panel-accueil">
-    <div class="card">
-      <div class="card-title">Bienvenue</div>
-      <div id="welcome-info" style="font-size:13px;color:var(--text-sec);line-height:1.7;"></div>
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+
+    <!-- TAB ACCUEIL -->
+    <div class="sidebar-panel" id="sb-accueil">
+      <div class="menu-section">Accueil</div>
+      <button class="menu-item" onclick="showWelcome()">🏠 Tableau de bord</button>
     </div>
-    <div class="card">
-      <div class="card-title">Progression</div>
-      <div id="accueil-niv-bar" class="niv-bar"></div>
-      <div id="accueil-niv-info" style="font-size:12px;color:var(--text-sec);text-align:center;"></div>
+
+    <!-- TAB CONTRATS -->
+    <div class="sidebar-panel" id="sb-contrats" style="display:none;">
+      <div class="menu-section">Suivi</div>
+      <button class="menu-item" onclick="showContratsPanel()">📊 Suivi des contrats</button>
     </div>
-    <div class="grid-4" id="accueil-metrics"></div>
-    <div class="card">
-      <div class="card-title">Liens rapides</div>
-      <a href="https://mysmart.smartsn.be" target="_blank" class="link-item">
-        <div class="link-icon" style="background:#EEF2FF;">🌐</div>
-        <div><div class="link-title">My Smart</div><div class="link-sub">Portail consultant</div></div>
-      </a>
-      <a href="https://www.orange.be" target="_blank" class="link-item">
-        <div class="link-icon" style="background:#FFF3E0;">🟠</div>
-        <div><div class="link-title">Orange Belgium</div><div class="link-sub">Site officiel</div></div>
-      </a>
-      <a href="https://eneco.be/fr" target="_blank" class="link-item">
-        <div class="link-icon" style="background:#E8F5E9;">⚡</div>
-        <div><div class="link-title">Eneco</div><div class="link-sub">Énergie responsable</div></div>
-      </a>
-      <a href="https://www.crdc.be/" target="_blank" class="link-item">
-        <div class="link-icon" style="background:var(--gray);">📋</div>
-        <div><div class="link-title">CRB (1399)</div><div class="link-sub">Vérification clients</div></div>
-      </a>
+
+    <!-- TAB OUTILS -->
+    <div class="sidebar-panel" id="sb-outils" style="display:none;">
+      <div class="menu-section">Scripts Orange</div>
+      <button class="menu-item" onclick="showScriptPanel('sc-orange-froid')">❄️ Prospect froid</button>
+      <button class="menu-item" onclick="showScriptPanel('sc-orange-ref')">🤝 Référence</button>
+      <button class="menu-item" onclick="showScriptPanel('sc-orange-amis')">👥 Amis / connaissances</button>
+      <div class="menu-section">Scripts Eneco</div>
+      <button class="menu-item" onclick="showScriptPanel('sc-eneco-froid')">❄️ Prospect froid</button>
+      <button class="menu-item" onclick="showScriptPanel('sc-eneco-ref')">🤝 Référence</button>
+      <button class="menu-item" onclick="showScriptPanel('sc-eneco-amis')">👥 Amis / connaissances</button>
+      <div class="menu-section">Scripts Recrutement</div>
+      <button class="menu-item" onclick="showScriptPanel('sc-recr-client')">⭐ Clients existants</button>
+      <button class="menu-item" onclick="showScriptPanel('sc-recr-prospect')">❄️ Prospects</button>
+      <button class="menu-item" onclick="showScriptPanel('sc-recr-amis')">👥 Connaissances</button>
+      <div class="menu-section">Simulateurs</div>
+      <button class="menu-item" onclick="loadIframe('wp_orange.html', this)">🟠 Simulateur Orange</button>
+      <button class="menu-item" onclick="loadIframe('wp_eneco.html', this)">⚡ Simulateur Eneco</button>
+      <button class="menu-item" onclick="loadIframe('wp_rem.html', this)">💶 Calculateur commissions</button>
+      <div class="menu-section">Documents</div>
+      <button class="menu-item" onclick="loadIframe('documents/wp_commissions.pdf', this)">💶 Les commissions</button>
+      <button class="menu-item" onclick="loadIframe('documents/wp_smartPlan.pdf', this)">📊 Plan de commissions</button>
+      <button class="menu-item" onclick="loadIframe('documents/wp_orange.pdf', this)">🟠 Produits Orange</button>
+      <button class="menu-item" onclick="loadIframe('documents/wp_eneco.pdf', this)">⚡ Produits Eneco</button>
+      <button class="menu-item" onclick="loadIframe('documents/wp_salesforce.pdf', this)">☁️ Manuel Salesforce</button>
+      <button class="menu-item" onclick="loadIframe('documents/wp_mysmart.pdf', this)">📘 Manuel My Smart</button>
+      <div class="menu-section">Sites web</div>
+      <a href="https://smartservicesnetwork.my.site.com/" target="_blank" class="menu-item" style="text-decoration:none;">🏢 My Smart ↗</a>
+      <a href="https://smartsn.showpad.biz/webapp2/home" target="_blank" class="menu-item" style="text-decoration:none;">📱 Showpad ↗</a>
+      <a href="https://obe.my.site.com" target="_blank" class="menu-item" style="text-decoration:none;">☁️ Salesforce ↗</a>
+      <a href="https://www.crdc.be/" target="_blank" class="menu-item" style="text-decoration:none;">📋 CRB (1399) ↗</a>
+      <a href="https://eneco.be/fr/?" target="_blank" class="menu-item" style="text-decoration:none;">⚡ Eneco ↗</a>
+      <a href="https://www.orange.be/fr/options-et-services/internet/internet-boost/internet-boost-giga" target="_blank" class="menu-item" style="text-decoration:none;">🟠 Orange Fibre ↗</a>
+      <div class="menu-section">Support Smart SN</div>
+      <a href="tel:+3200077170" class="menu-item" style="text-decoration:none;">📞 +32 200 77 17</a>
+      <a href="mailto:support@smartsn.be" class="menu-item" style="text-decoration:none;">📧 support@smartsn.be</a>
+      <a href="mailto:rem@smartsn.be" class="menu-item" style="text-decoration:none;">💶 rem@smartsn.be</a>
     </div>
+
+    <!-- TAB AGENDA -->
+    <div class="sidebar-panel" id="sb-agenda" style="display:none;">
+      <div class="menu-section">Agenda</div>
+      <button class="menu-item" onclick="showAgendaPanel()">📅 Événements Smart SN</button>
+      <button class="menu-item" onclick="showCalendlyPanel()">📆 Réserver un RDV</button>
+    </div>
+
   </div>
 
-  <!-- TAB CONTRATS -->
-  <div class="tab-panel" id="panel-contrats">
+  <!-- CONTENU DROIT -->
+  <div class="content" id="main-content">
 
-    <!-- Navigation mois -->
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-      <div style="font-size:15px;font-weight:700;color:var(--text);">Suivi contrats</div>
-      <div style="display:flex;align-items:center;gap:6px;">
-        <button onclick="pmPrevMonth()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:13px;">‹</button>
-        <span id="pm-month-label" style="font-size:13px;font-weight:600;min-width:120px;text-align:center;"></span>
-        <button onclick="pmNextMonth()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:13px;">›</button>
+    <!-- TAB ACCUEIL -->
+    <div class="tab-panel active" id="panel-accueil">
+      <div class="card">
+        <div class="card-title">Bienvenue</div>
+        <div id="welcome-info" style="font-size:13px;color:var(--text-sec);line-height:1.7;"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Progression</div>
+        <div id="accueil-niv-bar" class="niv-bar"></div>
+        <div id="accueil-niv-info" style="font-size:12px;color:var(--text-sec);text-align:center;"></div>
+      </div>
+      <div class="grid-4" id="accueil-metrics"></div>
+      <div class="card">
+        <div class="card-title">Liens rapides</div>
+        <a href="https://smartservicesnetwork.my.site.com/" target="_blank" class="link-item">
+          <div class="link-icon" style="background:#EEF2FF;">🏢</div>
+          <div><div class="link-title">My Smart</div><div class="link-sub">Portail consultant</div></div>
+        </a>
+        <a href="https://www.orange.be" target="_blank" class="link-item">
+          <div class="link-icon" style="background:#FFF3E0;">🟠</div>
+          <div><div class="link-title">Orange Belgium</div><div class="link-sub">Site officiel</div></div>
+        </a>
+        <a href="https://eneco.be/fr" target="_blank" class="link-item">
+          <div class="link-icon" style="background:#E8F5E9;">⚡</div>
+          <div><div class="link-title">Eneco</div><div class="link-sub">Énergie responsable</div></div>
+        </a>
+        <a href="https://www.crdc.be/" target="_blank" class="link-item">
+          <div class="link-icon" style="background:var(--gray);">📋</div>
+          <div><div class="link-title">CRB (1399)</div><div class="link-sub">Vérification clients</div></div>
+        </a>
       </div>
     </div>
 
-    <!-- Progression -->
-    <div class="card" id="pm-progression-card">
-      <div class="card-title">Progression niveaux</div>
-      <div id="pm-agent-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;"></div>
-      <div class="niv-bar" id="pm-niv-bar"></div>
-      <div id="pm-niv-info" style="font-size:11px;color:var(--text-sec);text-align:center;margin-top:6px;"></div>
-    </div>
-
-    <!-- Métriques -->
-    <div class="grid-4" id="pm-metrics"></div>
-
-    <!-- Encodage -->
-    <div class="card">
-      <div class="card-title">Encoder un contrat</div>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
-        <select id="pm-add-agent" style="font-size:12px;padding:6px 10px;border:1px solid var(--border);border-radius:8px;background:white;color:var(--text);font-family:'Outfit',sans-serif;"></select>
-        <div class="toggle-soho" id="pm-soho-toggle" onclick="pmToggleSoHo()">
-          <span class="t-dot"></span><span>SoHo</span>
+    <!-- TAB CONTRATS -->
+    <div class="tab-panel" id="panel-contrats">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-size:15px;font-weight:700;">Suivi contrats</div>
+        <div style="display:flex;align-items:center;gap:6px;">
+          <button onclick="pmPrevMonth()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:13px;">‹</button>
+          <span id="pm-month-label" style="font-size:13px;font-weight:600;min-width:120px;text-align:center;"></span>
+          <button onclick="pmNextMonth()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:13px;">›</button>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;font-size:12px;color:var(--text-sec);">
-        <i class="ti ti-calendar"></i>
-        <span>Date contrat</span>
-        <input type="date" id="pm-contract-date" style="font-size:12px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;background:white;color:var(--text);font-family:'Outfit',sans-serif;">
-        <button onclick="pmSetToday()" style="font-size:11px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;background:none;cursor:pointer;">Aujourd'hui</button>
-        <span style="color:var(--text-ter);">Encodé le <span id="pm-encoded-label"></span></span>
+      <div class="card" id="pm-progression-card">
+        <div class="card-title">Progression niveaux</div>
+        <div id="pm-agent-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;"></div>
+        <div class="niv-bar" id="pm-niv-bar"></div>
+        <div id="pm-niv-info" style="font-size:11px;color:var(--text-sec);text-align:center;margin-top:6px;"></div>
       </div>
-      <div id="pm-products-panel"></div>
-      <!-- Panier -->
-      <div style="margin-top:10px;border-top:1px solid var(--orange-border);padding-top:10px;">
-        <div style="font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Panier</div>
-        <div id="pm-panier"></div>
-        <button id="pm-btn-valider" onclick="pmValiderPanier()" class="btn-primary btn-orange" style="width:100%;margin-top:10px;opacity:.4;" disabled>✓ Valider l'encodage</button>
+      <div class="grid-4" id="pm-metrics"></div>
+      <div class="card">
+        <div class="card-title">Encoder un contrat</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+          <select id="pm-add-agent" style="font-size:12px;padding:6px 10px;border:1px solid var(--border);border-radius:8px;background:white;color:var(--text);font-family:'Outfit',sans-serif;"></select>
+          <div class="toggle-soho" id="pm-soho-toggle" onclick="pmToggleSoHo()"><span class="t-dot"></span><span>SoHo</span></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;font-size:12px;color:var(--text-sec);">
+          <span>📅 Date contrat</span>
+          <input type="date" id="pm-contract-date" style="font-size:12px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;background:white;color:var(--text);font-family:'Outfit',sans-serif;">
+          <button onclick="pmSetToday()" style="font-size:11px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;background:none;cursor:pointer;">Aujourd'hui</button>
+          <span style="color:var(--text-ter);">Encodé le <span id="pm-encoded-label"></span></span>
+        </div>
+        <div id="pm-products-panel"></div>
+        <div style="margin-top:10px;border-top:1px solid var(--orange-border);padding-top:10px;">
+          <div style="font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Panier</div>
+          <div id="pm-panier"></div>
+          <button id="pm-btn-valider" onclick="pmValiderPanier()" class="btn-primary btn-orange" style="width:100%;margin-top:10px;opacity:.4;" disabled>✓ Valider l'encodage</button>
+        </div>
       </div>
-    </div>
-
-    <!-- Stats -->
-    <div class="grid-2">
-      <div class="card"><div class="card-title">Orange</div><div id="pm-orange-stats"></div></div>
-      <div class="card"><div class="card-title">Eneco</div><div id="pm-eneco-stats"></div></div>
-    </div>
-
-    <!-- Par agent (admin only) -->
-    <div class="card" id="pm-team-card">
-      <div class="card-title">Par agent</div>
-      <div id="pm-team-stats"></div>
-    </div>
-
-    <!-- Historique -->
-    <div class="card">
-      <div class="card-title">Historique du mois</div>
-      <div id="pm-history"></div>
-    </div>
-
-    <!-- Export -->
-    <div class="card">
-      <div class="card-title">Export</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <button onclick="pmExportPDF()" class="btn-primary"><i class="ti ti-file-type-pdf"></i> PDF</button>
-        <button onclick="pmExportMail()" class="btn-primary btn-outline"><i class="ti ti-mail"></i> Email</button>
+      <div class="grid-2">
+        <div class="card"><div class="card-title">Orange</div><div id="pm-orange-stats"></div></div>
+        <div class="card"><div class="card-title">Eneco</div><div id="pm-eneco-stats"></div></div>
       </div>
-    </div>
-
-    <!-- Évolution -->
-    <div class="card">
-      <div class="card-title">Évolution 6 mois</div>
-      <div class="chart-wrap"><canvas id="pm-chart"></canvas></div>
-      <div style="display:flex;gap:14px;margin-top:8px;font-size:11px;color:var(--text-sec);">
-        <span><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#E65100;margin-right:3px;"></span>Orange</span>
-        <span><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#2E7D32;margin-right:3px;"></span>Eneco</span>
+      <div class="card" id="pm-team-card"><div class="card-title">Par agent</div><div id="pm-team-stats"></div></div>
+      <div class="card"><div class="card-title">Historique du mois</div><div id="pm-history"></div></div>
+      <div class="card">
+        <div class="card-title">Export</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button onclick="pmExportPDF()" class="btn-primary"><i class="ti ti-file-type-pdf"></i> PDF</button>
+          <button onclick="pmExportMail()" class="btn-primary btn-outline"><i class="ti ti-mail"></i> Email</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Évolution 6 mois</div>
+        <div class="chart-wrap"><canvas id="pm-chart"></canvas></div>
+        <div style="display:flex;gap:14px;margin-top:8px;font-size:11px;color:var(--text-sec);">
+          <span><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#E65100;margin-right:3px;"></span>Orange</span>
+          <span><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#2E7D32;margin-right:3px;"></span>Eneco</span>
+        </div>
       </div>
     </div>
+
+    <!-- TAB OUTILS — panel script + iframe -->
+    <div class="tab-panel" id="panel-outils">
+      <!-- Panel script (affiché quand on clique un script) -->
+      <div id="script-display" style="display:none;" class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <span id="script-title" style="font-size:14px;font-weight:700;"></span>
+          <button onclick="hideScriptPanel()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;color:var(--text-sec);">✕ Fermer</button>
+        </div>
+        <div id="script-content"></div>
+        <button id="script-copy-btn" onclick="copyScript()" style="margin-top:12px;padding:8px 16px;background:transparent;border:1.5px solid var(--orange);border-radius:8px;color:var(--orange);font-size:12px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;">📋 Copier le script complet</button>
+      </div>
+      <!-- Iframe pour simulateurs et PDFs -->
+      <div id="iframe-panel" style="display:none;height:calc(100vh - 130px);">
+        <div id="iframe-loading" style="display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column;gap:12px;color:var(--text-ter);">
+          <div style="width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--orange);border-radius:50%;animation:spin .8s linear infinite;"></div>
+          Chargement...
+        </div>
+        <iframe id="embed-frame" src="" style="width:100%;height:100%;border:none;border-radius:12px;display:none;" onload="frameLoaded()"></iframe>
+      </div>
+      <!-- Message accueil outils -->
+      <div id="outils-welcome" class="card">
+        <div class="card-title">🛠 Outils</div>
+        <p style="font-size:13px;color:var(--text-sec);">Sélectionnez un outil dans le menu de gauche.</p>
+      </div>
+    </div>
+
+    <!-- TAB AGENDA -->
+    <div class="tab-panel" id="panel-agenda">
+      <div id="agenda-panel" class="card">
+        <div class="card-title">Prochains événements Smart SN</div>
+        <div id="agenda-list"></div>
+      </div>
+      <div id="calendly-panel" class="card">
+        <div class="card-title">📆 Réserver un accompagnement</div>
+        <div style="border-radius:10px;overflow:hidden;border:1px solid var(--border);">
+          <iframe src="https://calendly.com/infos-phil-mobile/30min" style="width:100%;height:500px;border:none;" frameborder="0"></iframe>
+        </div>
+      </div>
+    </div>
+
   </div>
-
-  <!-- TAB OUTILS -->
-  <div class="tab-panel" id="panel-outils">
-    <div class="card">
-      <div class="card-title">Documents</div>
-      <a href="documents/wp_commissions.pdf" target="_blank" class="link-item">
-        <div class="link-icon" style="background:#FFF3E0;">💶</div>
-        <div><div class="link-title">Rémunérations & Commissions</div><div class="link-sub">Barème complet</div></div>
-      </a>
-      <a href="documents/wp_orange.pdf" target="_blank" class="link-item">
-        <div class="link-icon" style="background:#FFF3E0;">🟠</div>
-        <div><div class="link-title">Produits Orange</div><div class="link-sub">Catalogue complet</div></div>
-      </a>
-      <a href="documents/wp_eneco.pdf" target="_blank" class="link-item">
-        <div class="link-icon" style="background:#E8F5E9;">⚡</div>
-        <div><div class="link-title">Produits Eneco</div><div class="link-sub">Offres énergie</div></div>
-      </a>
-      <a href="documents/wp_smartPlan.pdf" target="_blank" class="link-item">
-        <div class="link-icon" style="background:#EEF2FF;">📘</div>
-        <div><div class="link-title">Smart Plan</div><div class="link-sub">Plan de carrière</div></div>
-      </a>
-    </div>
-    <div class="card">
-      <div class="card-title">Outils en ligne</div>
-      <a href="https://obe.my.site.com" target="_blank" class="link-item">
-        <div class="link-icon" style="background:#EEF2FF;">☁️</div>
-        <div><div class="link-title">Salesforce</div><div class="link-sub">CRM Orange</div></div>
-      </a>
-      <a href="https://www.orange.be/fr/options-et-services/internet/internet-boost/internet-boost-giga" target="_blank" class="link-item">
-        <div class="link-icon" style="background:#FFF3E0;">📡</div>
-        <div><div class="link-title">Orange Fibre Éligibilité</div><div class="link-sub">Vérifier la fibre</div></div>
-      </a>
-      <a href="https://mysmart.smartsn.be" target="_blank" class="link-item">
-        <div class="link-icon" style="background:var(--gray);">🌐</div>
-        <div><div class="link-title">My Smart</div><div class="link-sub">Portail consultant</div></div>
-      </a>
-    </div>
-  </div>
-
-  <!-- TAB AGENDA -->
-  <div class="tab-panel" id="panel-agenda">
-    <div class="card">
-      <div class="card-title">Prochains événements Smart SN</div>
-      <div id="agenda-list"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">📆 Réserver un accompagnement</div>
-      <div style="border-radius:10px;overflow:hidden;border:1px solid var(--border);">
-        <iframe src="https://calendly.com/infos-phil-mobile/30min" style="width:100%;height:500px;border:none;" frameborder="0"></iframe>
-      </div>
-    </div>
-  </div>
-
-</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
@@ -494,8 +519,27 @@ function switchTab(tab){
   ['accueil','contrats','outils','agenda'].forEach(t=>{
     document.getElementById('tab-'+t).classList.toggle('active',t===tab);
     document.getElementById('panel-'+t).classList.toggle('active',t===tab);
+    const sb=document.getElementById('sb-'+t);
+    if(sb) sb.style.display=t===tab?'block':'none';
   });
   if(tab==='contrats') pmRenderChart();
+}
+
+function loadIframe(url, btn){
+  document.querySelectorAll('.sidebar .menu-item').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  document.getElementById('outils-welcome').style.display='none';
+  document.getElementById('script-display').style.display='none';
+  const panel=document.getElementById('iframe-panel');
+  panel.style.display='block';
+  document.getElementById('iframe-loading').style.display='flex';
+  document.getElementById('embed-frame').style.display='none';
+  document.getElementById('embed-frame').src=url;
+}
+
+function frameLoaded(){
+  document.getElementById('iframe-loading').style.display='none';
+  document.getElementById('embed-frame').style.display='block';
 }
 
 // ===== ACCUEIL =====
@@ -833,6 +877,145 @@ window.pmExportMail=function(){
   lines.push(`Niveau: ${cur.label} · ${Math.round(asp*10)/10} ASP${next?` → ${next.label} dans ${Math.round((next.pts-asp)*10)/10} ASP`:''}`);
   window.location.href=`mailto:infos@phil-mobile.be?subject=${encodeURIComponent('Résumé Smart Tools — '+MONTHS[curMonth]+' '+curYear)}&body=${encodeURIComponent(lines.join('\n'))}`;
 };
+
+// ===== SCRIPTS DE VENTE =====
+const SCRIPTS = {
+  'sc-orange-froid': {
+    title: '🟠 Orange — Prospect froid',
+    sections: [
+      {label:'📞 Introduction', text:'Bonjour, je suis bien chez Monsieur/Madame [Nom] ?\n\n[Votre prénom] de [Votre structure] à l\'appareil.\n\nJe vous rassure, je ne vous appelle pas pour vous vendre quelque chose immédiatement.'},
+      {label:'🎯 Accroche', text:'Je réalise actuellement des analyses gratuites des factures GSM, Internet et TV dans votre région afin de vérifier si les habitants paient le juste prix.'},
+      {label:'🔍 Qualification', text:'Vous êtes actuellement chez quel opérateur ?\nOrange, Proximus, VOO, Telenet ou autre ?'},
+      {label:'💬 Découverte', text:'Et globalement vous êtes satisfait de votre abonnement ?\n\nSi je pouvais vous faire économiser quelques euros ou obtenir plus de services pour le même prix, cela vous intéresserait ?'},
+      {label:'📅 Prise de rendez-vous', text:'Le plus simple est de prendre 15 minutes ensemble afin que j\'analyse votre facture gratuitement.\n\nJe peux passer quand cela vous convient ou le faire à distance.'},
+      {label:'✅ Conclusion', text:'Quel serait le meilleur moment pour vous ?'}
+    ],
+    full: 'Bonjour, je suis bien chez Monsieur/Madame [Nom] ?\n\n[Votre prénom] de [Votre structure] à l\'appareil.\nJe vous rassure, je ne vous appelle pas pour vous vendre quelque chose immédiatement.\nJe réalise actuellement des analyses gratuites des factures GSM, Internet et TV dans votre région afin de vérifier si les habitants paient le juste prix.\nVous êtes actuellement chez quel opérateur ? Orange, Proximus, VOO, Telenet ou autre ?\nEt globalement vous êtes satisfait de votre abonnement ?\n\nSi je pouvais vous faire économiser quelques euros ou obtenir plus de services pour le même prix, cela vous intéresserait ?\nLe plus simple est de prendre 15 minutes ensemble afin que j\'analyse votre facture gratuitement.\n\nJe peux passer quand cela vous convient ou le faire à distance.\nQuel serait le meilleur moment pour vous ?'
+  },
+  'sc-orange-ref': {
+    title: '🟠 Orange — Référence client',
+    sections: [
+      {label:'📞 Introduction', text:'Bonjour Monsieur/Madame [Nom],\n\nJe vous contacte suite aux coordonnées que m\'a communiquées [Prénom du client].'},
+      {label:'🎯 Accroche', text:'Il est client chez moi pour ses services Orange et m\'a indiqué que cela pourrait vous intéresser également.'},
+      {label:'🔍 Découverte', text:'Actuellement vous êtes chez quel opérateur ?'},
+      {label:'🔄 Transition', text:'Je ne vais pas vous demander de changer aujourd\'hui.\n\nMon objectif est simplement de vérifier si votre offre actuelle est toujours adaptée.'},
+      {label:'📅 Rendez-vous', text:'Je propose une analyse gratuite et sans engagement.'},
+      {label:'✅ Conclusion', text:'Quel serait le meilleur moment pour regarder cela ensemble ?'}
+    ],
+    full: 'Bonjour Monsieur/Madame [Nom],\n\nJe vous contacte suite aux coordonnées que m\'a communiquées [Prénom du client].\nIl est client chez moi pour ses services Orange et m\'a indiqué que cela pourrait vous intéresser également.\nActuellement vous êtes chez quel opérateur ?\nJe ne vais pas vous demander de changer aujourd\'hui.\nMon objectif est simplement de vérifier si votre offre actuelle est toujours adaptée.\nJe propose une analyse gratuite et sans engagement.\nQuel serait le meilleur moment pour regarder cela ensemble ?'
+  },
+  'sc-orange-amis': {
+    title: '🟠 Orange — Amis / connaissances',
+    sections: [
+      {label:'📞 Introduction', text:'Salut [Prénom], comment vas-tu ?'},
+      {label:'🎯 Accroche', text:'J\'ai commencé une activité avec Orange et je réalise des analyses de factures gratuitement.'},
+      {label:'❓ Question', text:'Tu as Orange ? Tu es satisfait de ton abonnement actuel ?'},
+      {label:'💬 Proposition', text:'Je peux regarder ça avec toi, sans engagement. C\'est juste pour voir si tu as le meilleur deal.'},
+      {label:'✅ Conclusion', text:'On peut faire ça en 15 minutes quand tu veux !'}
+    ],
+    full: 'Salut [Prénom], comment vas-tu ?\nJ\'ai commencé une activité avec Orange et je réalise des analyses de factures gratuitement.\nTu as Orange ? Tu es satisfait de ton abonnement actuel ?\nJe peux regarder ça avec toi, sans engagement. C\'est juste pour voir si tu as le meilleur deal.\nOn peut faire ça en 15 minutes quand tu veux !'
+  },
+  'sc-eneco-froid': {
+    title: '⚡ Eneco — Prospect froid',
+    sections: [
+      {label:'📞 Introduction', text:'Bonjour Monsieur/Madame [Nom].\n\n[Votre prénom] de [Votre structure] à l\'appareil.\n\nJe vous contacte car je réalise des analyses gratuites des factures d\'énergie dans votre région.'},
+      {label:'🎯 Accroche', text:'Avec la hausse des prix de l\'énergie, beaucoup de ménages paient trop cher sans le savoir.'},
+      {label:'🔍 Qualification', text:'Vous êtes actuellement chez quel fournisseur d\'énergie ?\nVous avez un contrat fixe ou variable ?'},
+      {label:'💬 Découverte', text:'Êtes-vous satisfait de votre fournisseur actuel ?\n\nAvez-vous eu l\'occasion de comparer récemment ?'},
+      {label:'📅 Rendez-vous', text:'Je peux faire une analyse gratuite et sans engagement.\nCela prend environ 15 minutes et vous permet de savoir si vous êtes bien placé.'},
+      {label:'✅ Conclusion', text:'Quel serait le meilleur moment pour regarder cela ensemble ?'}
+    ],
+    full: 'Bonjour Monsieur/Madame [Nom].\n[Votre prénom] de [Votre structure] à l\'appareil.\nJe vous contacte car je réalise des analyses gratuites des factures d\'énergie dans votre région.\nAvec la hausse des prix de l\'énergie, beaucoup de ménages paient trop cher sans le savoir.\nVous êtes actuellement chez quel fournisseur d\'énergie ? Vous avez un contrat fixe ou variable ?\nÊtes-vous satisfait de votre fournisseur actuel ? Avez-vous eu l\'occasion de comparer récemment ?\nJe peux faire une analyse gratuite et sans engagement. Cela prend environ 15 minutes et vous permet de savoir si vous êtes bien placé.\nQuel serait le meilleur moment pour regarder cela ensemble ?'
+  },
+  'sc-eneco-ref': {
+    title: '⚡ Eneco — Référence',
+    sections: [
+      {label:'📞 Introduction', text:'Bonjour Monsieur/Madame [Nom].\n\nJe vous contacte de la part de [Prénom], qui est client chez moi pour son énergie.'},
+      {label:'🎯 Accroche', text:'Il m\'a conseillé de vous contacter car il pense que vous pourriez bénéficier d\'une meilleure offre.'},
+      {label:'🔍 Qualification', text:'Vous êtes actuellement chez quel fournisseur d\'énergie ?'},
+      {label:'💬 Proposition', text:'Je ne viens pas vous forcer à changer.\nJuste vous proposer une analyse gratuite pour comparer.'},
+      {label:'✅ Conclusion', text:'On peut faire ça quand vous voulez, en 15 minutes.'}
+    ],
+    full: 'Bonjour Monsieur/Madame [Nom].\nJe vous contacte de la part de [Prénom], qui est client chez moi pour son énergie.\nIl m\'a conseillé de vous contacter car il pense que vous pourriez bénéficier d\'une meilleure offre.\nVous êtes actuellement chez quel fournisseur d\'énergie ?\nJe ne viens pas vous forcer à changer. Juste vous proposer une analyse gratuite pour comparer.\nOn peut faire ça quand vous voulez, en 15 minutes.'
+  },
+  'sc-eneco-amis': {
+    title: '⚡ Eneco — Amis / connaissances',
+    sections: [
+      {label:'📞 Introduction', text:'Salut [Prénom], comment tu vas ?'},
+      {label:'🎯 Accroche', text:'Je travaille maintenant avec Eneco et je propose des analyses de factures gratuitement.'},
+      {label:'❓ Question', text:'Tu es chez quel fournisseur en ce moment ? Tu trouves que tu paies trop ?'},
+      {label:'💬 Proposition', text:'Je peux regarder ta facture avec toi, c\'est gratuit et sans engagement.'},
+      {label:'✅ Conclusion', text:'On peut faire ça rapidement, tu veux qu\'on regarde ensemble ?'}
+    ],
+    full: 'Salut [Prénom], comment tu vas ?\nJe travaille maintenant avec Eneco et je propose des analyses de factures gratuitement.\nTu es chez quel fournisseur en ce moment ? Tu trouves que tu paies trop ?\nJe peux regarder ta facture avec toi, c\'est gratuit et sans engagement.\nOn peut faire ça rapidement, tu veux qu\'on regarde ensemble ?'
+  },
+  'sc-recr-client': {
+    title: '🚀 Recrutement — Clients existants',
+    sections: [
+      {label:'📞 Introduction', text:'Bonjour [Prénom].\n\nJe vous contacte car vous êtes client chez moi et je voulais vous parler d\'autre chose.'},
+      {label:'🎯 Accroche', text:'En plus de mes services Orange/Eneco, je développe une équipe de consultants indépendants.'},
+      {label:'💡 Valeur', text:'✔ Formation complète\n✔ Pas besoin d\'expérience\n✔ Revenus récurrents possibles\n✔ Activité à temps partiel ou complet'},
+      {label:'🔍 Découverte', text:'Seriez-vous ouvert à découvrir une activité complémentaire ?'},
+      {label:'✅ Conclusion', text:'Je peux vous présenter le concept en une vingtaine de minutes, quand cela vous convient.'}
+    ],
+    full: 'Bonjour [Prénom].\nJe vous contacte car vous êtes client chez moi et je voulais vous parler d\'autre chose.\nEn plus de mes services Orange/Eneco, je développe une équipe de consultants indépendants.\n✔ Formation complète\n✔ Pas besoin d\'expérience\n✔ Revenus récurrents possibles\n✔ Activité à temps partiel ou complet\nSeriez-vous ouvert à découvrir une activité complémentaire ?\nJe peux vous présenter le concept en une vingtaine de minutes, quand cela vous convient.'
+  },
+  'sc-recr-prospect': {
+    title: '🚀 Recrutement — Prospect',
+    sections: [
+      {label:'📞 Introduction', text:'Bonjour Monsieur/Madame [Nom].\nJe vous contacte car je développe actuellement une équipe commerciale dans votre région.'},
+      {label:'🎯 Accroche', text:'Seriez-vous ouvert à découvrir une activité complémentaire qui peut être exercée à votre rythme ?'},
+      {label:'💡 Valeur', text:'✔ Formation incluse\n✔ Pas besoin d\'expérience\n✔ Possibilité de revenus récurrents'},
+      {label:'🔍 Découverte', text:'Cherchez-vous actuellement un complément de revenus ou une nouvelle opportunité ?'},
+      {label:'📅 Rendez-vous', text:'Si oui, je peux vous présenter le concept en une vingtaine de minutes.'}
+    ],
+    full: 'Bonjour Monsieur/Madame [Nom].\nJe vous contacte car je développe actuellement une équipe commerciale dans votre région.\nSeriez-vous ouvert à découvrir une activité complémentaire qui peut être exercée à votre rythme ?\n✔ Formation incluse\n✔ Pas besoin d\'expérience\n✔ Possibilité de revenus récurrents\nCherchez-vous actuellement un complément de revenus ou une nouvelle opportunité ?\nSi oui, je peux vous présenter le concept en une vingtaine de minutes.'
+  },
+  'sc-recr-amis': {
+    title: '🚀 Recrutement — Connaissances',
+    sections: [
+      {label:'📞 Introduction', text:'Salut [Prénom].'},
+      {label:'🎯 Accroche', text:'Je pense à toi parce que je développe actuellement mon activité avec Orange et Eneco.'},
+      {label:'❓ Question', text:'Tu as déjà pensé à développer un revenu complémentaire sans devoir prendre un deuxième emploi ?'},
+      {label:'💡 Valeur', text:'✔ Tu travailles quand tu veux\n✔ Formation complète\n✔ Accompagnement permanent'},
+      {label:'✅ Conclusion', text:'Ça te dirait que je t\'explique rapidement le concept autour d\'un café ou en visio ?'}
+    ],
+    full: 'Salut [Prénom].\nJe pense à toi parce que je développe actuellement mon activité avec Orange et Eneco.\nTu as déjà pensé à développer un revenu complémentaire sans devoir prendre un deuxième emploi ?\n✔ Tu travailles quand tu veux\n✔ Formation complète\n✔ Accompagnement permanent\nÇa te dirait que je t\'explique rapidement le concept autour d\'un café ou en visio ?'
+  }
+};
+
+let currentScript = null;
+
+function showScriptPanel(id){
+  const sc = SCRIPTS[id];
+  if(!sc) return;
+  currentScript = sc;
+  document.querySelectorAll('.sidebar .menu-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('outils-welcome').style.display='none';
+  document.getElementById('iframe-panel').style.display='none';
+  document.getElementById('script-title').textContent = sc.title;
+  document.getElementById('script-content').innerHTML = sc.sections.map(s=>`
+    <div style="margin-bottom:12px;">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--orange);margin-bottom:4px;">${s.label}</div>
+      <div style="font-size:13px;color:#374151;line-height:1.8;white-space:pre-line;padding:10px 14px;background:var(--orange-light);border-radius:8px;border-left:3px solid var(--orange);">${s.text}</div>
+    </div>`).join('');
+  document.getElementById('script-display').style.display='block';
+}
+
+function hideScriptPanel(){
+  document.getElementById('script-display').style.display='none';
+  document.getElementById('outils-welcome').style.display='block';
+  currentScript=null;
+}
+
+function copyScript(){
+  if(!currentScript) return;
+  navigator.clipboard.writeText(currentScript.full).then(()=>{
+    const btn=document.getElementById('script-copy-btn');
+    btn.textContent='✅ Copié !';
+    setTimeout(()=>{btn.textContent='📋 Copier le script complet';},2000);
+  });
+}
 
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('/smartsn/sw.js').catch(()=>{});

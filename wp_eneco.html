@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comparateur Energie — Phil-Mobile</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#f0f4f8; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif; padding:16px; }
+
+.header {
+  background:linear-gradient(135deg,#27ae60,#2ecc71);
+  color:white; border-radius:18px; padding:16px 20px;
+  display:flex; align-items:center; gap:14px; margin-bottom:16px;
+}
+.header img { width:50px; height:50px; background:white; border-radius:12px; padding:5px; object-fit:contain; }
+.header-title { font-size:20px; font-weight:700; }
+.header-sub { font-size:12px; opacity:0.85; margin-top:2px; }
+
+/* DONNÉES CLIENT */
+.section-title { font-size:13px; font-weight:700; color:#555; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:10px; }
+.card { background:white; border-radius:16px; padding:16px; margin-bottom:12px; box-shadow:0 2px 10px rgba(0,0,0,0.06); }
+
+label { display:block; font-size:12px; font-weight:600; color:#333; margin-bottom:4px; }
+input[type=number], select {
+  width:100%; padding:10px 12px; border-radius:10px;
+  border:1.5px solid #e0e0e0; font-size:14px; background:#fafafa;
+  outline:none; transition:border-color 0.2s;
+}
+input[type=number]:focus, select:focus { border-color:#27ae60; background:white; }
+.row { margin-bottom:12px; }
+.row-2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
+
+.switch { display:flex; align-items:center; gap:8px; margin-bottom:10px; cursor:pointer; }
+.switch input { width:auto; accent-color:#27ae60; width:18px; height:18px; }
+.switch label { margin:0; font-size:13px; font-weight:500; cursor:pointer; }
+
+/* BOUTON */
+.btn-calc {
+  width:100%; border:none; padding:14px; border-radius:14px;
+  background:linear-gradient(135deg,#27ae60,#2ecc71);
+  color:white; font-size:16px; font-weight:700; cursor:pointer;
+  margin-bottom:16px; letter-spacing:0.3px;
+}
+.btn-calc:active { opacity:0.9; }
+
+/* RÉSULTATS */
+.results-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
+.result-card {
+  border-radius:16px; padding:16px; text-align:center;
+}
+.result-card.current { background:#fff3e0; border:2px solid #ff9800; }
+.result-card.flex { background:#e8f5e9; border:2px solid #27ae60; }
+.result-card.fixe { background:#e3f2fd; border:2px solid #2196f3; }
+.result-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+.result-label.current { color:#e65100; }
+.result-label.flex { color:#1b5e20; }
+.result-label.fixe { color:#0d47a1; }
+.result-amount { font-size:28px; font-weight:700; line-height:1; }
+.result-amount.current { color:#e65100; }
+.result-amount.flex { color:#27ae60; }
+.result-amount.fixe { color:#2196f3; }
+.result-sub { font-size:10px; color:#888; margin-top:4px; }
+
+/* COMPARAISON */
+.compare-card { background:white; border-radius:16px; padding:16px; box-shadow:0 2px 10px rgba(0,0,0,0.06); }
+.compare-row { display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid #f0f0f0; font-size:13px; }
+.compare-row:last-child { border:none; }
+.compare-label { color:#555; }
+.compare-val { font-weight:700; }
+.saving-pos { color:#27ae60; }
+.saving-neg { color:#e53935; }
+.saving-zero { color:#888; }
+
+.detail-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px; margin-top:10px; }
+.detail-cell { background:#f8f9fa; border-radius:8px; padding:8px; text-align:center; }
+.detail-cell .d-label { font-size:10px; color:#888; margin-bottom:2px; }
+.detail-cell .d-val { font-size:13px; font-weight:700; color:#333; }
+
+.badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:11px; font-weight:700; margin-top:6px; }
+.badge-best { background:#e8f5e9; color:#1b5e20; }
+.badge-worst { background:#ffebee; color:#b71c1c; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<!-- FOURNISSEUR ACTUEL -->
+<div class="card">
+  <div class="section-title">⚡ Situation actuelle du client</div>
+
+  <div class="row">
+    <label>Fournisseur actuel</label>
+    <select id="fournisseur" onchange="updateTarifs()">
+      <option value="engie">Engie</option>
+      <option value="luminus">Luminus</option>
+      <option value="total">TotalEnergies / Total Énergie</option>
+      <option value="mega">Mega</option>
+      <option value="octa">Octa+</option>
+      <option value="voo">Voo</option>
+      <option value="autre">Autre / Inconnu</option>
+    </select>
+  </div>
+
+  <div style="background:#fff8e1;border-radius:10px;padding:12px;margin-bottom:12px;border:1px solid #ffe082;">
+    <div style="font-size:12px;font-weight:700;color:#e65100;margin-bottom:8px;">📋 Tarifs actuels du fournisseur <span style="font-size:10px;font-weight:400;">(pré-remplis — vérifier sur la facture)</span></div>
+    <div class="row-2">
+      <div>
+        <label>Tarif élec (€/kWh)</label>
+        <input type="number" id="tarifElecActuel" value="0.2800" step="0.001" min="0">
+      </div>
+      <div>
+        <label>Tarif nuit (€/kWh)</label>
+        <input type="number" id="tarifNuitActuel" value="0.2200" step="0.001" min="0">
+      </div>
+    </div>
+    <div class="row-2">
+      <div>
+        <label>Tarif gaz (€/kWh)</label>
+        <input type="number" id="tarifGazActuel" value="0.0950" step="0.001" min="0">
+      </div>
+      <div>
+        <label>Abonnement réseau (€/an)</label>
+        <input type="number" id="aboActuel" value="65" min="0">
+      </div>
+    </div>
+    <div style="font-size:10px;color:#888;margin-top:4px;">💡 Ces tarifs permettent de recalculer le coût réel actuel avec les prix d'aujourd'hui</div>
+  </div>
+
+  <div style="font-size:12px;font-weight:700;color:#555;margin-bottom:8px;">OU entrer directement la mensualité facturée</div>
+  <div class="row-2">
+    <div>
+      <label>Mensualité élec facturée (€)</label>
+      <input type="number" id="mensElec" value="120" min="0">
+    </div>
+    <div>
+      <label>Mensualité gaz facturée (€)</label>
+      <input type="number" id="mensGaz" value="0" min="0">
+    </div>
+  </div>
+  <div style="font-size:10px;color:#888;margin-top:-8px;">⚠️ La mensualité peut être basée sur d'anciens tarifs — le recalcul par kWh est plus précis</div>
+</div>
+
+<!-- CONSOMMATION -->
+<div class="card">
+  <div class="section-title">📊 Consommation annuelle</div>
+
+  <div class="row">
+    <label>Type de compteur principal</label>
+    <select id="compteur" onchange="toggleCompteur()">
+      <option value="simple">Simple (mono-horaire)</option>
+      <option value="double">Bi-horaire (jour/nuit)</option>
+    </select>
+  </div>
+
+  <div id="simpleBox">
+    <div class="row">
+      <label>Consommation électricité (kWh/an)</label>
+      <input type="number" id="simpleKwh" value="4500" min="0">
+    </div>
+  </div>
+
+  <div id="doubleBox" style="display:none;">
+    <div class="row-2">
+      <div>
+        <label>Consommation Jour (kWh/an)</label>
+        <input type="number" id="jour" value="3500" min="0">
+      </div>
+      <div>
+        <label>Consommation Nuit (kWh/an)</label>
+        <input type="number" id="nuit" value="1500" min="0">
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPTEUR EXCLUSIF NUIT SÉPARÉ -->
+  <div style="border-top:1px solid #f0f0f0;margin-top:10px;padding-top:10px;">
+    <div class="switch">
+      <input type="checkbox" id="hasExclusifNuit" onchange="toggleExclusifNuit()">
+      <label for="hasExclusifNuit">+ Compteur exclusif nuit séparé <span style="font-size:10px;color:#888;">(chauffe-eau, chauffage...)</span></label>
+    </div>
+    <div id="exclusifNuitBox" style="display:none;margin-top:8px;">
+      <div class="row">
+        <label>Consommation exclusif nuit (kWh/an)</label>
+        <input type="number" id="nuitKwh" value="3000" min="0">
+      </div>
+      <div style="font-size:11px;color:#888;margin-top:-6px;margin-bottom:4px;">Tarif nuit Eneco Flex : 0.098 €/kWh · Fixe : 0.118 €/kWh</div>
+    </div>
+  </div>
+
+  <div class="switch">
+    <input type="checkbox" id="solaire" onchange="toggleSolaire()">
+    <label for="solaire">Panneaux solaires</label>
+  </div>
+
+  <div id="injectBox" style="display:none; margin-top:10px;">
+    <div class="row-2">
+      <div>
+        <label>Production totale (kWh/an)</label>
+        <input type="number" id="production" value="4000" min="0" oninput="updateInjection()">
+      </div>
+      <div>
+        <label>Autoconsommation (%)</label>
+        <input type="number" id="autoconsom" value="40" min="0" max="100" oninput="updateInjection()">
+      </div>
+    </div>
+    <div class="row">
+      <label>Injection estimée (kWh/an) <span style="color:#27ae60;font-weight:700;" id="inject-calc">— kWh</span></label>
+      <input type="number" id="inject" value="2400" min="0">
+    </div>
+    <div class="switch">
+      <input type="checkbox" id="batterie" onchange="toggleBatterie()">
+      <label for="batterie">Batterie de stockage</label>
+    </div>
+    <div id="batterieBox" style="display:none; margin-top:8px;">
+      <div class="row">
+        <label>Capacité batterie (kWh)</label>
+        <input type="number" id="battCap" value="10" min="0">
+      </div>
+      <div style="font-size:11px;color:#888;">La batterie réduit l'injection en stockant l'excédent</div>
+    </div>
+    <div class="row" style="margin-top:10px;">
+      <label>💰 Prix de rachat Eneco (€/kWh) <span style="font-size:10px;color:#e65100;">— à vérifier avant chaque simulation</span></label>
+      <input type="number" id="prixRachat" value="0.049" step="0.001" min="0">
+      <div style="font-size:11px;color:#888;margin-top:4px;">Flex: variable chaque mois · Fixe: garanti sur la durée</div>
+    </div>
+  </div>
+</div>
+
+<!-- GAZ -->
+<div class="card">
+  <div class="section-title">🔥 Gaz naturel</div>
+  <div class="switch">
+    <input type="checkbox" id="gazCheck" onchange="toggleGaz()">
+    <label for="gazCheck">Le client a du gaz naturel</label>
+  </div>
+  <div id="gazBox" style="display:none; margin-top:10px;">
+    <div class="row">
+      <label>Consommation gaz (kWh/an)</label>
+      <input type="number" id="gaz" value="12000" min="0">
+    </div>
+  </div>
+</div>
+
+<!-- TRANSPORT (réseau) -->
+<div class="card">
+  <div class="section-title">🔌 Coûts de transport réseau</div>
+  <div class="row-2">
+    <div>
+      <label>Transport électricité (€/an)</label>
+      <input type="number" id="transportElec" value="380" min="0">
+    </div>
+    <div>
+      <label>Transport gaz (€/an)</label>
+      <input type="number" id="transportGaz" value="0" min="0">
+    </div>
+  </div>
+  <div style="font-size:11px;color:#888;margin-top:-6px;">Visible sur vos factures (réseau de distribution)</div>
+</div>
+
+<!-- BOUTON -->
+<button class="btn-calc" onclick="comparer()">🔍 Comparer les offres</button>
+
+<!-- RÉSULTATS -->
+<div id="results" style="display:none;">
+
+  <div class="section-title" style="margin-bottom:10px;">📊 Résultats de la comparaison</div>
+
+  <div class="results-grid">
+    <div class="result-card current">
+      <div class="result-label current">Fournisseur actuel</div>
+      <div class="result-amount current" id="res-current">—</div>
+      <div class="result-sub">€/mois (tarifs actuels)</div>
+      <div id="res-current-sub" style="font-size:9px;color:#e65100;margin-top:4px;"></div>
+    </div>
+    <div style="display:grid;gap:8px;">
+      <div class="result-card flex">
+        <div class="result-label flex">Eneco Flex</div>
+        <div class="result-amount flex" id="res-flex">—</div>
+        <div class="result-sub">€/mois</div>
+      </div>
+      <div class="result-card fixe">
+        <div class="result-label fixe">Eneco Fixe</div>
+        <div class="result-amount fixe" id="res-fixe">—</div>
+        <div class="result-sub">€/mois</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DÉTAIL -->
+  <div class="compare-card" style="margin-bottom:12px;">
+    <div style="font-size:13px;font-weight:700;color:#333;margin-bottom:10px;">📋 Détail mensuel</div>
+    <div class="compare-row">
+      <span class="compare-label">Énergie (fourniture)</span>
+      <span style="display:flex;gap:10px;">
+        <span class="compare-val" style="color:#27ae60;" id="det-flex-energy">—</span>
+        <span class="compare-val" style="color:#2196f3;" id="det-fixe-energy">—</span>
+      </span>
+    </div>
+    <div class="compare-row">
+      <span class="compare-label">Abonnement réseau</span>
+      <span class="compare-val" id="det-abo">—</span>
+    </div>
+    <div class="compare-row">
+      <span class="compare-label">Transport réseau</span>
+      <span class="compare-val" id="det-transport">—</span>
+    </div>
+    <div id="det-inject-row" class="compare-row" style="display:none;">
+      <span class="compare-label">☀️ Économie autoconsommation</span>
+      <span class="compare-val" style="color:#27ae60;" id="det-inject">—</span>
+    </div>
+    <div id="det-rachat-row" class="compare-row" style="display:none;">
+      <span class="compare-label">💰 Revenu rachat injection</span>
+      <span class="compare-val" style="color:#e67e22;font-weight:700;" id="det-rachat">—</span>
+    </div>
+    <div id="det-gaz-row" class="compare-row" style="display:none;">
+      <span class="compare-label">Gaz (fourniture)</span>
+      <span style="display:flex;gap:10px;">
+        <span class="compare-val" style="color:#27ae60;" id="det-flex-gaz">—</span>
+        <span class="compare-val" style="color:#2196f3;" id="det-fixe-gaz">—</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- ÉCONOMIES -->
+  <div class="compare-card">
+    <div style="font-size:13px;font-weight:700;color:#333;margin-bottom:10px;">💰 Économies vs fournisseur actuel</div>
+    <div class="compare-row">
+      <span class="compare-label">Avec Eneco Flex</span>
+      <span>
+        <span class="compare-val" id="eco-flex-mois">—</span>/mois
+        <span class="compare-val" id="eco-flex-an" style="margin-left:8px;font-size:12px;"></span>/an
+        <span class="badge" id="badge-flex"></span>
+      </span>
+    </div>
+    <div class="compare-row">
+      <span class="compare-label">Avec Eneco Fixe</span>
+      <span>
+        <span class="compare-val" id="eco-fixe-mois">—</span>/mois
+        <span class="compare-val" id="eco-fixe-an" style="margin-left:8px;font-size:12px;"></span>/an
+        <span class="badge" id="badge-fixe"></span>
+      </span>
+    </div>
+    <div class="compare-row" style="border:none;padding-top:12px;">
+      <span class="compare-label" style="font-weight:700;">🏆 Meilleure offre</span>
+      <span class="compare-val" id="best-offer" style="color:#27ae60;">—</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toggleCompteur(){
+  const v = document.getElementById('compteur').value;
+  document.getElementById('simpleBox').style.display = v==='simple'?'block':'none';
+  document.getElementById('doubleBox').style.display = v==='double'?'block':'none';
+}
+
+function toggleExclusifNuit(){
+  document.getElementById('exclusifNuitBox').style.display = 
+    document.getElementById('hasExclusifNuit').checked ? 'block' : 'none';
+}
+function toggleSolaire(){
+  document.getElementById('injectBox').style.display = document.getElementById('solaire').checked?'block':'none';
+}
+function toggleGaz(){
+  document.getElementById('gazBox').style.display = document.getElementById('gazCheck').checked?'block':'none';
+  document.getElementById('transportGaz').closest('.row-2').querySelector('div:last-child').style.opacity = document.getElementById('gazCheck').checked ? '1':'0.4';
+}
+
+var currentMode = 'annuelle'; // mode par défaut
+
+function setMode(mode){
+  currentMode = mode;
+  document.getElementById('mode-annuelle').style.display = mode==='annuelle'?'block':'none';
+  document.getElementById('mode-mensuelle').style.display = mode==='mensuelle'?'block':'none';
+  document.getElementById('btn-annuelle').style.background = mode==='annuelle'?'#27ae60':'#f0f0f0';
+  document.getElementById('btn-annuelle').style.color = mode==='annuelle'?'white':'#555';
+  document.getElementById('btn-mensuelle').style.background = mode==='mensuelle'?'#27ae60':'#f0f0f0';
+  document.getElementById('btn-mensuelle').style.color = mode==='mensuelle'?'white':'#555';
+}
+
+function calcMensFromAnnuel(){
+  const elec = parseFloat(document.getElementById('totalAnnuelElec').value)||0;
+  const gaz = parseFloat(document.getElementById('totalAnnuelGaz').value)||0;
+  if(elec > 0){
+    const m = (elec/12).toFixed(2);
+    document.getElementById('mensElec').value = m;
+    document.getElementById('mens-auto-elec').textContent = '→ '+m+' €/mois';
+  }
+  if(gaz > 0){
+    const m = (gaz/12).toFixed(2);
+    document.getElementById('mensGaz').value = m;
+    document.getElementById('mens-auto-gaz').textContent = '→ '+m+' €/mois';
+  }
+}
+
+function syncTarifs(){
+  // Synchroniser les champs tarifs entre les deux modes
+  const v = document.getElementById('tarifElecActuel2').value;
+  if(document.getElementById('tarifElecActuel')) document.getElementById('tarifElecActuel').value = v;
+}
+
+// Tarifs moyens 2025 par fournisseur (à mettre à jour régulièrement)
+const TARIFS_FOURNISSEURS = {
+  engie:   { elec: 0.2950, nuit: 0.2300, gaz: 0.1020 },
+  luminus: { elec: 0.2820, nuit: 0.2180, gaz: 0.0980 },
+  total:   { elec: 0.2750, nuit: 0.2100, gaz: 0.0960 },
+  mega:    { elec: 0.2600, nuit: 0.2000, gaz: 0.0900 },
+  octa:    { elec: 0.2550, nuit: 0.1980, gaz: 0.0880 },
+  voo:     { elec: 0.2800, nuit: 0.2200, gaz: 0.0950 },
+  totalenergie: { elec: 0.2750, nuit: 0.2100, gaz: 0.0960 },
+  autre:   { elec: 0.2800, nuit: 0.2200, gaz: 0.0950 }
+};
+
+function updateTarifs(){
+  const f = document.getElementById('fournisseur').value;
+  const t = TARIFS_FOURNISSEURS[f];
+  document.getElementById('tarifElecActuel').value = t.elec.toFixed(4);
+  document.getElementById('tarifNuitActuel').value = t.nuit.toFixed(4);
+  document.getElementById('tarifGazActuel').value = t.gaz.toFixed(4);
+  document.getElementById('tarifElecActuel2').value = t.elec.toFixed(4);
+  document.getElementById('tarifNuitActuel2').value = t.nuit.toFixed(4);
+  document.getElementById('tarifGazActuel2').value = t.gaz.toFixed(4);
+}
+
+function updateInjection(){
+  const prod = parseFloat(document.getElementById('production').value)||0;
+  const auto = parseFloat(document.getElementById('autoconsom').value)||40;
+  const inject = Math.round(prod * (1 - auto/100));
+  document.getElementById('inject').value = inject;
+  document.getElementById('inject-calc').textContent = inject+' kWh injectés';
+}
+
+function toggleBatterie(){
+  document.getElementById('batterieBox').style.display = document.getElementById('batterie').checked?'block':'none';
+}
+
+function comparer(){
+  const compteur = document.getElementById('compteur').value;
+  const hasSolaire = document.getElementById('solaire').checked;
+  const hasGaz = document.getElementById('gazCheck').checked;
+
+  // Consommation élec
+  let kwhElec = 0;
+  if(compteur==='simple'){
+    kwhElec = parseFloat(document.getElementById('simpleKwh').value)||0;
+  } else {
+    kwhElec = (parseFloat(document.getElementById('jour').value)||0) + (parseFloat(document.getElementById('nuit').value)||0);
+  }
+  // Compteur exclusif nuit séparé
+  const hasExclusifNuit = document.getElementById('hasExclusifNuit').checked;
+  const kwhExclusifNuit = hasExclusifNuit ? (parseFloat(document.getElementById('nuitKwh').value)||0) : 0;
+
+  // Injection
+  const inject = hasSolaire ? (parseFloat(document.getElementById('inject').value)||0) : 0;
+
+  // Gaz
+  const kwhGaz = hasGaz ? (parseFloat(document.getElementById('gaz').value)||0) : 0;
+
+  // Transport
+  const transElec = parseFloat(document.getElementById('transportElec').value)||0;
+  const transGaz = hasGaz ? (parseFloat(document.getElementById('transportGaz').value)||0) : 0;
+  const totalTrans = (transElec + transGaz) / 12;
+
+  // Abonnement réseau fixe Eneco
+  const aboElec = 65/12;
+  const aboExclusifNuit = hasExclusifNuit ? 30/12 : 0; // abonnement réduit 2ème compteur
+  const aboGaz = hasGaz ? 65/12 : 0;
+  const totalAbo = aboElec + aboExclusifNuit + aboGaz;
+
+  // TARIFS ENECO
+  const tarifsElec = {
+    flex: compteur==='simple' ? 0.1406 : { jour:0.1406, nuit:0.1406 },
+    fixe: compteur==='simple' ? 0.1690 : { jour:0.1872, nuit:0.1532 }
+  };
+  const tarifsExclusifNuit = { flex: 0.0980, fixe: 0.1180 };
+  const tarifsGaz = { flex: 0.057, fixe: 0.0662 };
+  const creditInject = 0.049;
+
+  // CALCUL ENECO
+  const prixRachatVal = hasSolaire ? (parseFloat(document.getElementById('prixRachat').value)||0.049) : 0;
+
+  function calcEneco(tarif){
+    let elec = 0;
+    if(compteur==='simple'){
+      elec = kwhElec * tarifsElec[tarif];
+    } else {
+      const j = parseFloat(document.getElementById('jour').value)||0;
+      const n = parseFloat(document.getElementById('nuit').value)||0;
+      elec = j * tarifsElec[tarif].jour + n * tarifsElec[tarif].nuit;
+    }
+    // Ajouter compteur exclusif nuit si présent
+    if(hasExclusifNuit){
+      elec += kwhExclusifNuit * tarifsExclusifNuit[tarif];
+    }
+    if(hasSolaire) elec -= inject * creditInject;
+    const gaz = hasGaz ? kwhGaz * tarifsGaz[tarif] : 0;
+    const annuel = elec + gaz;
+    // Déduire revenu rachat injection
+    const rachatMensuel = hasSolaire ? (inject * prixRachatVal) / 12 : 0;
+    return { energy: annuel/12, gaz: hasGaz ? (kwhGaz*tarifsGaz[tarif])/12 : 0, total: annuel/12 + totalAbo + totalTrans - rachatMensuel };
+  }
+
+  const flex = calcEneco('flex');
+  const fixe = calcEneco('fixe');
+
+  // Détecter le mode actif via variable globale
+  const modeAnnuelle = (currentMode === 'annuelle');
+  const tarifElecActuel = parseFloat(document.getElementById(modeAnnuelle?'tarifElecActuel':'tarifElecActuel2').value)||0.28;
+  const tarifNuitActuel = parseFloat(document.getElementById(modeAnnuelle?'tarifNuitActuel':'tarifNuitActuel2').value)||0.22;
+  const tarifGazActuel = parseFloat(document.getElementById(modeAnnuelle?'tarifGazActuel':'tarifGazActuel2').value)||0.095;
+  const aboActuel = parseFloat(document.getElementById(modeAnnuelle?'aboActuel':'aboActuel2').value)||65;
+
+  // Calcul recalculé avec consommation réelle × tarifs actuels
+  let currentElecRecalc = 0;
+  if(compteur==='simple'){
+    currentElecRecalc = kwhElec * tarifElecActuel;
+  } else {
+    const j = parseFloat(document.getElementById('jour').value)||0;
+    const n = parseFloat(document.getElementById('nuit').value)||0;
+    currentElecRecalc = j * tarifElecActuel + n * tarifNuitActuel;
+  }
+  if(hasExclusifNuit) currentElecRecalc += kwhExclusifNuit * tarifNuitActuel;
+  if(hasSolaire) currentElecRecalc -= (inject * 0.049); // crédit injection estimé
+
+  const currentGazRecalc = hasGaz ? kwhGaz * tarifGazActuel : 0;
+  const currentRecalc = (currentElecRecalc + currentGazRecalc + aboActuel) / 12 + totalTrans;
+
+  // Mensualité selon le mode
+  const mensElec = parseFloat(document.getElementById(modeAnnuelle?'mensElec':'mensElecM').value)||0;
+  const mensGaz = parseFloat(document.getElementById(modeAnnuelle?'mensGaz':'mensGazM').value)||0;
+  const currentFacture = mensElec + mensGaz;
+
+  // On utilise le recalculé si > 0, sinon la mensualité
+  const current = currentRecalc > 0 ? currentRecalc : currentFacture;
+
+  // AFFICHAGE
+  document.getElementById('res-current').textContent = current.toFixed(2)+' €';
+  // Ajouter sous-texte si recalculé
+  const subEl = document.getElementById('res-current-sub');
+  if(subEl && currentFacture > 0 && currentRecalc > 0){
+    subEl.textContent = 'Facturé: '+currentFacture.toFixed(2)+' € · Recalculé: '+currentRecalc.toFixed(2)+' €';
+  }
+  document.getElementById('res-flex').textContent = flex.total.toFixed(2)+' €';
+  document.getElementById('res-fixe').textContent = fixe.total.toFixed(2)+' €';
+
+  document.getElementById('det-flex-energy').textContent = 'Flex: '+flex.energy.toFixed(2)+' €';
+  document.getElementById('det-fixe-energy').textContent = 'Fixe: '+fixe.energy.toFixed(2)+' €';
+  document.getElementById('det-abo').textContent = totalAbo.toFixed(2)+' €';
+  document.getElementById('det-transport').textContent = totalTrans.toFixed(2)+' €';
+
+  // Prix rachat
+  const prixRachat = hasSolaire ? (parseFloat(document.getElementById('prixRachat').value)||0.049) : 0;
+  const revenuInjectAnnuel = hasSolaire ? inject * prixRachat : 0;
+  const revenuInjectMensuel = revenuInjectAnnuel / 12;
+
+  if(hasSolaire){
+    document.getElementById('det-inject-row').style.display='flex';
+    document.getElementById('det-inject').textContent = '-'+((inject*creditInject)/12).toFixed(2)+' € (autoconso)';
+    // Afficher revenu rachat
+    document.getElementById('det-rachat-row').style.display='flex';
+    document.getElementById('det-rachat').textContent = '+'+revenuInjectMensuel.toFixed(2)+' €/mois ('+revenuInjectAnnuel.toFixed(0)+' €/an)';
+  }
+  if(hasGaz){
+    document.getElementById('det-gaz-row').style.display='flex';
+    document.getElementById('det-flex-gaz').textContent = 'Flex: '+flex.gaz.toFixed(2)+' €';
+    document.getElementById('det-fixe-gaz').textContent = 'Fixe: '+fixe.gaz.toFixed(2)+' €';
+  }
+
+  // ÉCONOMIES
+  function ecoDisplay(id_mois, id_an, id_badge, eneco){
+    const diff = current - eneco;
+    const el_m = document.getElementById(id_mois);
+    const el_a = document.getElementById(id_an);
+    const el_b = document.getElementById(id_badge);
+    el_m.textContent = (diff>=0?'+':'')+diff.toFixed(2)+' €';
+    el_a.textContent = '('+((diff*12)>=0?'+':'')+(diff*12).toFixed(0)+' €)';
+    el_m.className = 'compare-val '+(diff>0?'saving-pos':diff<0?'saving-neg':'saving-zero');
+    el_a.style.color = diff>0?'#27ae60':diff<0?'#e53935':'#888';
+    el_b.textContent = diff>0?'Économie':'Moins cher';
+    el_b.className = 'badge '+(diff>0?'badge-best':'badge-worst');
+  }
+  ecoDisplay('eco-flex-mois','eco-flex-an','badge-flex', flex.total);
+  ecoDisplay('eco-fixe-mois','eco-fixe-an','badge-fixe', fixe.total);
+
+  const best = flex.total < fixe.total ? 'Eneco Flex' : 'Eneco Fixe';
+  const bestDiff = Math.abs(flex.total - fixe.total);
+  document.getElementById('best-offer').textContent = best+' (diff: '+bestDiff.toFixed(2)+' €/mois)';
+
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
+}
+</script>
+</body>
+</html>
