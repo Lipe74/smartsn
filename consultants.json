@@ -23,22 +23,6 @@
       "pqsValidated": true,
       "fastSCValidated": false,
       "fastECValidated": false
-    },
-    {
-      "id": "lotus193",
-      "name": "Julien",
-      "fullName": "Julien Couvreur",
-      "upline": "Philippe Tomaszewsky",
-      "uplineTel": "+32 475 24 02 05",
-      "uplineEmail": "infos@phil-mobile.be",
-      "calendlyUrl": "https://calendly.com/infos-phil-mobile/30min",
-      "startDate": "24/04/2026",
-      "aspInit": 16,
-      "isAdmin": false,
-      "active": true,
-      "pqsValidated": false,
-      "fastSCValidated": false,
-      "fastECValidated": false
     }
   ]
 }
