@@ -1183,7 +1183,7 @@ function copyScript(){
 }
 
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('/smartsn/sw.js').catch(()=>{});
+  navigator.serviceWorker.register('./sw.js', {scope: './'}).catch(()=>{});
 }
 </script>
 </body>

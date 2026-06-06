@@ -215,7 +215,7 @@ function doLogin(){
 document.addEventListener('keydown',e=>{if(e.key==='Enter') doLogin();});
 
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('/sw.js')
+  navigator.serviceWorker.register('./sw.js', {scope: './'})
     .then(()=>console.log('SW OK'))
     .catch(e=>console.log('SW error:',e));
 }
