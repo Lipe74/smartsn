@@ -738,10 +738,6 @@ function renderAccueil(){
     ${sponsorHtml}
   `;
 
-  const aspTotal = getTotalASP(user.fullName);
-  const curNiveau = getNiveau(aspTotal);
-  const nextNiveau = getNextNiveau(aspTotal);
-
   document.getElementById('accueil-niv-bar').innerHTML = NIVEAUX.map(n=>{
     const done=aspTotal>=n.pts&&n.code!==curNiveau.code;const current=n.code===curNiveau.code;
     return `<div class="niv-step${done?' done':''}${current?' current':''}">${n.label}<span class="niv-pts">${n.pts>0?n.pts:''}</span></div>`;
