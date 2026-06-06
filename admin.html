@@ -119,7 +119,7 @@ body{font-family:'Outfit',sans-serif;background:var(--gray);color:var(--text);mi
       </div>
       <div class="form-row">
         <div class="form-group"><label>Email upline</label><input type="email" id="edit-upline-email" placeholder="ex: infos@phil-mobile.be"></div>
-        <div class="form-group"></div>
+        <div class="form-group"><label>URL Calendly upline</label><input type="url" id="edit-calendly" placeholder="ex: https://calendly.com/sponsor/30min"></div>
       </div>
     </div>
     <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px;margin-bottom:14px;">
@@ -205,7 +205,10 @@ body{font-family:'Outfit',sans-serif;background:var(--gray);color:var(--text);mi
       </div>
       <div class="form-row">
         <div class="form-group"><label>Email upline</label><input type="email" id="new-upline-email" placeholder="ex: infos@phil-mobile.be"></div>
-        <div class="form-group" style="justify-content:flex-end;"><button class="btn btn-orange" onclick="addConsultant()" style="margin-top:20px;">+ Ajouter</button></div>
+        <div class="form-group"><label>URL Calendly upline</label><input type="url" id="new-calendly" placeholder="ex: https://calendly.com/sponsor/30min"></div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:4px;">
+        <button class="btn btn-orange" onclick="addConsultant()">+ Ajouter</button>
       </div>
     </div>
   </div>
@@ -370,6 +373,7 @@ function openEdit(i){
   document.getElementById('edit-upline').value = c.upline||'';
   document.getElementById('edit-upline-tel').value = c.uplineTel||'';
   document.getElementById('edit-upline-email').value = c.uplineEmail||'';
+  document.getElementById('edit-calendly').value = c.calendlyUrl||'';
   document.getElementById('edit-pqs').checked = !!c.pqsValidated;
   document.getElementById('edit-fastsc').checked = !!c.fastSCValidated;
   document.getElementById('edit-fastec').checked = !!c.fastECValidated;
@@ -406,6 +410,7 @@ function saveEdit(){
     upline: document.getElementById('edit-upline').value.trim()||null,
     uplineTel: document.getElementById('edit-upline-tel').value.trim()||null,
     uplineEmail: document.getElementById('edit-upline-email').value.trim()||null,
+    calendlyUrl: document.getElementById('edit-calendly').value.trim()||null,
     pqsValidated: document.getElementById('edit-pqs').checked,
     fastSCValidated: document.getElementById('edit-fastsc').checked,
     fastECValidated: document.getElementById('edit-fastec').checked,
@@ -424,6 +429,7 @@ function addConsultant(){
   const upline = document.getElementById('new-upline').value.trim();
   const uplineTel = document.getElementById('new-upline-tel').value.trim();
   const uplineEmail = document.getElementById('new-upline-email').value.trim();
+  const calendlyUrl = document.getElementById('new-calendly').value.trim();
   const startDateRaw = document.getElementById('new-startdate').value;
   const aspInit = parseInt(document.getElementById('new-asp').value)||0;
   const isAdmin = document.getElementById('new-role').value==='true';
@@ -440,11 +446,12 @@ function addConsultant(){
   consultantsData.consultants.push({
     id, name, fullName,
     upline: upline||null, uplineTel: uplineTel||null, uplineEmail: uplineEmail||null,
+    calendlyUrl: calendlyUrl||null,
     startDate, aspInit, isAdmin, active: true
   });
   if(isAdmin) consultantsData.admins = consultantsData.consultants.filter(x=>x.isAdmin).map(x=>({id:x.id,name:x.name,fullName:x.fullName,isAdmin:true}));
 
-  ['new-id','new-name','new-fullname','new-upline','new-upline-tel','new-upline-email','new-startdate'].forEach(f=>document.getElementById(f).value='');
+  ['new-id','new-name','new-fullname','new-upline','new-upline-tel','new-upline-email','new-calendly','new-startdate'].forEach(f=>document.getElementById(f).value='');
   document.getElementById('new-asp').value='0';
   document.getElementById('new-role').value='false';
 

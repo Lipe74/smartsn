@@ -15,6 +15,7 @@
       "upline": "Jean Luc Danko",
       "uplineTel": "+32498664215",
       "uplineEmail": "jld@danko.be",
+      "calendlyUrl": null,
       "startDate": "29/11/2025",
       "aspInit": 82,
       "isAdmin": true,
@@ -30,10 +31,14 @@
       "upline": "Philippe Tomaszewsky",
       "uplineTel": "+32 475 24 02 05",
       "uplineEmail": "infos@phil-mobile.be",
+      "calendlyUrl": "https://calendly.com/infos-phil-mobile/30min",
       "startDate": "24/04/2026",
       "aspInit": 16,
       "isAdmin": false,
-      "active": true
+      "active": true,
+      "pqsValidated": false,
+      "fastSCValidated": false,
+      "fastECValidated": false
     }
   ]
 }

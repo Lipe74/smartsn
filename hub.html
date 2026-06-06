@@ -326,13 +326,20 @@ iframe{width:100%;flex:1;border:none;border-radius:8px;}
       <div class="card">
         <div class="card-title">📆 Réserver un accompagnement</div>
         <div id="calendly-container">
-          <p style="font-size:13px;color:var(--text-sec);margin-bottom:12px;">Chaque consultant peut utiliser le calendrier de son sponsor. Entrez l'URL Calendly ci-dessous :</p>
-          <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
-            <input type="url" id="calendly-url" placeholder="https://calendly.com/votre-sponsor/30min" style="flex:1;min-width:200px;font-size:12px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-family:'Outfit',sans-serif;">
-            <button onclick="loadCalendly()" class="btn-primary btn-orange" style="padding:8px 14px;font-size:12px;">Afficher</button>
+          <!-- Affiché automatiquement si calendlyUrl rempli dans le profil -->
+          <div id="calendly-auto" style="display:none;border-radius:10px;overflow:hidden;border:1px solid var(--border);">
+            <iframe id="calendly-auto-frame" src="" style="width:100%;height:500px;border:none;" frameborder="0"></iframe>
           </div>
-          <div id="calendly-frame" style="border-radius:10px;overflow:hidden;border:1px solid var(--border);display:none;">
-            <iframe id="calendly-iframe" src="" style="width:100%;height:500px;border:none;" frameborder="0"></iframe>
+          <!-- Champ manuel si pas d'URL définie -->
+          <div id="calendly-manual">
+            <p style="font-size:13px;color:var(--text-sec);margin-bottom:12px;">Entrez l'URL Calendly de votre sponsor :</p>
+            <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;">
+              <input type="url" id="calendly-url" placeholder="https://calendly.com/votre-sponsor/30min" style="flex:1;min-width:200px;font-size:12px;padding:8px 10px;border:1px solid var(--border);border-radius:8px;font-family:'Outfit',sans-serif;">
+              <button onclick="loadCalendly()" class="btn-primary btn-orange" style="padding:8px 14px;font-size:12px;">Afficher</button>
+            </div>
+            <div id="calendly-frame" style="border-radius:10px;overflow:hidden;border:1px solid var(--border);display:none;">
+              <iframe id="calendly-iframe" src="" style="width:100%;height:500px;border:none;" frameborder="0"></iframe>
+            </div>
           </div>
         </div>
       </div>
@@ -510,6 +517,14 @@ function initUI(){
   document.getElementById('pm-encoded-label').textContent = fmtDate(today);
 
   // Agenda
+  // Calendly automatique si URL définie
+  const c = allConsultants.find(x=>x.fullName===currentUser.fullName)||{};
+  if(c.calendlyUrl){
+    document.getElementById('calendly-auto-frame').src = c.calendlyUrl;
+    document.getElementById('calendly-auto').style.display='block';
+    document.getElementById('calendly-manual').style.display='none';
+  }
+
   renderAgenda();
 
   // Accueil
