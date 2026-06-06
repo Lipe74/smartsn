@@ -211,6 +211,24 @@ iframe{width:100%;flex:1;border:none;border-radius:8px;}
 
     <!-- TAB OUTILS -->
     <div class="sidebar-panel" id="sb-outils" style="display:none;">
+      <div class="menu-section">Simulateurs</div>
+      <button class="menu-item" onclick="loadIframe('wp_rem.html', this)">💶 Calculateur commissions</button>
+      <button class="menu-item" onclick="loadIframe('wp_orange.html', this)">🟠 Simulateur Orange</button>
+      <button class="menu-item" onclick="loadIframe('wp_eneco.html', this)">⚡ Simulateur Eneco</button>
+      <div class="menu-section">Sites web</div>
+      <a href="https://smartservicesnetwork.my.site.com/" target="_blank" class="menu-item" style="text-decoration:none;">🏢 My Smart ↗</a>
+      <a href="https://smartsn.showpad.biz/webapp2/home" target="_blank" class="menu-item" style="text-decoration:none;">📱 Showpad ↗</a>
+      <a href="https://obe.my.site.com" target="_blank" class="menu-item" style="text-decoration:none;">☁️ Sales Force ↗</a>
+      <a href="https://www.crdc.be/" target="_blank" class="menu-item" style="text-decoration:none;">📋 CRB (1399) ↗</a>
+      <a href="https://eneco.be/fr/?" target="_blank" class="menu-item" style="text-decoration:none;">⚡ Eneco ↗</a>
+      <a href="https://www.orange.be/fr/options-et-services/internet/internet-boost/internet-boost-giga" target="_blank" class="menu-item" style="text-decoration:none;">🟠 Orange Fibre ↗</a>
+      <div class="menu-section">Documents</div>
+      <button class="menu-item" onclick="loadIframe('documents/wp_commissions.pdf', this)">💶 Les commissions</button>
+      <button class="menu-item" onclick="loadIframe('documents/wp_smartPlan.pdf', this)">📊 Plan de commissions</button>
+      <button class="menu-item" onclick="loadIframe('documents/wp_orange.pdf', this)">🟠 Produits Orange</button>
+      <button class="menu-item" onclick="loadIframe('documents/wp_eneco.pdf', this)">⚡ Produits Eneco</button>
+      <button class="menu-item" onclick="loadIframe('documents/wp_salesforce.pdf', this)">☁️ Manuel Salesforce</button>
+      <button class="menu-item" onclick="loadIframe('documents/wp_mysmart.pdf', this)">📘 Manuel My Smart</button>
       <div class="menu-section">Scripts Orange</div>
       <button class="menu-item" onclick="showScriptPanel('sc-orange-froid')">❄️ Prospect froid</button>
       <button class="menu-item" onclick="showScriptPanel('sc-orange-ref')">🤝 Référence</button>
@@ -223,24 +241,6 @@ iframe{width:100%;flex:1;border:none;border-radius:8px;}
       <button class="menu-item" onclick="showScriptPanel('sc-recr-client')">⭐ Clients existants</button>
       <button class="menu-item" onclick="showScriptPanel('sc-recr-prospect')">❄️ Prospects</button>
       <button class="menu-item" onclick="showScriptPanel('sc-recr-amis')">👥 Connaissances</button>
-      <div class="menu-section">Simulateurs</div>
-      <button class="menu-item" onclick="loadIframe('wp_orange.html', this)">🟠 Simulateur Orange</button>
-      <button class="menu-item" onclick="loadIframe('wp_eneco.html', this)">⚡ Simulateur Eneco</button>
-      <button class="menu-item" onclick="loadIframe('wp_rem.html', this)">💶 Calculateur commissions</button>
-      <div class="menu-section">Documents</div>
-      <button class="menu-item" onclick="loadIframe('documents/wp_commissions.pdf', this)">💶 Les commissions</button>
-      <button class="menu-item" onclick="loadIframe('documents/wp_smartPlan.pdf', this)">📊 Plan de commissions</button>
-      <button class="menu-item" onclick="loadIframe('documents/wp_orange.pdf', this)">🟠 Produits Orange</button>
-      <button class="menu-item" onclick="loadIframe('documents/wp_eneco.pdf', this)">⚡ Produits Eneco</button>
-      <button class="menu-item" onclick="loadIframe('documents/wp_salesforce.pdf', this)">☁️ Manuel Salesforce</button>
-      <button class="menu-item" onclick="loadIframe('documents/wp_mysmart.pdf', this)">📘 Manuel My Smart</button>
-      <div class="menu-section">Sites web</div>
-      <a href="https://smartservicesnetwork.my.site.com/" target="_blank" class="menu-item" style="text-decoration:none;">🏢 My Smart ↗</a>
-      <a href="https://smartsn.showpad.biz/webapp2/home" target="_blank" class="menu-item" style="text-decoration:none;">📱 Showpad ↗</a>
-      <a href="https://obe.my.site.com" target="_blank" class="menu-item" style="text-decoration:none;">☁️ Salesforce ↗</a>
-      <a href="https://www.crdc.be/" target="_blank" class="menu-item" style="text-decoration:none;">📋 CRB (1399) ↗</a>
-      <a href="https://eneco.be/fr/?" target="_blank" class="menu-item" style="text-decoration:none;">⚡ Eneco ↗</a>
-      <a href="https://www.orange.be/fr/options-et-services/internet/internet-boost/internet-boost-giga" target="_blank" class="menu-item" style="text-decoration:none;">🟠 Orange Fibre ↗</a>
       <div class="menu-section">Support Smart SN</div>
       <a href="tel:+3200077170" class="menu-item" style="text-decoration:none;">📞 +32 200 77 17</a>
       <a href="mailto:support@smartsn.be" class="menu-item" style="text-decoration:none;">📧 support@smartsn.be</a>
@@ -371,9 +371,47 @@ iframe{width:100%;flex:1;border:none;border-radius:8px;}
         <iframe id="embed-frame" src="" style="width:100%;height:100%;border:none;border-radius:12px;display:none;" onload="frameLoaded()"></iframe>
       </div>
       <!-- Message accueil outils -->
-      <div id="outils-welcome" class="card">
-        <div class="card-title">🛠 Outils</div>
-        <p style="font-size:13px;color:var(--text-sec);">Sélectionnez un outil dans le menu de gauche.</p>
+      <div id="outils-welcome">
+        <div style="text-align:center;padding:28px 16px 20px;">
+          <div style="width:64px;height:64px;border-radius:50%;background:#EEF2FF;border:2px solid #c7d7f5;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 14px;">🧰</div>
+          <div style="font-size:17px;font-weight:700;color:var(--blue);margin-bottom:6px;">Bienvenue dans vos outils</div>
+          <p style="font-size:13px;color:var(--text-sec);line-height:1.6;max-width:320px;margin:0 auto 20px;">
+            Retrouvez ici votre <strong style="color:var(--orange);">simulateur de commissions</strong>, tous vos <strong style="color:var(--blue);">documents</strong> utiles (manuels, plans, catalogues) ainsi que vos <strong style="color:#2E7D32;">scripts de vente</strong> prêts à l'emploi.
+          </p>
+          <p style="font-size:12px;color:var(--text-ter);margin-bottom:20px;">Cliquez sur un élément du menu à gauche pour l'afficher ici.</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;padding:0 16px 20px;">
+          <button onclick="loadIframe('wp_rem.html', null)" style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:white;border:1.5px solid #c7d7f5;border-radius:10px;cursor:pointer;font-family:'Outfit',sans-serif;text-align:left;transition:all .15s;" onmouseover="this.style.borderColor='var(--blue)';this.style.background='#EEF2FF';" onmouseout="this.style.borderColor='#c7d7f5';this.style.background='white';">
+            <span style="font-size:22px;">💶</span>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--blue);">Simulateur de commissions interactif</div>
+              <div style="font-size:11px;color:var(--text-ter);">Calculez vos gains en temps réel</div>
+            </div>
+            <span style="margin-left:auto;color:var(--text-ter);font-size:16px;">›</span>
+          </button>
+          <button onclick="loadIframe('documents/wp_commissions.pdf', null)" style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:white;border:1.5px solid #c7d7f5;border-radius:10px;cursor:pointer;font-family:'Outfit',sans-serif;text-align:left;transition:all .15s;" onmouseover="this.style.borderColor='var(--blue)';this.style.background='#EEF2FF';" onmouseout="this.style.borderColor='#c7d7f5';this.style.background='white';">
+            <span style="font-size:22px;">📄</span>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--blue);">Manuels, plans & catalogues PDF</div>
+              <div style="font-size:11px;color:var(--text-ter);">Tous vos documents en un clic</div>
+            </div>
+            <span style="margin-left:auto;color:var(--text-ter);font-size:16px;">›</span>
+          </button>
+          <button onclick="showScriptPanel('sc-orange-froid')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;background:white;border:1.5px solid #c7d7f5;border-radius:10px;cursor:pointer;font-family:'Outfit',sans-serif;text-align:left;transition:all .15s;" onmouseover="this.style.borderColor='var(--blue)';this.style.background='#EEF2FF';" onmouseout="this.style.borderColor='#c7d7f5';this.style.background='white';">
+            <span style="font-size:22px;">💬</span>
+            <div>
+              <div style="font-size:13px;font-weight:700;color:var(--blue);">Scripts de vente prêts à copier</div>
+              <div style="font-size:11px;color:var(--text-ter);">Orange, Eneco, Recrutement</div>
+            </div>
+            <span style="margin-left:auto;color:var(--text-ter);font-size:16px;">›</span>
+          </button>
+        </div>
+        <div style="border-top:1px solid var(--border);padding:16px;text-align:center;">
+          <p style="font-size:11px;color:var(--text-ter);margin-bottom:10px;">En cas de lien mort ou de souci</p>
+          <a href="mailto:infos@phil-mobile.be" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--blue);text-decoration:none;margin-bottom:6px;">💶 infos@phil-mobile.be</a><br>
+          <a href="https://wa.me/32475240205" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#25d366;text-decoration:none;">💬 WhatsApp Philippe</a>
+          <p style="font-size:11px;color:var(--text-ter);margin-top:10px;">— Philippe</p>
+        </div>
       </div>
     </div>
 
