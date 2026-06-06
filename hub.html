@@ -612,7 +612,7 @@ function renderContactSponsor(){
   const uplineTel=c.uplineTel||currentUser.uplineTel;
   const uplineEmail=c.uplineEmail||currentUser.uplineEmail;
   const sponsorData = allConsultants.find(x=>x.fullName===upline)||{};
-  const sponsorPhoto = sponsorData.photo || 'images/logo.png';
+  const sponsorPhoto = sponsorData.id ? `images/${sponsorData.id}.png` : 'images/logo.png';
   if(upline){
     el.innerHTML=`
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
@@ -643,12 +643,17 @@ function fmtDateFr(d){return d.toLocaleDateString('fr-BE',{day:'2-digit',month:'
 
 function renderAccueil(){
   const info = document.getElementById('welcome-info');
-  const pqs = calcPQS(currentUser.startDate);
+  if(!info) return;
+  // Récupérer les données complètes depuis allConsultants
+  const c = allConsultants.find(x=>x.id===currentUser.id) || currentUser;
+  // Merge pour avoir toutes les infos
+  const user = {...currentUser, ...c};
+  const pqs = calcPQS(user.startDate);
 
   // Fast SC (90j) et Fast EC (120j)
   function calcFastDays(limitDays){
-    if(!currentUser.startDate||currentUser.startDate==='—') return null;
-    const parts=currentUser.startDate.split('/');
+    if(!user.startDate||user.startDate==='—') return null;
+    const parts=user.startDate.split('/');
     if(parts.length!==3) return null;
     const start=new Date(parts[2],parts[1]-1,parts[0]);
     const deadline=new Date(start.getTime()+limitDays*24*60*60*1000);
@@ -659,8 +664,8 @@ function renderAccueil(){
 
   // PQS block
   let pqsHtml = '';
-  if(pqs && !currentUser.pqsValidated){
-    const color = pqs.daysLeft<=0?'#E24B4A':pqs.daysLeft<=7?'#f97316':pqs.daysLeft<=14?'#F59E0B':'#2E7D32';
+  if(pqs && !user.pqsValidated){
+    const color = pqs.daysLeft<=0?'#E24B4A':pqs.daysLeft<=7?'var(--orange)':pqs.daysLeft<=14?'#F59E0B':'#2E7D32';
     const label = pqs.daysLeft<=0 ? '⚠️ Délai PQS dépassé !'
       : pqs.daysLeft===1 ? '🔴 Deadline PQS demain !'
       : `⏱ Deadline PQS dans <strong style="color:${color};">${pqs.daysLeft} jours</strong>`;
@@ -674,88 +679,82 @@ function renderAccueil(){
 
   // Sponsor block
   let sponsorHtml = '';
-  if(currentUser.upline){
+  if(user.upline){
     sponsorHtml = `<div style="margin-top:10px;background:#EEF2FF;border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
       <div style="font-size:20px;">👤</div>
-      <div style="flex:1;">
-        <div style="font-size:10px;color:var(--text-ter);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;">Votre sponsor</div>
-        <div style="font-size:13px;font-weight:700;color:var(--blue);">${currentUser.upline}</div>
-      </div>
-      ${currentUser.uplineTel?`<a href="tel:${currentUser.uplineTel}" style="display:flex;align-items:center;gap:5px;padding:6px 12px;background:var(--blue);color:white;border-radius:99px;text-decoration:none;font-size:12px;font-weight:600;">📞 Appeler</a>`:''}
-      ${currentUser.uplineEmail?`<a href="mailto:${currentUser.uplineEmail}" style="display:flex;align-items:center;gap:5px;padding:6px 12px;background:var(--orange);color:white;border-radius:99px;text-decoration:none;font-size:12px;font-weight:600;">📧 Email</a>`:''}
+      <div style="flex:1;"><div style="font-size:10px;color:var(--text-ter);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;">Votre sponsor</div>
+      <div style="font-size:13px;font-weight:700;color:var(--blue);">${user.upline}</div></div>
+      ${user.uplineTel?`<a href="tel:${user.uplineTel}" style="display:flex;align-items:center;gap:5px;padding:6px 12px;background:var(--blue);color:white;border-radius:99px;text-decoration:none;font-size:12px;font-weight:600;">📞 Appeler</a>`:''}
+      ${user.uplineEmail?`<a href="mailto:${user.uplineEmail}" style="display:flex;align-items:center;gap:5px;padding:6px 12px;background:var(--orange);color:white;border-radius:99px;text-decoration:none;font-size:12px;font-weight:600;">📧 Email</a>`:''}
     </div>`;
   }
 
-  const aspTotal = getTotalASP(currentUser.fullName);
+  const aspTotal = getTotalASP(user.fullName);
   const curNiveau = getNiveau(aspTotal);
   const nextNiveau = getNextNiveau(aspTotal);
-
-  const photo = c.photo || 'images/logo.png';
-  const sponsorPhoto = allConsultants.find(x=>x.fullName===c.upline)?.photo || 'images/logo.png';
+  const photo = `images/${user.id}.png`;
 
   info.innerHTML = `
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
       <img src="${photo}" style="width:48px;height:48px;border-radius:50%;object-fit:cover;border:2px solid var(--orange);flex-shrink:0;" onerror="this.src='images/logo.png'">
       <div style="flex:1;">
-        <div style="font-size:15px;font-weight:700;color:var(--text);">Bonjour ${currentUser.name} 👋</div>
-        <div style="font-size:12px;color:var(--text-sec);">Consultant Smart SN · Actif depuis le <strong>${currentUser.startDate}</strong></div>
-        <div style="margin-top:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-          <span style="font-size:12px;font-weight:700;background:var(--orange-light);color:var(--orange);padding:3px 10px;border-radius:99px;border:1px solid var(--orange-border);">
-            Statut : ${curNiveau.label}
-          </span>
-          ${nextNiveau ? `<span style="font-size:11px;color:var(--text-ter);">→ <strong style="color:var(--text-sec);">${nextNiveau.label}</strong> dans <strong style="color:var(--orange);">${Math.round((nextNiveau.pts - aspTotal)*10)/10} ASP</strong></span>` : '<span style="font-size:11px;color:#2E7D32;font-weight:600;">🏆 Niveau max atteint !</span>'}
+        <div style="font-size:15px;font-weight:700;color:var(--text);">Bonjour ${user.name} 👋</div>
+        <div style="font-size:11px;color:var(--text-sec);">Consultant Smart SN · Actif depuis le <strong>${user.startDate||'—'}</strong></div>
+        <div style="margin-top:5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span style="font-size:12px;font-weight:700;background:var(--orange-light);color:var(--orange);padding:3px 10px;border-radius:99px;border:1px solid var(--orange-border);">Statut : ${curNiveau.label}</span>
+          ${nextNiveau?`<span style="font-size:11px;color:var(--text-ter);">→ <strong style="color:var(--text-sec);">${nextNiveau.label}</strong> dans <strong style="color:var(--orange);">${Math.round((nextNiveau.pts-aspTotal)*10)/10} ASP</strong></span>`:''}
         </div>
-        ${nextNiveau ? `
-        <div style="margin-top:8px;">
-          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-ter);margin-bottom:3px;">
-            <span>${curNiveau.label} (${curNiveau.pts} pts)</span>
-            <span>${Math.round(aspTotal*10)/10} / ${nextNiveau.pts} ASP</span>
-            <span>${nextNiveau.label} (${nextNiveau.pts} pts)</span>
-          </div>
-          <div style="height:7px;background:var(--gray);border-radius:99px;overflow:hidden;border:1px solid var(--border);">
-            <div style="height:100%;width:${Math.round((aspTotal-curNiveau.pts)/(nextNiveau.pts-curNiveau.pts)*100)}%;background:linear-gradient(90deg,var(--orange),#f97316cc);border-radius:99px;transition:width .5s;"></div>
-          </div>
-        </div>` : ''}
       </div>
     </div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
-      ${currentUser.pqsValidated
-        ? '<span style="font-size:11px;padding:4px 10px;border-radius:99px;background:#E8F5E9;color:#2E7D32;font-weight:600;border:1px solid #c8e6c9;">✅ PQS réussi</span>'
-        : pqs && pqs.daysLeft > 0
-          ? `<span style="font-size:11px;padding:4px 10px;border-radius:99px;background:#FFF3E0;color:#B45309;font-weight:600;border:1px solid #f0d080;">⏱ PQS en cours — ${pqs.daysLeft}j restants</span>`
-          : '<span style="font-size:11px;padding:4px 10px;border-radius:99px;background:#fff0f0;color:#E24B4A;font-weight:600;border:1px solid #ffcdd2;">❌ PQS non réussi</span>'}
-      ${currentUser.fastSCValidated
-        ? '<span style="font-size:11px;padding:4px 10px;border-radius:99px;background:#FFF3E0;color:#B45309;font-weight:600;border:1px solid #f0d080;">🚀 Fast SC validé</span>'
-        : fastSCDays !== null && fastSCDays > 0
-          ? `<span style="font-size:11px;padding:4px 10px;border-radius:99px;background:#f5f7fa;color:#6b7280;font-weight:600;border:1px solid var(--border);">🚀 Fast SC — ${fastSCDays}j restants</span>`
-          : '<span style="font-size:11px;padding:4px 10px;border-radius:99px;background:#f5f7fa;color:#9ca3af;font-weight:600;border:1px solid var(--border);">🚀 Fast SC expiré</span>'}
-      ${currentUser.fastECValidated
-        ? '<span style="font-size:11px;padding:4px 10px;border-radius:99px;background:#EEF2FF;color:#1e3a6e;font-weight:600;border:1px solid #c7d7f5;">⚡ Fast EC validé</span>'
-        : fastECDays !== null && fastECDays > 0
-          ? `<span style="font-size:11px;padding:4px 10px;border-radius:99px;background:#f5f7fa;color:#6b7280;font-weight:600;border:1px solid var(--border);">⚡ Fast EC — ${fastECDays}j restants</span>`
-          : '<span style="font-size:11px;padding:4px 10px;border-radius:99px;background:#f5f7fa;color:#9ca3af;font-weight:600;border:1px solid var(--border);">⚡ Fast EC expiré</span>'}
+    ${nextNiveau?`
+    <div style="margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-ter);margin-bottom:3px;">
+        <span>${curNiveau.label} (${curNiveau.pts})</span>
+        <span>${Math.round(aspTotal*10)/10} ASP</span>
+        <span>${nextNiveau.label} (${nextNiveau.pts})</span>
+      </div>
+      <div style="height:6px;background:var(--gray);border-radius:99px;overflow:hidden;border:1px solid var(--border);">
+        <div style="height:100%;width:${Math.round((aspTotal-curNiveau.pts)/(nextNiveau.pts-curNiveau.pts)*100)}%;background:linear-gradient(90deg,var(--orange),#ffb347);border-radius:99px;"></div>
+      </div>
+    </div>`:''}
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
+      ${user.pqsValidated
+        ? '<span style="font-size:11px;padding:3px 9px;border-radius:99px;background:#E8F5E9;color:#2E7D32;font-weight:600;border:1px solid #c8e6c9;">✅ PQS réussi</span>'
+        : pqs&&pqs.daysLeft>0
+          ? `<span style="font-size:11px;padding:3px 9px;border-radius:99px;background:#FFF3E0;color:#B45309;font-weight:600;border:1px solid #f0d080;">⏱ PQS — ${pqs.daysLeft}j restants</span>`
+          : '<span style="font-size:11px;padding:3px 9px;border-radius:99px;background:#fff0f0;color:#E24B4A;font-weight:600;border:1px solid #ffcdd2;">❌ PQS non réussi</span>'}
+      ${user.fastSCValidated
+        ? '<span style="font-size:11px;padding:3px 9px;border-radius:99px;background:#FFF3E0;color:#B45309;font-weight:600;border:1px solid #f0d080;">🚀 Fast SC validé</span>'
+        : fastSCDays!==null&&fastSCDays>0
+          ? `<span style="font-size:11px;padding:3px 9px;border-radius:99px;background:#f5f7fa;color:#6b7280;font-weight:600;border:1px solid var(--border);">🚀 Fast SC — ${fastSCDays}j</span>`
+          : '<span style="font-size:11px;padding:3px 9px;border-radius:99px;background:#f5f7fa;color:#9ca3af;font-weight:600;border:1px solid var(--border);">🚀 Fast SC expiré</span>'}
+      ${user.fastECValidated
+        ? '<span style="font-size:11px;padding:3px 9px;border-radius:99px;background:#EEF2FF;color:var(--blue);font-weight:600;border:1px solid #c7d7f5;">⚡ Fast EC validé</span>'
+        : fastECDays!==null&&fastECDays>0
+          ? `<span style="font-size:11px;padding:3px 9px;border-radius:99px;background:#f5f7fa;color:#6b7280;font-weight:600;border:1px solid var(--border);">⚡ Fast EC — ${fastECDays}j</span>`
+          : '<span style="font-size:11px;padding:3px 9px;border-radius:99px;background:#f5f7fa;color:#9ca3af;font-weight:600;border:1px solid var(--border);">⚡ Fast EC expiré</span>'}
     </div>
     ${pqsHtml}
     ${sponsorHtml}
   `;
 
-  const asp = aspTotal;
-  const cur = curNiveau;
-  const next = nextNiveau;
+  const aspTotal = getTotalASP(user.fullName);
+  const curNiveau = getNiveau(aspTotal);
+  const nextNiveau = getNextNiveau(aspTotal);
 
   document.getElementById('accueil-niv-bar').innerHTML = NIVEAUX.map(n=>{
-    const done=asp>=n.pts&&n.code!==cur.code;const current=n.code===cur.code;
+    const done=aspTotal>=n.pts&&n.code!==curNiveau.code;const current=n.code===curNiveau.code;
     return `<div class="niv-step${done?' done':''}${current?' current':''}">${n.label}<span class="niv-pts">${n.pts>0?n.pts:''}</span></div>`;
   }).join('');
 
-  if(next){
-    const pct=Math.round((asp-cur.pts)/(next.pts-cur.pts)*100);
-    const rem=Math.round((next.pts-asp)*10)/10;
+  if(nextNiveau){
+    const pct=Math.round((aspTotal-curNiveau.pts)/(nextNiveau.pts-curNiveau.pts)*100);
+    const rem=Math.round((nextNiveau.pts-aspTotal)*10)/10;
     document.getElementById('accueil-niv-info').innerHTML=
       `<div style="height:6px;background:var(--gray);border-radius:99px;overflow:hidden;margin:6px 0;"><div style="height:100%;width:${pct}%;background:var(--orange);border-radius:99px;"></div></div>
-       Niveau <strong>${cur.label}</strong> · ${Math.round(asp*10)/10} ASP · Prochain <strong style="color:var(--orange);">${next.label}</strong> dans ${rem} ASP`;
+       Niveau <strong>${curNiveau.label}</strong> · ${Math.round(aspTotal*10)/10} ASP · Prochain <strong style="color:var(--orange);">${nextNiveau.label}</strong> dans ${rem} ASP`;
   } else {
-    document.getElementById('accueil-niv-info').innerHTML=`<strong style="color:var(--orange);">🏆 Niveau maximum · ${Math.round(asp*10)/10} ASP</strong>`;
+    document.getElementById('accueil-niv-info').innerHTML=`<strong style="color:var(--orange);">🏆 Niveau maximum · ${Math.round(aspTotal*10)/10} ASP</strong>`;
   }
 
   const mc = getMC(curYear, curMonth);
