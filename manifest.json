@@ -2,29 +2,29 @@
   "name": "Smart Tools by Phil-Mobile",
   "short_name": "Smart Tools",
   "description": "Espace consultants Smart Services Network — Outils, suivi contrats, agenda",
-  "start_url": "/smartsn/index.html",
-  "scope": "/smartsn/",
+  "start_url": "https://lipe74.github.io/smartsn/index.html",
+  "scope": "https://lipe74.github.io/smartsn/",
   "display": "standalone",
   "background_color": "#1e3a6e",
   "theme_color": "#1e3a6e",
   "orientation": "portrait",
   "lang": "fr",
-  "id": "smart-tools-app",
+  "id": "https://lipe74.github.io/smartsn/",
   "icons": [
     {
-      "src": "images/logo.png",
+      "src": "https://lipe74.github.io/smartsn/images/logo.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "images/logo.png",
+      "src": "https://lipe74.github.io/smartsn/images/logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "images/logo.png",
+      "src": "https://lipe74.github.io/smartsn/images/logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
@@ -32,7 +32,7 @@
   ],
   "screenshots": [
     {
-      "src": "images/splash.png",
+      "src": "https://lipe74.github.io/smartsn/images/splash.png",
       "sizes": "853x1844",
       "type": "image/png",
       "form_factor": "narrow"
