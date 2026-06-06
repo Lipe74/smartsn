@@ -1,4 +1,4 @@
-const CACHE_NAME = 'smart-tools-10';
+const CACHE_NAME = 'smart-tools-05';
 const ASSETS = [
   '/',
   '/index.html',
