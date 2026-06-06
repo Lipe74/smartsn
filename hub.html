@@ -543,11 +543,65 @@ function frameLoaded(){
 }
 
 // ===== ACCUEIL =====
+function calcPQS(startDateStr){
+  if(!startDateStr||startDateStr==='—') return null;
+  const parts=startDateStr.split('/');
+  if(parts.length!==3) return null;
+  const start=new Date(parts[2],parts[1]-1,parts[0]);
+  const deadline=new Date(start.getTime()+40*24*60*60*1000);
+  const now=new Date();
+  const daysLeft=Math.ceil((deadline-now)/(24*60*60*1000));
+  const pct=Math.min(100,Math.max(0,Math.round((40-daysLeft)/40*100)));
+  return{deadline,daysLeft,pct};
+}
+function fmtDateFr(d){return d.toLocaleDateString('fr-BE',{day:'2-digit',month:'2-digit',year:'numeric'});}
+
 function renderAccueil(){
   const info = document.getElementById('welcome-info');
-  info.innerHTML = `Bonjour <strong>${currentUser.name}</strong> 👋<br>
-    Consultant Smart SN · Upline : <strong>${currentUser.upline||'—'}</strong><br>
-    Actif depuis le <strong>${currentUser.startDate}</strong>`;
+  const pqs = calcPQS(currentUser.startDate);
+
+  // PQS block
+  let pqsHtml = '';
+  if(pqs){
+    const color = pqs.daysLeft<=0?'#E24B4A':pqs.daysLeft<=7?'#f97316':pqs.daysLeft<=14?'#F59E0B':'#2E7D32';
+    const label = pqs.daysLeft<=0 ? '⚠️ Délai PQS dépassé !'
+      : pqs.daysLeft===1 ? '🔴 Deadline PQS demain !'
+      : `⏱ Deadline PQS dans <strong style="color:${color};">${pqs.daysLeft} jours</strong>`;
+    pqsHtml = `<div style="margin-top:10px;background:#f5f7fa;border-radius:8px;padding:10px 12px;border-left:3px solid ${color};">
+      <div style="font-size:12px;color:var(--text-sec);margin-bottom:5px;">${label} <span style="color:var(--text-ter);font-size:10px;">— ${fmtDateFr(pqs.deadline)}</span></div>
+      <div style="height:5px;background:var(--border);border-radius:99px;overflow:hidden;">
+        <div style="height:100%;width:${pqs.pct}%;background:${color};border-radius:99px;transition:width .4s;"></div>
+      </div>
+    </div>`;
+  }
+
+  // Sponsor block
+  let sponsorHtml = '';
+  if(currentUser.upline){
+    sponsorHtml = `<div style="margin-top:10px;background:#EEF2FF;border-radius:8px;padding:10px 12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+      <div style="font-size:20px;">👤</div>
+      <div style="flex:1;">
+        <div style="font-size:10px;color:var(--text-ter);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px;">Votre sponsor</div>
+        <div style="font-size:13px;font-weight:700;color:var(--blue);">${currentUser.upline}</div>
+      </div>
+      ${currentUser.uplineTel?`<a href="tel:${currentUser.uplineTel}" style="display:flex;align-items:center;gap:5px;padding:6px 12px;background:var(--blue);color:white;border-radius:99px;text-decoration:none;font-size:12px;font-weight:600;">📞 Appeler</a>`:''}
+      ${currentUser.uplineEmail?`<a href="mailto:${currentUser.uplineEmail}" style="display:flex;align-items:center;gap:5px;padding:6px 12px;background:var(--orange);color:white;border-radius:99px;text-decoration:none;font-size:12px;font-weight:600;">📧 Email</a>`:''}
+    </div>`;
+  }
+
+  info.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <div style="width:40px;height:40px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;flex-shrink:0;">
+        ${currentUser.fullName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2)}
+      </div>
+      <div>
+        <div style="font-size:15px;font-weight:700;color:var(--text);">Bonjour ${currentUser.name} 👋</div>
+        <div style="font-size:12px;color:var(--text-sec);">Consultant Smart SN · Actif depuis le <strong>${currentUser.startDate}</strong></div>
+      </div>
+    </div>
+    ${pqsHtml}
+    ${sponsorHtml}
+  `;
 
   const asp = getTotalASP(currentUser.fullName);
   const cur = getNiveau(asp);
@@ -564,6 +618,8 @@ function renderAccueil(){
     document.getElementById('accueil-niv-info').innerHTML=
       `<div style="height:6px;background:var(--gray);border-radius:99px;overflow:hidden;margin:6px 0;"><div style="height:100%;width:${pct}%;background:var(--orange);border-radius:99px;"></div></div>
        Niveau <strong>${cur.label}</strong> · ${Math.round(asp*10)/10} ASP · Prochain <strong style="color:var(--orange);">${next.label}</strong> dans ${rem} ASP`;
+  } else {
+    document.getElementById('accueil-niv-info').innerHTML=`<strong style="color:var(--orange);">🏆 Niveau maximum · ${Math.round(asp*10)/10} ASP</strong>`;
   }
 
   const mc = getMC(curYear, curMonth);
