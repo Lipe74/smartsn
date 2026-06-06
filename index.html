@@ -13,7 +13,21 @@
 <meta name="apple-mobile-web-app-title" content="Smart Tools">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Smart Tools">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<!-- Splash iOS -->
+<link rel="apple-touch-startup-image" href="images/splash.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)">
+<link rel="apple-touch-startup-image" href="images/splash.png" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)">
+<link rel="apple-touch-startup-image" href="images/splash.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)">
+<link rel="apple-touch-startup-image" href="images/splash.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)">
+<link rel="apple-touch-startup-image" href="images/splash.png">
+<!-- Splash Android PWA -->
+<style>
+#st-splash{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;z-index:9999;background:#1e3a6e;transition:opacity .5s ease;}
+#st-splash img{width:100%;height:100%;object-fit:cover;}
+#st-splash.hide{opacity:0;pointer-events:none;}
+</style>
 <style>
   *{box-sizing:border-box;margin:0;padding:0;}
   :root{
@@ -97,6 +111,20 @@
 </style>
 </head>
 <body>
+<!-- SPLASH Android PWA -->
+<div id="st-splash" style="display:none;"><img src="images/splash.png" alt="Smart Tools"></div>
+<script>
+if(window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone){
+  const s=document.getElementById('st-splash');
+  if(s) s.style.display='flex';
+  window.addEventListener('load',function(){
+    setTimeout(function(){
+      const s=document.getElementById('st-splash');
+      if(s){s.classList.add('hide');setTimeout(()=>s.remove(),500);}
+    },2000);
+  });
+}
+</script>
 
 <div class="login-card">
   <div class="logo-wrap">
