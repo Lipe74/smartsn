@@ -601,6 +601,10 @@ function renderAccueil(){
     </div>`;
   }
 
+  const aspTotal = getTotalASP(currentUser.fullName);
+  const curNiveau = getNiveau(aspTotal);
+  const nextNiveau = getNextNiveau(aspTotal);
+
   info.innerHTML = `
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
       <div style="width:42px;height:42px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:white;flex-shrink:0;">
@@ -609,11 +613,23 @@ function renderAccueil(){
       <div style="flex:1;">
         <div style="font-size:15px;font-weight:700;color:var(--text);">Bonjour ${currentUser.name} 👋</div>
         <div style="font-size:12px;color:var(--text-sec);">Consultant Smart SN · Actif depuis le <strong>${currentUser.startDate}</strong></div>
-        <div style="margin-top:4px;">
+        <div style="margin-top:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
           <span style="font-size:12px;font-weight:700;background:var(--orange-light);color:var(--orange);padding:3px 10px;border-radius:99px;border:1px solid var(--orange-border);">
-            Statut : ${getNiveau(getTotalASP(currentUser.fullName)).label}
+            Statut : ${curNiveau.label}
           </span>
+          ${nextNiveau ? `<span style="font-size:11px;color:var(--text-ter);">→ <strong style="color:var(--text-sec);">${nextNiveau.label}</strong> dans <strong style="color:var(--orange);">${Math.round((nextNiveau.pts - aspTotal)*10)/10} ASP</strong></span>` : '<span style="font-size:11px;color:#2E7D32;font-weight:600;">🏆 Niveau max atteint !</span>'}
         </div>
+        ${nextNiveau ? `
+        <div style="margin-top:8px;">
+          <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-ter);margin-bottom:3px;">
+            <span>${curNiveau.label} (${curNiveau.pts} pts)</span>
+            <span>${Math.round(aspTotal*10)/10} / ${nextNiveau.pts} ASP</span>
+            <span>${nextNiveau.label} (${nextNiveau.pts} pts)</span>
+          </div>
+          <div style="height:7px;background:var(--gray);border-radius:99px;overflow:hidden;border:1px solid var(--border);">
+            <div style="height:100%;width:${Math.round((aspTotal-curNiveau.pts)/(nextNiveau.pts-curNiveau.pts)*100)}%;background:linear-gradient(90deg,var(--orange),#f97316cc);border-radius:99px;transition:width .5s;"></div>
+          </div>
+        </div>` : ''}
       </div>
     </div>
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
@@ -637,9 +653,9 @@ function renderAccueil(){
     ${sponsorHtml}
   `;
 
-  const asp = getTotalASP(currentUser.fullName);
-  const cur = getNiveau(asp);
-  const next = getNextNiveau(asp);
+  const asp = aspTotal;
+  const cur = curNiveau;
+  const next = nextNiveau;
 
   document.getElementById('accueil-niv-bar').innerHTML = NIVEAUX.map(n=>{
     const done=asp>=n.pts&&n.code!==cur.code;const current=n.code===cur.code;
