@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Smart Tools — Espace Consultants</title>
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="apple-touch-icon" href="images/logo.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1e3a6e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Smart Tools">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  :root{
+    --blue:#1e3a6e;
+    --blue-dark:#152d56;
+    --blue-light:#2a4f94;
+    --orange:#f97316;
+    --orange-light:#fff3e8;
+    --white:#ffffff;
+    --gray:#f5f7fa;
+  }
+  html,body{height:100%;font-family:'Outfit',sans-serif;}
+  body{
+    background:var(--blue);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    min-height:100vh;padding:20px;
+    background-image:
+      radial-gradient(ellipse at 20% 50%, rgba(249,115,22,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(255,255,255,0.04) 0%, transparent 50%);
+  }
+  .login-card{
+    width:100%;max-width:380px;
+    background:rgba(255,255,255,0.06);
+    border:1px solid rgba(255,255,255,0.12);
+    border-radius:24px;
+    padding:40px 32px;
+    backdrop-filter:blur(20px);
+    box-shadow:0 32px 64px rgba(0,0,0,0.3);
+    animation:fadeUp .5s ease;
+  }
+  @keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+  .logo-wrap{text-align:center;margin-bottom:28px;}
+  .logo-wrap img{width:120px;border-radius:12px;background:white;padding:10px;}
+  .by-line{font-size:11px;color:rgba(255,255,255,0.4);margin-top:8px;letter-spacing:.1em;text-transform:uppercase;}
+  h1{font-size:22px;font-weight:700;color:white;text-align:center;margin-bottom:6px;}
+  .subtitle{font-size:13px;color:rgba(255,255,255,0.5);text-align:center;margin-bottom:28px;line-height:1.5;}
+  .input-wrap{position:relative;margin-bottom:14px;}
+  .input-wrap input{
+    width:100%;padding:14px 16px;
+    font-size:14px;font-family:'Outfit',sans-serif;
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.15);
+    border-radius:12px;color:white;outline:none;
+    transition:all .2s;
+    -webkit-text-fill-color:white;
+  }
+  .input-wrap input::placeholder{color:rgba(255,255,255,0.35);}
+  .input-wrap input:focus{
+    border-color:var(--orange);
+    background:rgba(255,255,255,0.12);
+    box-shadow:0 0 0 3px rgba(249,115,22,0.15);
+  }
+  .btn-login{
+    width:100%;padding:14px;
+    background:var(--orange);color:white;
+    border:none;border-radius:12px;
+    font-size:15px;font-weight:700;font-family:'Outfit',sans-serif;
+    cursor:pointer;transition:all .2s;
+    margin-top:4px;
+  }
+  .btn-login:hover{background:#ea6c0a;transform:translateY(-1px);box-shadow:0 8px 24px rgba(249,115,22,0.35);}
+  .btn-login:active{transform:translateY(0);}
+  .error-msg{
+    font-size:12px;color:#ff6b6b;
+    background:rgba(255,107,107,0.1);
+    border:1px solid rgba(255,107,107,0.2);
+    border-radius:8px;padding:10px 14px;
+    margin-bottom:12px;display:none;text-align:center;
+  }
+  .footer-note{
+    margin-top:24px;text-align:center;
+    font-size:11px;color:rgba(255,255,255,0.25);
+    line-height:1.7;
+  }
+  .footer-note a{color:var(--orange);text-decoration:none;opacity:.7;}
+  .loading{display:none;text-align:center;margin-top:12px;}
+  .loading-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--orange);margin:0 3px;animation:bounce .8s infinite;}
+  .loading-dot:nth-child(2){animation-delay:.15s;}
+  .loading-dot:nth-child(3){animation-delay:.3s;}
+  @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+</style>
+</head>
+<body>
+
+<div class="login-card">
+  <div class="logo-wrap">
+    <img src="images/logo.png" alt="Smart SN" onerror="this.style.display='none'">
+    <div class="by-line">Smart Tools · by Phil-Mobile</div>
+  </div>
+
+  <h1>Espace Consultants</h1>
+  <p class="subtitle">Connectez-vous avec votre identifiant Smart Services Network</p>
+
+  <div class="error-msg" id="error-msg">Identifiant non reconnu. Contactez votre upline.</div>
+
+  <div class="input-wrap">
+    <input type="text" id="login-input" placeholder="Votre identifiant Smart SN" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false">
+  </div>
+
+  <button class="btn-login" id="btn-login" onclick="doLogin()">Connexion →</button>
+
+  <div class="loading" id="loading">
+    <span class="loading-dot"></span>
+    <span class="loading-dot"></span>
+    <span class="loading-dot"></span>
+  </div>
+
+  <div class="footer-note">
+    Accès réservé aux consultants Smart SN.<br>
+    <a href="mailto:infos@phil-mobile.be">Besoin d'accès ? Contactez Philippe</a>
+  </div>
+</div>
+
+<script>
+const BASE = 'https://lipe74.github.io/smartsn/';
+const SESSION_DAYS = 7;
+
+function setCookie(name,val,days){
+  const d=new Date();d.setTime(d.getTime()+days*86400000);
+  document.cookie=name+'='+val+';expires='+d.toUTCString()+';path=/';
+}
+function getCookie(name){
+  const m=document.cookie.match(new RegExp('(^| )'+name+'=([^;]+)'));
+  return m?m[2]:null;
+}
+
+// Vérifier session existante
+window.addEventListener('DOMContentLoaded',function(){
+  const saved=getCookie('sn_user');
+  if(saved){
+    // Valider que le consultant existe encore
+    fetch('consultants.json?v='+Date.now())
+      .then(r=>r.json())
+      .then(data=>{
+        const user=data.consultants.find(c=>c.id===saved&&c.active);
+        if(user){window.location.href='hub.html';}
+      }).catch(()=>{});
+  }
+});
+
+function doLogin(){
+  const val=document.getElementById('login-input').value.trim().toLowerCase();
+  if(!val) return;
+  document.getElementById('btn-login').style.display='none';
+  document.getElementById('loading').style.display='block';
+  document.getElementById('error-msg').style.display='none';
+
+  fetch('consultants.json?v='+Date.now())
+    .then(r=>r.json())
+    .then(data=>{
+      const user=data.consultants.find(c=>c.id===val&&c.active);
+      if(user){
+        setCookie('sn_user',val,SESSION_DAYS);
+        window.location.href='hub.html';
+      } else {
+        document.getElementById('error-msg').style.display='block';
+        document.getElementById('btn-login').style.display='block';
+        document.getElementById('loading').style.display='none';
+        document.getElementById('login-input').value='';
+        document.getElementById('login-input').focus();
+      }
+    })
+    .catch(()=>{
+      document.getElementById('error-msg').textContent='Erreur de connexion. Réessayez.';
+      document.getElementById('error-msg').style.display='block';
+      document.getElementById('btn-login').style.display='block';
+      document.getElementById('loading').style.display='none';
+    });
+}
+
+document.addEventListener('keydown',e=>{if(e.key==='Enter') doLogin();});
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/smartsn/sw.js')
+    .then(()=>console.log('SW OK'))
+    .catch(e=>console.log('SW error:',e));
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+{
+  "admins": [
+    {
+      "id": "delta835",
+      "name": "Philippe",
+      "fullName": "Philippe Tomaszewsky",
+      "isAdmin": true
+    }
+  ],
+  "consultants": [
+    {
+      "id": "delta835",
+      "name": "Philippe",
+      "fullName": "Philippe Tomaszewsky",
+      "upline": null,
+      "startDate": "29/11/2025",
+      "aspInit": 82,
+      "isAdmin": true,
+      "active": true
+    },
+    {
+      "id": "lotus193",
+      "name": "Julien",
+      "fullName": "Julien Couvreur",
+      "upline": "Philippe Tomaszewsky",
+      "startDate": "24/04/2026",
+      "aspInit": 16,
+      "isAdmin": false,
+      "active": true
+    }
+  ]
+}

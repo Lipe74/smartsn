@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Smart Tools — Hub Consultant</title>
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="apple-touch-icon" href="images/logo.png">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1e3a6e">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Smart Tools">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --blue:#1e3a6e;--blue-dark:#152d56;--blue-light:#2a4f94;
+  --orange:#f97316;--orange-light:#fff3e8;--orange-border:#fde8cc;
+  --white:#fff;--gray:#f5f7fa;--border:#e8edf5;
+  --text:#1a1a2e;--text-sec:#6b7280;--text-ter:#9ca3af;
+}
+html,body{height:100%;font-family:'Outfit',sans-serif;background:var(--gray);color:var(--text);}
+
+/* HEADER */
+.header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;background:var(--blue);
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 12px rgba(30,58,110,0.3);
+}
+.header-left{display:flex;align-items:center;gap:10px;}
+.header-logo{width:30px;height:30px;border-radius:6px;object-fit:contain;background:white;padding:3px;}
+.header-title{font-size:15px;font-weight:700;color:white;}
+.header-right{display:flex;align-items:center;gap:8px;}
+.welcome-badge{font-size:11px;font-weight:600;color:var(--orange);background:rgba(249,115,22,0.15);padding:5px 12px;border-radius:99px;border:1px solid rgba(249,115,22,0.3);}
+.btn-logout{font-size:11px;color:rgba(255,255,255,0.5);background:none;border:1px solid rgba(255,255,255,0.15);border-radius:6px;padding:5px 10px;cursor:pointer;font-family:'Outfit',sans-serif;}
+.btn-logout:hover{background:rgba(255,255,255,0.08);}
+
+/* TABS */
+.tabs{display:flex;background:var(--blue-dark);border-bottom:1px solid rgba(255,255,255,0.08);}
+.tab-btn{flex:1;padding:11px 6px;font-size:11px;font-weight:600;color:rgba(255,255,255,0.45);background:none;border:none;border-bottom:2px solid transparent;cursor:pointer;font-family:'Outfit',sans-serif;text-transform:uppercase;letter-spacing:.05em;transition:all .2s;}
+.tab-btn.active{color:var(--orange);border-bottom-color:var(--orange);}
+
+/* LAYOUT */
+.main{display:flex;gap:0;height:calc(100vh - 88px);}
+.sidebar{width:200px;flex-shrink:0;background:white;border-right:1px solid var(--border);overflow-y:auto;display:none;}
+.sidebar.show{display:block;}
+.content{flex:1;overflow-y:auto;padding:16px;}
+
+/* TAB PANELS */
+.tab-panel{display:none;}
+.tab-panel.active{display:block;}
+
+/* MENU ITEMS */
+.menu-section{padding:10px 12px 4px;font-size:10px;font-weight:700;color:var(--text-ter);text-transform:uppercase;letter-spacing:.08em;}
+.menu-item{display:block;width:100%;text-align:left;padding:9px 12px;font-size:12px;font-weight:500;color:var(--text-sec);background:none;border:none;border-radius:6px;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;text-decoration:none;margin-bottom:2px;}
+.menu-item:hover{background:var(--orange-light);color:var(--orange);}
+.menu-item.active{background:var(--orange-light);color:var(--orange);font-weight:600;}
+
+/* CARDS */
+.card{background:white;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;}
+.card-title{font-size:11px;font-weight:700;color:var(--text-ter);text-transform:uppercase;letter-spacing:.08em;margin-bottom:12px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;}
+
+/* METRIC CARDS */
+.mc{background:var(--gray);border-radius:8px;padding:12px;border:1px solid var(--border);}
+.mc-label{font-size:10px;color:var(--text-sec);margin-bottom:3px;}
+.mc-val{font-size:20px;font-weight:700;color:var(--text);}
+.mc-sub{font-size:10px;color:var(--text-ter);margin-top:2px;}
+.pbar{height:4px;background:var(--border);border-radius:99px;margin-top:5px;overflow:hidden;}
+.pbar-fill{height:100%;border-radius:99px;background:var(--orange);transition:width .4s;}
+
+/* NIVEAU BAR */
+.niv-bar{display:flex;border-radius:8px;overflow:hidden;border:1px solid var(--border);margin-bottom:10px;}
+.niv-step{flex:1;padding:6px 2px;text-align:center;font-size:9px;font-weight:600;color:var(--text-ter);background:var(--gray);border-right:1px solid var(--border);}
+.niv-step:last-child{border-right:none;}
+.niv-step.done{background:#E8F5E9;color:#2E7D32;}
+.niv-step.current{background:var(--orange);color:white;font-weight:700;}
+.niv-pts{display:block;font-size:8px;margin-top:1px;opacity:.7;}
+
+/* AGENT CARDS */
+.agent-card{display:flex;align-items:center;gap:8px;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--gray);margin-bottom:6px;cursor:pointer;transition:all .15s;}
+.agent-card.active{border-color:var(--orange);background:var(--orange-light);}
+.agent-av{width:32px;height:32px;border-radius:50%;background:#EEF2FF;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--blue);flex-shrink:0;}
+.agent-card.active .agent-av{background:var(--orange);color:white;}
+
+/* PRODUITS */
+.brand-sec{margin-bottom:10px;}
+.grp-lbl{font-size:10px;color:var(--text-ter);padding:4px 0 3px;font-style:italic;}
+.prod-grid{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:2px;}
+.prod-item{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:8px;overflow:hidden;background:white;}
+.prod-row{display:flex;align-items:center;}
+.pm-pbtn{width:26px;height:28px;border:none;cursor:pointer;font-size:14px;font-weight:700;background:none;color:var(--text-ter);}
+.pm-pbtn:hover{background:var(--gray);}
+.pm-pcnt{font-size:12px;font-weight:600;min-width:20px;text-align:center;color:var(--text);}
+.pm-pcnt.pos{color:#2E7D32;}
+.pm-pname{font-size:11px;color:var(--text);padding:0 6px;}
+.pm-pasp{font-size:9px;color:var(--text-ter);padding-right:5px;}
+.flash{animation:fl .25s ease;}
+@keyframes fl{0%{transform:scale(1.2);}100%{transform:scale(1);}}
+.porta-lbl{display:flex;align-items:center;gap:4px;font-size:9px;color:var(--text-sec);padding:2px 8px 4px;cursor:pointer;}
+
+/* PANIER */
+.panier-item{display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--orange-border);font-size:11px;}
+.panier-item:last-child{border-bottom:none;}
+.badge{font-size:10px;font-weight:600;padding:2px 6px;border-radius:6px;}
+.b-o{background:#FFF3E0;color:#B45309;border:1px solid #f0d080;}
+.b-e{background:#E8F5E9;color:#2E7D32;border:1px solid #c8e6c9;}
+.b-s{background:#E3F2FD;color:#1565C0;border:1px solid #90caf9;}
+.asp-chip{font-size:10px;background:var(--gray);color:var(--text-sec);padding:1px 6px;border-radius:99px;border:1px solid var(--border);}
+.late-chip{font-size:9px;background:#FFF3E0;color:#B45309;padding:1px 5px;border-radius:99px;}
+
+/* HIST */
+.hist-item{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid var(--border);font-size:11px;}
+.hist-item:last-child{border-bottom:none;}
+.btn-del{background:none;border:none;color:var(--text-ter);cursor:pointer;font-size:13px;}
+.btn-del:hover{color:#E24B4A;}
+
+/* STATS */
+.prod-stat-row{display:flex;align-items:center;justify-content:space-between;padding:4px 0;border-bottom:1px solid var(--border);}
+.prod-stat-row:last-child{border-bottom:none;}
+
+/* AGENDA */
+.event-item{padding:8px 10px;background:var(--orange-light);border-left:3px solid var(--orange);border-radius:0 6px 6px 0;margin-bottom:6px;}
+.event-date{font-size:11px;font-weight:700;color:var(--orange);}
+.event-title{font-size:12px;color:var(--text);margin-top:2px;}
+.event-meta{font-size:10px;color:var(--text-ter);margin-top:1px;}
+
+/* TOGGLE SOHO */
+.toggle-soho{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-sec);cursor:pointer;padding:6px 12px;border:1px solid var(--border);border-radius:8px;background:white;user-select:none;}
+.toggle-soho.active{background:#E3F2FD;color:#1565C0;border-color:#90caf9;}
+.t-dot{width:26px;height:14px;border-radius:99px;background:var(--border);position:relative;transition:.2s;flex-shrink:0;}
+.toggle-soho.active .t-dot{background:#1565C0;}
+.t-dot::after{content:'';position:absolute;width:10px;height:10px;border-radius:50%;background:white;top:2px;left:2px;transition:.2s;}
+.toggle-soho.active .t-dot::after{left:14px;}
+
+/* BTN */
+.btn-primary{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 16px;background:var(--blue);color:white;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;}
+.btn-primary:hover{background:var(--blue-light);}
+.btn-primary:disabled{opacity:.4;cursor:not-allowed;}
+.btn-orange{background:var(--orange);}
+.btn-orange:hover{background:#ea6c0a;}
+.btn-outline{background:none;color:var(--text);border:1px solid var(--border);}
+.btn-outline:hover{background:var(--gray);}
+
+/* IFRAME */
+.iframe-wrap{width:100%;height:100%;display:flex;flex-direction:column;}
+.iframe-loading{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;color:var(--text-ter);}
+iframe{width:100%;flex:1;border:none;border-radius:8px;}
+
+/* CHART */
+.chart-wrap{position:relative;width:100%;height:180px;}
+
+/* LINKS */
+.link-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);text-decoration:none;color:var(--text);}
+.link-item:last-child{border-bottom:none;}
+.link-item:hover .link-title{color:var(--orange);}
+.link-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.link-title{font-size:13px;font-weight:600;}
+.link-sub{font-size:11px;color:var(--text-ter);}
+
+.empty{text-align:center;padding:20px;color:var(--text-ter);font-size:12px;}
+
+@media(max-width:600px){.grid-4{grid-template-columns:repeat(2,1fr);}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <img src="images/logo.png" alt="Smart Tools" class="header-logo" onerror="this.style.display='none'">
+    <span class="header-title">Smart Tools</span>
+  </div>
+  <div class="header-right">
+    <span class="welcome-badge" id="welcome-badge">👋 ...</span>
+    <button class="btn-logout" onclick="doLogout()">Déconnexion</button>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab-btn active" id="tab-accueil" onclick="switchTab('accueil')">🏠 Accueil</button>
+  <button class="tab-btn" id="tab-contrats" onclick="switchTab('contrats')">📊 Contrats</button>
+  <button class="tab-btn" id="tab-outils" onclick="switchTab('outils')">🛠 Outils</button>
+  <button class="tab-btn" id="tab-agenda" onclick="switchTab('agenda')">📅 Agenda</button>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+<div class="content" id="main-content">
+
+  <!-- TAB ACCUEIL -->
+  <div class="tab-panel active" id="panel-accueil">
+    <div class="card">
+      <div class="card-title">Bienvenue</div>
+      <div id="welcome-info" style="font-size:13px;color:var(--text-sec);line-height:1.7;"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Progression</div>
+      <div id="accueil-niv-bar" class="niv-bar"></div>
+      <div id="accueil-niv-info" style="font-size:12px;color:var(--text-sec);text-align:center;"></div>
+    </div>
+    <div class="grid-4" id="accueil-metrics"></div>
+    <div class="card">
+      <div class="card-title">Liens rapides</div>
+      <a href="https://mysmart.smartsn.be" target="_blank" class="link-item">
+        <div class="link-icon" style="background:#EEF2FF;">🌐</div>
+        <div><div class="link-title">My Smart</div><div class="link-sub">Portail consultant</div></div>
+      </a>
+      <a href="https://www.orange.be" target="_blank" class="link-item">
+        <div class="link-icon" style="background:#FFF3E0;">🟠</div>
+        <div><div class="link-title">Orange Belgium</div><div class="link-sub">Site officiel</div></div>
+      </a>
+      <a href="https://eneco.be/fr" target="_blank" class="link-item">
+        <div class="link-icon" style="background:#E8F5E9;">⚡</div>
+        <div><div class="link-title">Eneco</div><div class="link-sub">Énergie responsable</div></div>
+      </a>
+      <a href="https://www.crdc.be/" target="_blank" class="link-item">
+        <div class="link-icon" style="background:var(--gray);">📋</div>
+        <div><div class="link-title">CRB (1399)</div><div class="link-sub">Vérification clients</div></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- TAB CONTRATS -->
+  <div class="tab-panel" id="panel-contrats">
+
+    <!-- Navigation mois -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div style="font-size:15px;font-weight:700;color:var(--text);">Suivi contrats</div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <button onclick="pmPrevMonth()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:13px;">‹</button>
+        <span id="pm-month-label" style="font-size:13px;font-weight:600;min-width:120px;text-align:center;"></span>
+        <button onclick="pmNextMonth()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:13px;">›</button>
+      </div>
+    </div>
+
+    <!-- Progression -->
+    <div class="card" id="pm-progression-card">
+      <div class="card-title">Progression niveaux</div>
+      <div id="pm-agent-cards" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;"></div>
+      <div class="niv-bar" id="pm-niv-bar"></div>
+      <div id="pm-niv-info" style="font-size:11px;color:var(--text-sec);text-align:center;margin-top:6px;"></div>
+    </div>
+
+    <!-- Métriques -->
+    <div class="grid-4" id="pm-metrics"></div>
+
+    <!-- Encodage -->
+    <div class="card">
+      <div class="card-title">Encoder un contrat</div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;">
+        <select id="pm-add-agent" style="font-size:12px;padding:6px 10px;border:1px solid var(--border);border-radius:8px;background:white;color:var(--text);font-family:'Outfit',sans-serif;"></select>
+        <div class="toggle-soho" id="pm-soho-toggle" onclick="pmToggleSoHo()">
+          <span class="t-dot"></span><span>SoHo</span>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;font-size:12px;color:var(--text-sec);">
+        <i class="ti ti-calendar"></i>
+        <span>Date contrat</span>
+        <input type="date" id="pm-contract-date" style="font-size:12px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;background:white;color:var(--text);font-family:'Outfit',sans-serif;">
+        <button onclick="pmSetToday()" style="font-size:11px;padding:4px 8px;border:1px solid var(--border);border-radius:6px;background:none;cursor:pointer;">Aujourd'hui</button>
+        <span style="color:var(--text-ter);">Encodé le <span id="pm-encoded-label"></span></span>
+      </div>
+      <div id="pm-products-panel"></div>
+      <!-- Panier -->
+      <div style="margin-top:10px;border-top:1px solid var(--orange-border);padding-top:10px;">
+        <div style="font-size:11px;font-weight:700;color:var(--orange);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;">Panier</div>
+        <div id="pm-panier"></div>
+        <button id="pm-btn-valider" onclick="pmValiderPanier()" class="btn-primary btn-orange" style="width:100%;margin-top:10px;opacity:.4;" disabled>✓ Valider l'encodage</button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid-2">
+      <div class="card"><div class="card-title">Orange</div><div id="pm-orange-stats"></div></div>
+      <div class="card"><div class="card-title">Eneco</div><div id="pm-eneco-stats"></div></div>
+    </div>
+
+    <!-- Par agent (admin only) -->
+    <div class="card" id="pm-team-card">
+      <div class="card-title">Par agent</div>
+      <div id="pm-team-stats"></div>
+    </div>
+
+    <!-- Historique -->
+    <div class="card">
+      <div class="card-title">Historique du mois</div>
+      <div id="pm-history"></div>
+    </div>
+
+    <!-- Export -->
+    <div class="card">
+      <div class="card-title">Export</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button onclick="pmExportPDF()" class="btn-primary"><i class="ti ti-file-type-pdf"></i> PDF</button>
+        <button onclick="pmExportMail()" class="btn-primary btn-outline"><i class="ti ti-mail"></i> Email</button>
+      </div>
+    </div>
+
+    <!-- Évolution -->
+    <div class="card">
+      <div class="card-title">Évolution 6 mois</div>
+      <div class="chart-wrap"><canvas id="pm-chart"></canvas></div>
+      <div style="display:flex;gap:14px;margin-top:8px;font-size:11px;color:var(--text-sec);">
+        <span><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#E65100;margin-right:3px;"></span>Orange</span>
+        <span><span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:#2E7D32;margin-right:3px;"></span>Eneco</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB OUTILS -->
+  <div class="tab-panel" id="panel-outils">
+    <div class="card">
+      <div class="card-title">Documents</div>
+      <a href="documents/wp_commissions.pdf" target="_blank" class="link-item">
+        <div class="link-icon" style="background:#FFF3E0;">💶</div>
+        <div><div class="link-title">Rémunérations & Commissions</div><div class="link-sub">Barème complet</div></div>
+      </a>
+      <a href="documents/wp_orange.pdf" target="_blank" class="link-item">
+        <div class="link-icon" style="background:#FFF3E0;">🟠</div>
+        <div><div class="link-title">Produits Orange</div><div class="link-sub">Catalogue complet</div></div>
+      </a>
+      <a href="documents/wp_eneco.pdf" target="_blank" class="link-item">
+        <div class="link-icon" style="background:#E8F5E9;">⚡</div>
+        <div><div class="link-title">Produits Eneco</div><div class="link-sub">Offres énergie</div></div>
+      </a>
+      <a href="documents/wp_smartPlan.pdf" target="_blank" class="link-item">
+        <div class="link-icon" style="background:#EEF2FF;">📘</div>
+        <div><div class="link-title">Smart Plan</div><div class="link-sub">Plan de carrière</div></div>
+      </a>
+    </div>
+    <div class="card">
+      <div class="card-title">Outils en ligne</div>
+      <a href="https://obe.my.site.com" target="_blank" class="link-item">
+        <div class="link-icon" style="background:#EEF2FF;">☁️</div>
+        <div><div class="link-title">Salesforce</div><div class="link-sub">CRM Orange</div></div>
+      </a>
+      <a href="https://www.orange.be/fr/options-et-services/internet/internet-boost/internet-boost-giga" target="_blank" class="link-item">
+        <div class="link-icon" style="background:#FFF3E0;">📡</div>
+        <div><div class="link-title">Orange Fibre Éligibilité</div><div class="link-sub">Vérifier la fibre</div></div>
+      </a>
+      <a href="https://mysmart.smartsn.be" target="_blank" class="link-item">
+        <div class="link-icon" style="background:var(--gray);">🌐</div>
+        <div><div class="link-title">My Smart</div><div class="link-sub">Portail consultant</div></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- TAB AGENDA -->
+  <div class="tab-panel" id="panel-agenda">
+    <div class="card">
+      <div class="card-title">Prochains événements Smart SN</div>
+      <div id="agenda-list"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">📆 Réserver un accompagnement</div>
+      <div style="border-radius:10px;overflow:hidden;border:1px solid var(--border);">
+        <iframe src="https://calendly.com/infos-phil-mobile/30min" style="width:100%;height:500px;border:none;" frameborder="0"></iframe>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+const BASE_URL = 'https://lipe74.github.io/smartsn/';
+const SESSION_DAYS = 7;
+const MONTHS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+
+// ===== NIVEAUX & PRODUITS =====
+const NIVEAUX = [
+  {code:'BC',label:'BC',pts:0},{code:'SC',label:'SC',pts:70},{code:'EC',label:'EC',pts:200},
+  {code:'PC',label:'PC',pts:600},{code:'MC',label:'MC',pts:2500},{code:'NMC',label:'NMC',pts:10000},{code:'PMC',label:'PMC',pts:25000}
+];
+const PRODUCTS = {
+  Orange:{
+    Internet:['Internet Start','Internet Zen','Internet Giga'],
+    'Ligne fixe':['Ligne fixe'],TV:['TV Orange'],
+    Mobile:['Mobile Child','Mobile Small','Mobile Medium','Mobile Large','Mobile Unlimited']
+  },
+  Eneco:{Énergie:['Eneco Flex','Eneco Fixe','Eneco Gaz']}
+};
+const ALL_O = Object.values(PRODUCTS.Orange).flat();
+const ALL_E = Object.values(PRODUCTS.Eneco).flat();
+const ASP_MAP = {
+  'Mobile Child':0,'Mobile Small':1,'Mobile Medium':1,'Mobile Large':1,'Mobile Unlimited':1,
+  'Internet Start':1,'Internet Zen':1,'Internet Giga':1,'Ligne fixe':0,'TV Orange':1,
+  'Eneco Flex':0.5,'Eneco Fixe':0.5,'Eneco Gaz':0.5,
+  'Mobile Child SoHo':0,'Mobile Small SoHo':1,'Mobile Medium SoHo':1.5,'Mobile Large SoHo':1.5,'Mobile Unlimited SoHo':1.5,
+  'Internet Start SoHo':1,'Internet Zen SoHo':1,'Internet Giga SoHo':1,'Ligne fixe SoHo':0,'TV Orange SoHo':1,
+  'Eneco Flex SoHo':1,'Eneco Fixe SoHo':1,'Eneco Gaz SoHo':1
+};
+const PORTABILITE = ['Internet Start','Internet Zen','Internet Giga','Internet Start SoHo','Internet Zen SoHo','Internet Giga SoHo'];
+
+const AGENDA_EVENTS = [
+  {date:'08/06/2026',title:'Team Meeting Herstal',meta:'19:30–21:30 · Inscription via My Smart → Events'},
+  {date:'17/06/2026',title:'Success Training FR — Bruxelles',meta:'18:00–21:00'},
+  {date:'22/06/2026',title:'Team Meeting Herstal',meta:'19:30–21:30 · Inscription via My Smart → Events'},
+  {date:'23/06/2026',title:'Orange MasterClass — Bruxelles',meta:'19:00–22:00'},
+  {date:'27/06/2026',title:'Success Training FR — Samedi',meta:'09:30–12:30'},
+  {date:'29/06/2026',title:'How to sell Eneco? — Herstal',meta:'19:00–21:00'},
+  {date:'02/07/2026',title:'Summer Drink',meta:'20:00–22:00'},
+  {date:'06/07/2026',title:'Team Meeting Herstal',meta:'19:30–21:30 · Inscription via My Smart → Events'},
+  {date:'27/09/2026',title:'Family Day — Pairi Daiza',meta:'10:00–18:00'},
+  {date:'14/11/2026',title:'Smart Day',meta:'13:00–18:00'}
+];
+
+// ===== SESSION =====
+function getCookie(n){const m=document.cookie.match(new RegExp('(^| )'+n+'=([^;]+)'));return m?m[2]:null;}
+function setCookie(n,v,d){const e=new Date();e.setTime(e.getTime()+d*86400000);document.cookie=n+'='+v+';expires='+e.toUTCString()+';path=/';}
+function deleteCookie(n){document.cookie=n+'=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/';}
+
+let currentUser = null;
+let allConsultants = [];
+let niveauAgent = null;
+let sohoMode = false;
+let panier = [];
+let contracts = [];
+const today = new Date();
+let curYear = today.getFullYear(), curMonth = today.getMonth();
+
+function doLogout(){deleteCookie('sn_user');window.location.href='index.html';}
+
+// ===== INIT =====
+window.addEventListener('DOMContentLoaded', async function(){
+  const userId = getCookie('sn_user');
+  if(!userId){window.location.href='index.html';return;}
+
+  try {
+    const data = await fetch('consultants.json?v='+Date.now()).then(r=>r.json());
+    allConsultants = data.consultants;
+    const user = allConsultants.find(c=>c.id===userId&&c.active);
+    if(!user){window.location.href='index.html';return;}
+    currentUser = user;
+    setCookie('sn_user',userId,SESSION_DAYS);
+
+    // Charger contrats depuis localStorage
+    try{contracts=JSON.parse(localStorage.getItem('sn_contracts_'+userId)||'[]');}catch(e){}
+
+    niveauAgent = user.fullName;
+    initUI();
+  } catch(e){
+    // Fallback si pas de réseau
+    const fallback = {id:userId,name:userId,fullName:userId,aspInit:0,isAdmin:false,active:true,startDate:'—'};
+    currentUser = fallback;
+    allConsultants = [fallback];
+    niveauAgent = fallback.fullName;
+    initUI();
+  }
+});
+
+function initUI(){
+  // Welcome
+  document.getElementById('welcome-badge').textContent = '👋 '+currentUser.name;
+
+  // Select agent encodage
+  const sel = document.getElementById('pm-add-agent');
+  const agentsVisible = currentUser.isAdmin ? allConsultants.filter(c=>c.active) : [currentUser];
+  agentsVisible.forEach(c=>{
+    const o=document.createElement('option');
+    o.value=c.fullName;o.textContent=c.fullName;sel.appendChild(o);
+  });
+  sel.value = currentUser.fullName;
+
+  // Cache équipe non-admin
+  if(!currentUser.isAdmin) document.getElementById('pm-team-card').style.display='none';
+
+  // Dates
+  document.getElementById('pm-contract-date').value = toInputVal(today);
+  document.getElementById('pm-encoded-label').textContent = fmtDate(today);
+
+  // Agenda
+  renderAgenda();
+
+  // Accueil
+  renderAccueil();
+
+  // Contrats
+  pmRender();
+
+  switchTab('accueil');
+}
+
+// ===== TABS =====
+function switchTab(tab){
+  ['accueil','contrats','outils','agenda'].forEach(t=>{
+    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
+    document.getElementById('panel-'+t).classList.toggle('active',t===tab);
+  });
+  if(tab==='contrats') pmRenderChart();
+}
+
+// ===== ACCUEIL =====
+function renderAccueil(){
+  const info = document.getElementById('welcome-info');
+  info.innerHTML = `Bonjour <strong>${currentUser.name}</strong> 👋<br>
+    Consultant Smart SN · Upline : <strong>${currentUser.upline||'—'}</strong><br>
+    Actif depuis le <strong>${currentUser.startDate}</strong>`;
+
+  const asp = getTotalASP(currentUser.fullName);
+  const cur = getNiveau(asp);
+  const next = getNextNiveau(asp);
+
+  document.getElementById('accueil-niv-bar').innerHTML = NIVEAUX.map(n=>{
+    const done=asp>=n.pts&&n.code!==cur.code;const current=n.code===cur.code;
+    return `<div class="niv-step${done?' done':''}${current?' current':''}">${n.label}<span class="niv-pts">${n.pts>0?n.pts:''}</span></div>`;
+  }).join('');
+
+  if(next){
+    const pct=Math.round((asp-cur.pts)/(next.pts-cur.pts)*100);
+    const rem=Math.round((next.pts-asp)*10)/10;
+    document.getElementById('accueil-niv-info').innerHTML=
+      `<div style="height:6px;background:var(--gray);border-radius:99px;overflow:hidden;margin:6px 0;"><div style="height:100%;width:${pct}%;background:var(--orange);border-radius:99px;"></div></div>
+       Niveau <strong>${cur.label}</strong> · ${Math.round(asp*10)/10} ASP · Prochain <strong style="color:var(--orange);">${next.label}</strong> dans ${rem} ASP`;
+  }
+
+  const mc = getMC(curYear, curMonth);
+  const byProd={};mc.forEach(c=>{byProd[c.product]=(byProd[c.product]||0)+1;});
+  const totalO=ALL_O.reduce((s,p)=>s+(byProd[p]||0)+(byProd[p+' SoHo']||0),0);
+  const totalE=ALL_E.reduce((s,p)=>s+(byProd[p]||0)+(byProd[p+' SoHo']||0),0);
+  const aspMois=mc.reduce((s,c)=>s+(c.asp||0),0);
+  document.getElementById('accueil-metrics').innerHTML=`
+    <div class="mc"><div class="mc-label">Contrats ce mois</div><div class="mc-val">${totalO+totalE}</div></div>
+    <div class="mc"><div class="mc-label">Orange</div><div class="mc-val" style="color:#E65100;">${totalO}</div></div>
+    <div class="mc"><div class="mc-label">Eneco</div><div class="mc-val" style="color:#2E7D32;">${totalE}</div></div>
+    <div class="mc"><div class="mc-label">ASP ce mois</div><div class="mc-val" style="color:var(--orange);">${Math.round(aspMois*10)/10}</div></div>`;
+}
+
+// ===== AGENDA =====
+function renderAgenda(){
+  const todayStr = today.toLocaleDateString('fr-BE',{day:'2-digit',month:'2-digit',year:'numeric'});
+  document.getElementById('agenda-list').innerHTML = AGENDA_EVENTS.map(e=>`
+    <div class="event-item">
+      <div class="event-date">📅 ${e.date}</div>
+      <div class="event-title">${e.title}</div>
+      <div class="event-meta">${e.meta}</div>
+    </div>`).join('');
+}
+
+// ===== HELPERS =====
+function save(){try{localStorage.setItem('sn_contracts_'+currentUser.id,JSON.stringify(contracts));}catch(e){}}
+function getMC(y,m){
+  const mc=contracts.filter(c=>c.year===y&&c.month===m);
+  return currentUser.isAdmin ? mc : mc.filter(c=>c.agent===currentUser.fullName);
+}
+function isCurrentMonth(){return curYear===today.getFullYear()&&curMonth===today.getMonth();}
+function fmtDate(d){return new Date(d).toLocaleDateString('fr-BE',{day:'2-digit',month:'2-digit',year:'numeric'});}
+function toInputVal(d){return d.toISOString().split('T')[0];}
+function pmSetToday(){document.getElementById('pm-contract-date').value=toInputVal(today);document.getElementById('pm-encoded-label').textContent=fmtDate(today);}
+function getTotalASP(agent){
+  const c=allConsultants.find(x=>x.fullName===agent);
+  const init=(c?.aspInit)||0;
+  return init+contracts.filter(x=>x.agent===agent).reduce((s,x)=>s+(x.asp||0),0);
+}
+function getNiveau(asp){let r=NIVEAUX[0];for(let i=0;i<NIVEAUX.length;i++){if(asp>=NIVEAUX[i].pts)r=NIVEAUX[i];}return r;}
+function getNextNiveau(asp){for(let i=0;i<NIVEAUX.length;i++){if(NIVEAUX[i].pts>asp)return NIVEAUX[i];}return null;}
+function countBy(mc,f){const r={};mc.forEach(c=>{r[c[f]]=(r[c[f]]||0)+1;});return r;}
+
+// ===== SUIVI CONTRATS =====
+function pmToggleSoHo(){
+  if(panier.length>0){if(!confirm('Panier non validé, vider ?')) return;panier=[];}
+  sohoMode=!sohoMode;
+  const t=document.getElementById('pm-soho-toggle');
+  sohoMode?t.classList.add('active'):t.classList.remove('active');
+  pmBuildProducts();pmRenderPanier();
+}
+
+function pmRenderAgentCards(){
+  const agents = currentUser.isAdmin
+    ? allConsultants.filter(c=>c.active)
+    : [currentUser];
+  document.getElementById('pm-agent-cards').innerHTML = agents.map(c=>{
+    const asp=getTotalASP(c.fullName);const cur=getNiveau(asp);const next=getNextNiveau(asp);
+    const pct=next?Math.round((asp-cur.pts)/(next.pts-cur.pts)*100):100;
+    const active=c.fullName===niveauAgent;
+    const ini=c.fullName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    return `<div class="agent-card${active?' active':''}" onclick="setNiveauAgent('${c.fullName}')">
+      <div class="agent-av">${ini}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:12px;font-weight:600;">${c.name}</div>
+        <div style="font-size:9px;color:var(--text-ter);">Depuis ${c.startDate}</div>
+        <div style="display:flex;align-items:center;gap:5px;margin-top:3px;">
+          <span style="font-size:10px;font-weight:600;color:${active?'var(--orange)':'var(--text-sec)'};">${cur.label}</span>
+          <div style="flex:1;height:3px;background:var(--border);border-radius:99px;overflow:hidden;">
+            <div style="height:100%;width:${pct}%;background:${active?'var(--orange)':'var(--border)'};border-radius:99px;"></div>
+          </div>
+          <span style="font-size:9px;color:var(--text-ter);">${Math.round(asp*10)/10}</span>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.setNiveauAgent=function(name){niveauAgent=name;pmRenderAgentCards();pmRenderNiveauDetail();};
+
+function pmRenderNiveauDetail(){
+  const asp=getTotalASP(niveauAgent);const cur=getNiveau(asp);const next=getNextNiveau(asp);
+  const c=allConsultants.find(x=>x.fullName===niveauAgent);
+  document.getElementById('pm-niv-bar').innerHTML=NIVEAUX.map(n=>{
+    const done=asp>=n.pts&&n.code!==cur.code;const current=n.code===cur.code;
+    return `<div class="niv-step${done?' done':''}${current?' current':''}">${n.label}<span class="niv-pts">${n.pts>0?n.pts:''}</span></div>`;
+  }).join('');
+  if(next){
+    const pct=Math.round((asp-cur.pts)/(next.pts-cur.pts)*100);
+    const rem=Math.round((next.pts-asp)*10)/10;
+    document.getElementById('pm-niv-info').innerHTML=
+      `<div style="height:5px;background:var(--gray);border-radius:99px;overflow:hidden;margin:5px 0;"><div style="height:100%;width:${pct}%;background:var(--orange);border-radius:99px;"></div></div>
+       Niveau <strong>${cur.label}</strong> · ${Math.round(asp*10)/10} ASP · → <strong style="color:var(--orange);">${next.label}</strong> dans ${rem} ASP`;
+  } else {
+    document.getElementById('pm-niv-info').innerHTML=`<strong style="color:var(--orange);">🏆 Niveau maximum · ${Math.round(asp*10)/10} ASP</strong>`;
+  }
+}
+
+function pmBuildProducts(){
+  if(!isCurrentMonth()){
+    document.getElementById('pm-products-panel').innerHTML='<div class="empty">🔒 Encodage uniquement pour le mois en cours</div>';
+    return;
+  }
+  const mc=contracts.filter(c=>c.year===curYear&&c.month===curMonth);
+  const byCnt={};mc.forEach(c=>{byCnt[c.product]=(byCnt[c.product]||0)+1;});
+  let html='';
+  Object.entries(PRODUCTS).forEach(([brand,groups])=>{
+    const color=brand==='Orange'?'#E65100':'#2E7D32';
+    html+=`<div class="brand-sec"><div style="display:flex;align-items:center;gap:5px;margin-bottom:5px;">
+      <span style="width:8px;height:8px;border-radius:50%;background:${color};display:inline-block;"></span>
+      <span style="font-size:12px;font-weight:600;">${brand}</span>
+      ${sohoMode?'<span style="font-size:9px;background:#E3F2FD;color:#1565C0;padding:1px 5px;border-radius:99px;">SoHo</span>':''}
+    </div>`;
+    Object.entries(groups).forEach(([grp,prods])=>{
+      html+=`<div class="grp-lbl">${grp}</div><div class="prod-grid">`;
+      prods.forEach(p=>{
+        const pKey=sohoMode?p+' SoHo':p;
+        const baseAsp=ASP_MAP[pKey]!==undefined?ASP_MAP[pKey]:0;
+        const hasPorta=PORTABILITE.includes(pKey);
+        const portId='porta-'+pKey.replace(/\s/g,'_');
+        const panierQty=panier.filter(x=>x.pKey===pKey).length;
+        html+=`<div class="prod-item">
+          <div class="prod-row">
+            <button class="pm-pbtn" onclick="panierChange('${brand}','${p.replace(/'/g,"\\'")}',${sohoMode},-1)">−</button>
+            <span class="pm-pcnt${panierQty>0?' pos':''}" id="pc-${pKey.replace(/\s/g,'_')}">${panierQty}</span>
+            <button class="pm-pbtn" onclick="panierChange('${brand}','${p.replace(/'/g,"\\'")}',${sohoMode},1)">+</button>
+            <span class="pm-pname">${p}</span>
+            ${baseAsp>0?`<span class="pm-pasp">${baseAsp}asp</span>`:''}
+          </div>
+          ${hasPorta?`<label class="porta-lbl"><input type="checkbox" id="${portId}" style="width:11px;height:11px;accent-color:var(--orange);" onchange="panierUpdatePorta('${pKey}',this.checked)"><span>Portabilité <span style="color:var(--orange);font-weight:600;">+0.5asp</span></span></label>`:''}
+        </div>`;
+      });
+      html+=`</div>`;
+    });
+    html+=`</div>`;
+  });
+  document.getElementById('pm-products-panel').innerHTML=html;
+  pmRenderPanier();
+}
+
+window.panierChange=function(brand,product,soho,delta){
+  const pKey=soho?product+' SoHo':product;
+  const baseAsp=ASP_MAP[pKey]!==undefined?ASP_MAP[pKey]:0;
+  if(delta>0){panier.push({brand,product,pKey,baseAsp,asp:baseAsp,soho,portabilite:false});}
+  else{const idx=[...panier].map((x,i)=>({x,i})).reverse().find(({x})=>x.pKey===pKey);if(idx)panier.splice(idx.i,1);}
+  const el=document.getElementById('pc-'+pKey.replace(/\s/g,'_'));
+  const qty=panier.filter(x=>x.pKey===pKey).length;
+  if(el){el.textContent=qty;el.className='pm-pcnt'+(qty>0?' pos':'');el.classList.add('flash');setTimeout(()=>el.classList.remove('flash'),250);}
+  pmRenderPanier();
+};
+
+window.panierUpdatePorta=function(pKey,checked){
+  panier.forEach(item=>{if(item.pKey===pKey){item.portabilite=checked;item.asp=item.baseAsp+(checked?.5:0);}});
+  pmRenderPanier();
+};
+
+function pmRenderPanier(){
+  const el=document.getElementById('pm-panier');if(!el)return;
+  if(panier.length===0){
+    el.innerHTML='<div class="empty" style="padding:8px;">Panier vide — utilisez les boutons +</div>';
+    document.getElementById('pm-btn-valider').style.opacity='.4';
+    document.getElementById('pm-btn-valider').disabled=true;return;
+  }
+  const aspTotal=panier.reduce((s,x)=>s+x.asp,0);
+  const grouped={};
+  panier.forEach(x=>{const k=x.pKey+(x.portabilite?'|P':'');grouped[k]=grouped[k]||{...x,qty:0};grouped[k].qty++;});
+  el.innerHTML=Object.values(grouped).map(g=>`
+    <div class="panier-item">
+      <span class="badge ${g.soho?'b-s':g.brand==='Orange'?'b-o':'b-e'}">${g.soho?'SoHo':g.brand}</span>
+      <span style="flex:1;">${g.product.replace(' SoHo','')}${g.portabilite?' <span style="color:var(--orange);font-size:9px;">+porta</span>':''}</span>
+      <span class="asp-chip">×${g.qty}</span>
+      <span style="font-size:10px;color:var(--orange);">${Math.round(g.asp*g.qty*10)/10}asp</span>
+    </div>`).join('')+
+    `<div style="text-align:right;padding-top:6px;font-size:11px;font-weight:700;color:var(--orange);">Total: ${Math.round(aspTotal*10)/10} ASP</div>`;
+  document.getElementById('pm-btn-valider').style.opacity='1';
+  document.getElementById('pm-btn-valider').disabled=false;
+}
+
+window.pmValiderPanier=function(){
+  if(panier.length===0)return;
+  const dVal=document.getElementById('pm-contract-date').value;
+  const contractDate=dVal?fmtDate(dVal+' '):fmtDate(today);
+  const encodedDate=fmtDate(today);
+  const isLate=dVal&&dVal!==toInputVal(today);
+  const agent=document.getElementById('pm-add-agent').value;
+  panier.forEach(item=>{
+    contracts.push({id:Date.now()+Math.random(),brand:item.brand,product:item.pKey,agent,contractDate,encodedDate,isLate:!!isLate,asp:item.asp,soho:item.soho,portabilite:item.portabilite,year:curYear,month:curMonth});
+  });
+  panier=[];save();pmBuildProducts();pmRenderStats();pmRenderAgentCards();pmRenderNiveauDetail();renderAccueil();
+};
+
+window.pmDelContract=function(id){contracts=contracts.filter(c=>c.id!==id);save();pmRender();};
+
+function pmRenderStats(){
+  const mc=getMC(curYear,curMonth);
+  const byProd={};mc.forEach(c=>{byProd[c.product]=(byProd[c.product]||0)+1;});
+  const totalO=ALL_O.reduce((s,p)=>s+(byProd[p]||0)+(byProd[p+' SoHo']||0),0);
+  const totalE=ALL_E.reduce((s,p)=>s+(byProd[p]||0)+(byProd[p+' SoHo']||0),0);
+  const total=totalO+totalE;
+  const aspMois=mc.reduce((s,c)=>s+(c.asp||0),0);
+  document.getElementById('pm-metrics').innerHTML=`
+    <div class="mc"><div class="mc-label">Total</div><div class="mc-val">${total}</div><div class="pbar"><div class="pbar-fill" style="width:${Math.min(100,total*5)}%;"></div></div></div>
+    <div class="mc"><div class="mc-label">Orange</div><div class="mc-val" style="color:#E65100;">${totalO}</div></div>
+    <div class="mc"><div class="mc-label">Eneco</div><div class="mc-val" style="color:#2E7D32;">${totalE}</div></div>
+    <div class="mc"><div class="mc-label">ASP mois</div><div class="mc-val" style="color:var(--orange);">${Math.round(aspMois*10)/10}</div></div>`;
+  function rps(elId,prods,color){
+    document.getElementById(elId).innerHTML=prods.map(p=>{
+      const cnt=(byProd[p]||0)+(byProd[p+' SoHo']||0);const s=byProd[p+' SoHo']||0;
+      return `<div class="prod-stat-row"><span style="font-size:11px;">${p}</span><span style="display:flex;align-items:center;gap:4px;">${s>0?`<span style="font-size:9px;background:#E3F2FD;color:#1565C0;padding:1px 4px;border-radius:99px;">+${s}S</span>`:''}<span style="font-size:12px;font-weight:600;color:${cnt>0?color:'var(--text-ter)'};">${cnt}</span></span></div>`;
+    }).join('');
+  }
+  rps('pm-orange-stats',ALL_O,'#E65100');rps('pm-eneco-stats',ALL_E,'#2E7D32');
+  if(currentUser.isAdmin){
+    const byAgent=countBy(mc,'agent');
+    document.getElementById('pm-team-stats').innerHTML=Object.entries(byAgent).sort((a,b)=>b[1]-a[1]).map(([agent,cnt])=>{
+      const ini=agent.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+      const aspAgent=mc.filter(c=>c.agent===agent).reduce((s,c)=>s+(c.asp||0),0);
+      const cur=getNiveau(getTotalASP(agent));
+      return `<div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);">
+        <span style="width:22px;height:22px;border-radius:50%;background:#EEF2FF;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--blue);">${ini}</span>
+        <span style="flex:1;font-size:12px;">${agent}</span>
+        <span style="font-size:10px;background:var(--orange-light);color:var(--orange);padding:1px 6px;border-radius:99px;">${cur.label}</span>
+        <span style="font-size:10px;color:var(--orange);">+${Math.round(aspAgent*10)/10}</span>
+        <span style="font-size:12px;font-weight:600;">${cnt}</span>
+      </div>`;
+    }).join('')||'<div class="empty">Aucun agent ce mois</div>';
+  }
+  const sorted=[...mc].sort((a,b)=>b.id-a.id);
+  document.getElementById('pm-history').innerHTML=sorted.length?sorted.map(c=>`
+    <div class="hist-item">
+      <span class="badge ${c.soho?'b-s':c.brand==='Orange'?'b-o':'b-e'}">${c.soho?'SoHo':c.brand}</span>
+      <span style="flex:1;">${c.product.replace(' SoHo','')}</span>
+      <span class="asp-chip">${c.asp||0}asp</span>
+      <span style="font-size:10px;color:var(--text-sec);">${c.agent.split(' ')[0]}</span>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:1px;">
+        <span style="font-size:9px;color:var(--text-sec);">📝 ${c.contractDate}${c.isLate?'<span class="late-chip">tardif</span>':''}</span>
+        <span style="font-size:9px;color:var(--text-ter);">🕐 ${c.encodedDate}</span>
+      </div>
+      <button class="btn-del" onclick="pmDelContract(${c.id})">🗑</button>
+    </div>`).join(''):'<div class="empty">Aucun contrat — utilisez les boutons + !</div>';
+}
+
+function pmRenderChart(){
+  const ctx=document.getElementById('pm-chart');if(!ctx||!window.Chart)return;
+  if(window._ch){window._ch.destroy();}
+  const labels=[],dO=[],dE=[];
+  for(let i=5;i>=0;i--){
+    let m=curMonth-i,y=curYear;while(m<0){m+=12;y--;}
+    labels.push(MONTHS[m].slice(0,3));
+    const mc=getMC(y,m);const bp={};mc.forEach(c=>{bp[c.product]=(bp[c.product]||0)+1;});
+    dO.push(ALL_O.reduce((s,p)=>s+(bp[p]||0)+(bp[p+' SoHo']||0),0));
+    dE.push(ALL_E.reduce((s,p)=>s+(bp[p]||0)+(bp[p+' SoHo']||0),0));
+  }
+  window._ch=new Chart(ctx,{type:'bar',data:{labels,datasets:[
+    {label:'Orange',data:dO,backgroundColor:'#E65100',borderRadius:4},
+    {label:'Eneco',data:dE,backgroundColor:'#2E7D32',borderRadius:4}
+  ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+    scales:{x:{stacked:true,ticks:{font:{size:10}},grid:{display:false}},y:{stacked:true,ticks:{font:{size:10},stepSize:1},grid:{color:'rgba(0,0,0,0.05)'}}}}});
+}
+
+function pmPrevMonth(){curMonth--;if(curMonth<0){curMonth=11;curYear--;}pmRender();}
+function pmNextMonth(){curMonth++;if(curMonth>11){curMonth=0;curYear++;}pmRender();}
+
+function pmRender(){
+  document.getElementById('pm-month-label').textContent=MONTHS[curMonth]+' '+curYear;
+  pmRenderAgentCards();pmRenderNiveauDetail();pmBuildProducts();pmRenderStats();
+}
+
+// ===== EXPORT =====
+window.pmExportPDF=function(){
+  const mc=getMC(curYear,curMonth);
+  const byProd={};mc.forEach(c=>{byProd[c.product]=(byProd[c.product]||0)+1;});
+  const totalO=ALL_O.reduce((s,p)=>s+(byProd[p]||0)+(byProd[p+' SoHo']||0),0);
+  const totalE=ALL_E.reduce((s,p)=>s+(byProd[p]||0)+(byProd[p+' SoHo']||0),0);
+  const aspTotal=mc.reduce((s,c)=>s+(c.asp||0),0);
+  const byAgent=countBy(mc,'agent');
+  let html=`<html><head><meta charset="utf-8"><title>Smart Tools ${MONTHS[curMonth]} ${curYear}</title>
+  <style>body{font-family:Arial,sans-serif;padding:32px;color:#1a1a2e;max-width:600px;margin:auto;}
+  h1{font-size:20px;color:#1e3a6e;}.sub{font-size:13px;color:#666;margin-bottom:20px;}
+  .totals{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;}.tot{background:#f5f7fa;border-radius:8px;padding:10px 16px;text-align:center;}
+  .tot-val{font-size:22px;font-weight:700;}.tot-label{font-size:11px;color:#666;}
+  h2{font-size:13px;color:#f97316;margin:16px 0 6px;border-bottom:1px solid #fde8cc;padding-bottom:3px;}
+  table{width:100%;border-collapse:collapse;font-size:12px;}td{padding:4px 8px;border-bottom:1px solid #f3f4f6;}td:last-child{text-align:right;font-weight:700;}
+  .footer{margin-top:28px;font-size:11px;color:#aaa;text-align:center;}</style></head><body>
+  <h1>Smart Tools — Résumé contrats</h1>
+  <div class="sub">${MONTHS[curMonth]} ${curYear} · ${currentUser.fullName} · Généré le ${fmtDate(today)}</div>
+  <div class="totals">
+    <div class="tot"><div class="tot-val" style="color:#1e3a6e;">${totalO+totalE}</div><div class="tot-label">Total</div></div>
+    <div class="tot"><div class="tot-val" style="color:#E65100;">${totalO}</div><div class="tot-label">Orange</div></div>
+    <div class="tot"><div class="tot-val" style="color:#2E7D32;">${totalE}</div><div class="tot-label">Eneco</div></div>
+    <div class="tot"><div class="tot-val" style="color:#f97316;">${Math.round(aspTotal*10)/10}</div><div class="tot-label">ASP</div></div>
+  </div><h2>Orange</h2><table>`;
+  Object.entries(PRODUCTS.Orange).forEach(([grp,ps])=>{
+    ps.forEach(p=>{const t=(byProd[p]||0)+(byProd[p+' SoHo']||0);if(t>0){const s=byProd[p+' SoHo']||0;html+=`<tr><td>${p}${s>0?` (dont ${s} SoHo)`:''}</td><td>${t}</td></tr>`;}});
+  });
+  html+=`</table><h2>Eneco</h2><table>`;
+  ALL_E.forEach(p=>{const t=(byProd[p]||0)+(byProd[p+' SoHo']||0);if(t>0)html+=`<tr><td>${p}</td><td>${t}</td></tr>`;});
+  html+=`</table><div class="footer">Smart Tools · by Phil-Mobile · infos@phil-mobile.be</div></body></html>`;
+  const w=window.open('','_blank');if(w){w.document.write(html);w.document.close();setTimeout(()=>w.print(),500);}
+};
+
+window.pmExportMail=function(){
+  const mc=getMC(curYear,curMonth);
+  const byProd={};mc.forEach(c=>{byProd[c.product]=(byProd[c.product]||0)+1;});
+  const aspTotal=mc.reduce((s,c)=>s+(c.asp||0),0);
+  const totalO=ALL_O.reduce((s,p)=>s+(byProd[p]||0)+(byProd[p+' SoHo']||0),0);
+  const totalE=ALL_E.reduce((s,p)=>s+(byProd[p]||0)+(byProd[p+' SoHo']||0),0);
+  let lines=[`Résumé — ${MONTHS[curMonth]} ${curYear} — ${currentUser.fullName}`,`Total: ${totalO+totalE} | Orange: ${totalO} | Eneco: ${totalE} | ASP: ${Math.round(aspTotal*10)/10}`];
+  const asp=getTotalASP(currentUser.fullName);const cur=getNiveau(asp);const next=getNextNiveau(asp);
+  lines.push(`Niveau: ${cur.label} · ${Math.round(asp*10)/10} ASP${next?` → ${next.label} dans ${Math.round((next.pts-asp)*10)/10} ASP`:''}`);
+  window.location.href=`mailto:infos@phil-mobile.be?subject=${encodeURIComponent('Résumé Smart Tools — '+MONTHS[curMonth]+' '+curYear)}&body=${encodeURIComponent(lines.join('\n'))}`;
+};
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/smartsn/sw.js').catch(()=>{});
+}
+</script>
+</body>
+</html>

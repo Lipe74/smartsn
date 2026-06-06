@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Tools — Admin</title>
+<link rel="icon" type="image/png" href="images/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{--blue:#1e3a6e;--orange:#f97316;--gray:#f5f7fa;--border:#e8edf5;--text:#1a1a2e;--text-sec:#6b7280;}
+body{font-family:'Outfit',sans-serif;background:var(--gray);color:var(--text);min-height:100vh;}
+.header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:var(--blue);color:white;}
+.header-title{font-size:16px;font-weight:700;}
+.badge{font-size:11px;background:rgba(249,115,22,.2);color:var(--orange);padding:4px 10px;border-radius:99px;border:1px solid rgba(249,115,22,.3);}
+.main{max-width:800px;margin:24px auto;padding:0 16px;}
+.card{background:white;border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px;}
+.card-title{font-size:13px;font-weight:700;color:var(--text-sec);text-transform:uppercase;letter-spacing:.08em;margin-bottom:16px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.form-group{display:flex;flex-direction:column;gap:4px;}
+.form-group label{font-size:11px;font-weight:600;color:var(--text-sec);text-transform:uppercase;letter-spacing:.05em;}
+.form-group input, .form-group select{padding:9px 12px;font-size:13px;border:1px solid var(--border);border-radius:8px;background:white;color:var(--text);font-family:'Outfit',sans-serif;outline:none;transition:border-color .2s;}
+.form-group input:focus, .form-group select:focus{border-color:var(--orange);}
+.btn{padding:10px 20px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;}
+.btn-primary{background:var(--blue);color:white;}.btn-primary:hover{background:#2a4f94;}
+.btn-orange{background:var(--orange);color:white;}.btn-orange:hover{background:#ea6c0a;}
+.btn-danger{background:#fff;color:#E24B4A;border:1px solid #E24B4A;}.btn-danger:hover{background:#fff0f0;}
+.btn-sm{padding:6px 12px;font-size:11px;}
+.consultant-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.consultant-row:last-child{border-bottom:none;}
+.avatar{width:36px;height:36px;border-radius:50%;background:#EEF2FF;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--blue);flex-shrink:0;}
+.consultant-info{flex:1;}
+.consultant-name{font-size:13px;font-weight:600;}
+.consultant-meta{font-size:11px;color:var(--text-sec);margin-top:2px;}
+.tag{font-size:10px;padding:2px 7px;border-radius:99px;font-weight:600;}
+.tag-admin{background:#EEF2FF;color:var(--blue);}
+.tag-active{background:#E8F5E9;color:#2E7D32;}
+.tag-inactive{background:#f3f4f6;color:var(--text-sec);}
+.lock-screen{position:fixed;inset:0;background:var(--blue);display:flex;align-items:center;justify-content:center;z-index:999;}
+.lock-card{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:40px 32px;width:100%;max-width:340px;text-align:center;backdrop-filter:blur(20px);}
+.lock-card h2{color:white;font-size:20px;margin-bottom:8px;}
+.lock-card p{color:rgba(255,255,255,.5);font-size:13px;margin-bottom:20px;}
+.lock-card input{width:100%;padding:12px;font-size:14px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:white;font-family:'Outfit',sans-serif;outline:none;text-align:center;margin-bottom:12px;}
+.lock-card input::placeholder{color:rgba(255,255,255,.3);}
+.json-preview{background:#1a1a2e;color:#a8ff78;font-family:monospace;font-size:11px;padding:16px;border-radius:8px;overflow-x:auto;white-space:pre;margin-top:12px;max-height:300px;overflow-y:auto;}
+.alert{padding:10px 14px;border-radius:8px;font-size:12px;margin-bottom:12px;display:none;}
+.alert-success{background:#E8F5E9;color:#2E7D32;border:1px solid #c8e6c9;}
+.alert-error{background:#fff0f0;color:#E24B4A;border:1px solid #ffcdd2;}
+@media(max-width:500px){.form-row{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- VERROU ADMIN -->
+<div class="lock-screen" id="lock-screen">
+  <div class="lock-card">
+    <div style="font-size:40px;margin-bottom:12px;">🔐</div>
+    <h2>Admin Smart Tools</h2>
+    <p>Accès réservé à Philippe</p>
+    <input type="password" id="admin-pwd" placeholder="Mot de passe admin" autocomplete="off">
+    <div style="font-size:11px;color:#ff6b6b;margin-bottom:10px;display:none;" id="admin-err">Mot de passe incorrect</div>
+    <button onclick="checkAdmin()" style="width:100%;padding:12px;background:var(--orange);color:white;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;">Connexion →</button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-title">⚙️ Admin Smart Tools</div>
+  <span class="badge">Philippe · Admin</span>
+</div>
+
+<div class="main">
+
+  <div id="alert-box" class="alert"></div>
+
+  <!-- LISTE CONSULTANTS -->
+  <div class="card">
+    <div class="card-title">Consultants actifs</div>
+    <div id="consultants-list"><div style="color:var(--text-sec);font-size:13px;">Chargement...</div></div>
+  </div>
+
+  <!-- AJOUTER UN CONSULTANT -->
+  <div class="card">
+    <div class="card-title">Ajouter un consultant</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Identifiant Smart SN *</label>
+        <input type="text" id="new-id" placeholder="ex: lotus193" autocapitalize="none">
+      </div>
+      <div class="form-group">
+        <label>Prénom *</label>
+        <input type="text" id="new-name" placeholder="ex: Julien">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Nom complet *</label>
+        <input type="text" id="new-fullname" placeholder="ex: Julien Couvreur">
+      </div>
+      <div class="form-group">
+        <label>Upline</label>
+        <input type="text" id="new-upline" placeholder="ex: Philippe Tomaszewsky">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Date démarrage</label>
+        <input type="date" id="new-startdate">
+      </div>
+      <div class="form-group">
+        <label>ASP initiaux</label>
+        <input type="number" id="new-asp" placeholder="0" min="0" value="0">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Rôle</label>
+        <select id="new-role">
+          <option value="false">Consultant</option>
+          <option value="true">Admin</option>
+        </select>
+      </div>
+      <div class="form-group" style="justify-content:flex-end;">
+        <button class="btn btn-orange" onclick="addConsultant()" style="margin-top:20px;">+ Ajouter</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JSON EXPORT -->
+  <div class="card">
+    <div class="card-title">consultants.json — à copier sur GitHub</div>
+    <p style="font-size:12px;color:var(--text-sec);margin-bottom:10px;">Après modification, copiez ce JSON et mettez-le à jour sur GitHub dans le fichier <strong>consultants.json</strong>.</p>
+    <button class="btn btn-primary btn-sm" onclick="copyJSON()">📋 Copier le JSON</button>
+    <button class="btn btn-sm" onclick="downloadJSON()" style="border:1px solid var(--border);background:white;margin-left:8px;">⬇ Télécharger</button>
+    <div class="json-preview" id="json-preview"></div>
+  </div>
+
+</div>
+
+<script>
+const ADMIN_PWD = 'delta835Admin2026';
+let consultantsData = null;
+
+function checkAdmin(){
+  const val = document.getElementById('admin-pwd').value;
+  if(val === ADMIN_PWD){
+    document.getElementById('lock-screen').style.display='none';
+    loadData();
+  } else {
+    document.getElementById('admin-err').style.display='block';
+    document.getElementById('admin-pwd').value='';
+  }
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&document.getElementById('lock-screen').style.display!=='none') checkAdmin();
+});
+
+async function loadData(){
+  try{
+    const data = await fetch('consultants.json?v='+Date.now()).then(r=>r.json());
+    consultantsData = data;
+    renderList();
+    renderJSON();
+  } catch(e){
+    consultantsData = {admins:[],consultants:[]};
+    renderList();renderJSON();
+  }
+}
+
+function renderList(){
+  const list = document.getElementById('consultants-list');
+  if(!consultantsData.consultants.length){list.innerHTML='<div style="color:var(--text-sec);font-size:13px;">Aucun consultant</div>';return;}
+  list.innerHTML = consultantsData.consultants.map((c,i)=>{
+    const ini=c.fullName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+    return `<div class="consultant-row">
+      <div class="avatar">${ini}</div>
+      <div class="consultant-info">
+        <div class="consultant-name">${c.fullName} <span class="tag ${c.isAdmin?'tag-admin':''}">${c.isAdmin?'Admin':'Consultant'}</span> <span class="tag ${c.active?'tag-active':'tag-inactive'}">${c.active?'Actif':'Inactif'}</span></div>
+        <div class="consultant-meta">ID: <strong>${c.id}</strong> · Depuis ${c.startDate||'—'} · ${c.aspInit||0} ASP init · Upline: ${c.upline||'—'}</div>
+      </div>
+      <button class="btn btn-danger btn-sm" onclick="toggleActive(${i})">${c.active?'Désactiver':'Réactiver'}</button>
+      <button class="btn btn-sm" onclick="removeConsultant(${i})" style="border:none;background:none;color:var(--text-sec);cursor:pointer;font-size:16px;">🗑</button>
+    </div>`;
+  }).join('');
+}
+
+function addConsultant(){
+  const id=document.getElementById('new-id').value.trim().toLowerCase();
+  const name=document.getElementById('new-name').value.trim();
+  const fullName=document.getElementById('new-fullname').value.trim();
+  const upline=document.getElementById('new-upline').value.trim();
+  const startDateRaw=document.getElementById('new-startdate').value;
+  const aspInit=parseInt(document.getElementById('new-asp').value)||0;
+  const isAdmin=document.getElementById('new-role').value==='true';
+
+  if(!id||!name||!fullName){showAlert('Remplissez les champs obligatoires (*)','error');return;}
+  if(consultantsData.consultants.find(c=>c.id===id)){showAlert('Identifiant déjà utilisé !','error');return;}
+
+  let startDate='—';
+  if(startDateRaw){
+    const d=new Date(startDateRaw);
+    startDate=d.toLocaleDateString('fr-BE',{day:'2-digit',month:'2-digit',year:'numeric'});
+  }
+
+  consultantsData.consultants.push({id,name,fullName,upline:upline||null,startDate,aspInit,isAdmin,active:true});
+  if(isAdmin&&!consultantsData.admins.find(a=>a.id===id)){
+    consultantsData.admins.push({id,name,fullName,isAdmin:true});
+  }
+
+  // Reset form
+  ['new-id','new-name','new-fullname','new-upline','new-startdate'].forEach(f=>document.getElementById(f).value='');
+  document.getElementById('new-asp').value='0';
+  document.getElementById('new-role').value='false';
+
+  renderList();renderJSON();
+  showAlert(`✅ ${fullName} ajouté ! Copiez le JSON et mettez à jour GitHub.`,'success');
+}
+
+function toggleActive(i){
+  consultantsData.consultants[i].active=!consultantsData.consultants[i].active;
+  renderList();renderJSON();
+  showAlert('Statut mis à jour — pensez à mettre à jour GitHub','success');
+}
+
+function removeConsultant(i){
+  const c=consultantsData.consultants[i];
+  if(!confirm(`Supprimer ${c.fullName} ?`)) return;
+  consultantsData.consultants.splice(i,1);
+  consultantsData.admins=consultantsData.admins.filter(a=>a.id!==c.id);
+  renderList();renderJSON();
+  showAlert('Consultant supprimé — pensez à mettre à jour GitHub','success');
+}
+
+function renderJSON(){
+  document.getElementById('json-preview').textContent=JSON.stringify(consultantsData,null,2);
+}
+
+function copyJSON(){
+  const text=JSON.stringify(consultantsData,null,2);
+  navigator.clipboard.writeText(text).then(()=>showAlert('✅ JSON copié ! Collez-le dans GitHub → consultants.json','success'));
+}
+
+function downloadJSON(){
+  const blob=new Blob([JSON.stringify(consultantsData,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='consultants.json';a.click();
+}
+
+function showAlert(msg,type){
+  const el=document.getElementById('alert-box');
+  el.textContent=msg;el.className='alert alert-'+(type==='error'?'error':'success');el.style.display='block';
+  setTimeout(()=>el.style.display='none',4000);
+}
+</script>
+</body>
+</html>
