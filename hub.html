@@ -62,10 +62,44 @@ html,body{height:100%;font-family:'Outfit',sans-serif;background:var(--gray);col
 .content-panel.active{display:block;}
 
 /* MENU ITEMS */
-.menu-section{padding:10px 12px 4px;font-size:10px;font-weight:700;color:var(--text-ter);text-transform:uppercase;letter-spacing:.08em;}
-.menu-item{display:block;width:100%;text-align:left;padding:9px 12px;font-size:12px;font-weight:500;color:var(--text-sec);background:none;border:none;border-radius:6px;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .15s;text-decoration:none;margin-bottom:2px;}
-.menu-item:hover{background:var(--orange-light);color:var(--orange);}
-.menu-item.active{background:var(--orange-light);color:var(--orange);font-weight:600;}
+.menu-section{
+  padding:10px 12px 4px;
+  font-size:10px;
+  font-weight:700;
+  color:var(--text-ter);
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+
+.menu-item{
+  display:block;
+  width:100%;
+  text-align:left;
+  padding:10px 12px;
+  font-size:12px;
+  font-weight:600;
+  color:var(--text);
+  background:#fff;
+  border:1px solid var(--orange);
+  border-radius:8px;
+  cursor:pointer;
+  font-family:'Outfit',sans-serif;
+  transition:all .15s;
+  text-decoration:none;
+  margin-bottom:6px;
+}
+
+.menu-item:hover{
+  background:var(--orange-light);
+  color:var(--orange);
+}
+
+.menu-item.active{
+  background:var(--orange);
+  color:#fff;
+  border-color:var(--orange);
+  font-weight:700;
+}
 
 /* CARDS */
 .card{background:white;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:12px;}
