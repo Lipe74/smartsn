@@ -27,6 +27,16 @@
       "aspInit": 16,
       "isAdmin": false,
       "active": true
+    },
+    {
+      "id": "lotus099",
+      "name": "Liliana",
+      "fullName": "Rodrigues",
+      "upline": "Philippe Tomaszewsky",
+      "startDate": "04/06/2026",
+      "aspInit": 0,
+      "isAdmin": false,
+      "active": true
     }
   ]
 }
